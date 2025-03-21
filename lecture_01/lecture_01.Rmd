@@ -1,0 +1,373 @@
+# Introduction to Monte Carlo Methods
+
+## Introduction to Averaging & Sampling
+
+In computational chemistry, we seek to calculate observable properties of molecular systems. These properties—such as energy, density, or heat capacity—represent the average behaviour of countless molecules interacting over time. The challenge lies in computing these averages efficiently and accurately.
+
+### The Computational Chemistry Challenge
+
+How do we calculate measurable properties of chemical systems? The properties we care about in chemistry—energy, structure, heat capacity—are statistical averages across many possible molecular arrangements. At finite temperature, molecules constantly move and explore different configurations, making the calculation of properties more complex than simply evaluating a single structure.
+
+### Potential Energy and Configurations
+
+The starting point for most computational chemistry methods is the potential energy function, denoted as $U(\mathbf{r})$. This function gives us the energy for any particular arrangement of atoms (configuration) in our system. The variable $\mathbf{r}$ represents the coordinates of all atoms.
+
+For a system at finite temperature, molecules constantly move and explore many different configurations. Some configurations are more likely than others, with lower-energy states being favoured. The probability of finding a system in a particular configuration follows the Boltzmann distribution:
+
+$$P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)$$
+
+Where $k$ is Boltzmann's constant and $T$ is the temperature.
+
+### The Averaging Problem
+
+To calculate a thermodynamic property $A$, we need to compute its average across all possible configurations, with each configuration weighted by its probability:
+
+$$\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})$$
+
+Where the sum runs over all possible configurations.
+
+This seemingly simple equation presents an enormous computational challenge. Consider a modest molecular system with just 20 atoms. If each atom could occupy only 10 possible positions (a gross simplification), we would need to evaluate $10^{20}$ different configurations. This number exceeds the count of stars in the observable universe!
+
+Clearly, direct summation is impossible for any realistic chemical system.
+
+### The General Idea of Sampling
+
+Rather than attempting to evaluate every possible configuration, we can estimate the average by examining only a representative sample of configurations. This approach mirrors how we might estimate the average height of people in Britain—we measure a carefully chosen subset rather than the entire population.
+
+For many mathematical problems, uniform random sampling works well. Estimating the area of irregular shapes or performing numerical integration can be effectively done with uniform sampling techniques.
+
+### The Special Challenge of Chemical Systems
+
+For chemistry, there's a critical distinction—some configurations are much more likely than others. The Boltzmann distribution tells us that lower-energy configurations are exponentially more likely than higher-energy ones.
+
+This means we need a *weighted* sample that favors important (lower energy) configurations.
+
+### A Brief Look at MD Sampling
+
+In Molecular Dynamics (MD), we simulate the physical motion of atoms over time, which naturally visits configurations according to their probability. The average of a property $A$ can then be estimated by:
+
+$$\langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)$$
+
+Where $M$ is the number of time steps (frames) in our trajectory.
+
+However, MD faces significant challenges. Energy barriers between different states can trap the system in local energy minima for extended periods, preventing adequate sampling of all relevant configurations. Some configurations may be rarely visited, leading to incomplete sampling.
+
+## Essentials of Random Sampling
+
+Monte Carlo methods employ random numbers to solve deterministic mathematical problems. This seemingly counterintuitive approach is powerful because it allows us to estimate properties that would be impossible to calculate directly.
+
+### Basic Concept
+
+The fundamental idea behind Monte Carlo methods is using random sampling to solve problems that might otherwise be intractable. By drawing random samples and evaluating the function of interest at these points, we can estimate averages, integrals, and other mathematical quantities.
+
+### Simple Uniform Sampling
+
+In its most basic form, Monte Carlo sampling involves drawing random points uniformly within a defined region. Each point has an equal probability of being selected, meaning we sample the space without any bias toward particular regions.
+
+This approach forms the foundation for our initial examples and is particularly effective for many mathematical problems where all regions of the domain are equally important.
+
+### Accessing Random Numbers in Practice
+
+Most programming languages provide built-in functions that generate random numbers uniformly distributed between 0 and 1. For example:
+- Python: `random.random()`
+- MATLAB: `rand()`
+- C++: `rand() / RAND_MAX`
+
+An important practical consideration is setting the random number generator's "seed"—a value that initializes the sequence. Using the same seed ensures reproducible results, which is essential for scientific work and debugging.
+
+## Core Probability Concepts for Monte Carlo
+
+To understand why Monte Carlo methods work, we need a few key concepts from probability theory.
+
+### Expected Values
+
+The expected value of a property $A$, denoted $E[A]$ or $\langle A \rangle$, represents the long-term average value we would obtain if we could measure $A$ over all possible configurations. Mathematically:
+
+$$E[A] = \sum A(\mathbf{r}) \times P(\mathbf{r})$$
+
+This is precisely the thermodynamic average we seek to calculate. The challenge lies in estimating this value efficiently.
+
+In simple terms, the expected value is "the value we would get with infinite samples"—it's our target for estimation.
+
+### The Law of Large Numbers
+
+The Law of Large Numbers provides the mathematical foundation for Monte Carlo methods. It states that as the sample size increases, the average of the samples approaches the true expected value.
+
+For example, if we flip a fair coin many times, the proportion of heads will converge to 0.5 as the number of flips increases. With 10 flips, we might see 7 heads (0.7), but with 10,000 flips, the proportion will be much closer to 0.5.
+
+In Monte Carlo simulations, this law guarantees that with sufficient samples, our estimate will approach the true average. The convergence can be visualized by plotting the running average against the number of samples.
+
+### Uncertainty in Monte Carlo Estimates
+
+Every Monte Carlo estimate comes with statistical uncertainty. As the number of samples ($N$) increases, the uncertainty decreases proportionally to $1/\sqrt{N}$. This means that to halve the uncertainty, we need four times as many samples.
+
+For students applying Monte Carlo methods, a simple approach to estimating uncertainty involves:
+1. Breaking the samples into several batches
+2. Computing the average for each batch
+3. Calculating the standard deviation of these batch averages
+
+This gives a reasonable estimate of the statistical error in our results.
+
+## Simple Demonstrations of Monte Carlo Methods
+
+Let's examine two classic examples that illustrate the power of Monte Carlo methods.
+
+### Estimating π by Monte Carlo Integration
+
+One of the simplest demonstrations of Monte Carlo methods is estimating the value of $\pi$. Consider a circle with radius 1 inscribed inside a square with side length 2. The area of the circle is $\pi$, while the area of the square is 4. Therefore, the ratio of these areas is $\pi/4$.
+
+We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. A point $(x,y)$ falls inside the circle if $x^2 + y^2 \leq 1$.
+
+The procedure works as follows:
+1. Generate $N$ random points with coordinates $(x,y)$, where $x$ and $y$ are uniformly distributed between -1 and 1
+2. Count how many points $M$ satisfy $x^2 + y^2 \leq 1$
+3. The estimate for $\pi$ is given by: $\pi \approx 4 \times M/N$
+
+This method converges slowly—doubling the precision requires quadrupling the number of points—but it elegantly demonstrates the Monte Carlo approach.
+
+A simple implementation might look like:
+
+```python
+import random
+import matplotlib.pyplot as plt
+import numpy as np
+
+def estimate_pi(num_points):
+    """
+    Estimate the value of pi using Monte Carlo method.
+    
+    Args:
+        num_points: Number of random points to generate
+        
+    Returns:
+        Estimate of pi
+    """
+    points_in_circle = 0
+    points_x = []
+    points_y = []
+    circle_x = []
+    circle_y = []
+    square_x = []
+    square_y = []
+    
+    for _ in range(num_points):
+        x = random.uniform(-1, 1)
+        y = random.uniform(-1, 1)
+        
+        points_x.append(x)
+        points_y.append(y)
+        
+        if x**2 + y**2 <= 1:
+            points_in_circle += 1
+            circle_x.append(x)
+            circle_y.append(y)
+        else:
+            square_x.append(x)
+            square_y.append(y)
+    
+    # Plot the points
+    plt.figure(figsize=(8, 8))
+    plt.scatter(circle_x, circle_y, color='blue', s=1)
+    plt.scatter(square_x, square_y, color='red', s=1)
+    plt.axis('equal')
+    plt.title(f'Estimating π: {4 * points_in_circle / num_points:.6f}')
+    plt.savefig('pi_estimation.png', dpi=300)
+    
+    return 4 * points_in_circle / num_points
+```
+
+When we visualize this process, we can color points based on whether they fall inside the circle (e.g., blue) or outside (e.g., red). As the number of points increases, our estimate becomes more accurate.
+
+![Estimating π with Monte Carlo](pi_estimation.png)
+
+We can also analyze how the error in our estimation decreases with sample size, demonstrating the $1/\sqrt{N}$ scaling of uncertainty.
+
+### Function Averaging / Numerical Integration
+
+Our second example involves calculating the average value of a function over a specific interval. Consider finding the average value of $\sin^2(x)$ over the interval $[0,\pi]$.
+
+Mathematically, this average is defined as:
+
+$$\text{Average value} = \frac{1}{\pi} \times \int_0^{\pi} \sin^2(x) dx$$
+
+The analytical solution to this integral is $1/2$.
+
+Using Monte Carlo methods, we can estimate this average by:
+1. Generating uniform random $x$-values between 0 and $\pi$
+2. Calculating $\sin^2(x)$ for each point
+3. Averaging the results
+
+```python
+import random
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+
+def average_sin_squared(num_points):
+    """
+    Estimate the average value of sin^2(x) over [0,π] using Monte Carlo.
+    
+    Args:
+        num_points: Number of random points to generate
+        
+    Returns:
+        Estimated average
+    """
+    total = 0
+    x_values = []
+    y_values = []
+    
+    for _ in range(num_points):
+        x = random.uniform(0, math.pi)
+        y = math.sin(x)**2
+        
+        total += y
+        x_values.append(x)
+        y_values.append(y)
+    
+    # Plot the function and sample points
+    plt.figure(figsize=(10, 6))
+    x = np.linspace(0, math.pi, 1000)
+    plt.plot(x, np.sin(x)**2, 'b-', label='$\sin^2(x)$')
+    plt.scatter(x_values[:100], y_values[:100], color='red', alpha=0.5, s=20, label='Sample points')
+    plt.axhline(y=0.5, color='g', linestyle='--', label='True average (0.5)')
+    plt.axhline(y=total/num_points, color='r', linestyle='--', label=f'MC estimate ({total/num_points:.4f})')
+    plt.xlabel('x')
+    plt.ylabel('$\sin^2(x)$')
+    plt.legend()
+    plt.title(f'Monte Carlo Integration: Average of $\sin^2(x)$ over [0,π]')
+    plt.savefig('sin_squared_average.png', dpi=300)
+    
+    return total / num_points
+```
+
+This example directly parallels the calculation of thermodynamic averages in chemistry. Both involve computing the average of a function weighted by some probability distribution. The only difference is that in this simple case, our probability distribution is uniform, whereas in chemical systems, we use the Boltzmann distribution.
+
+![Estimating the average of sin²(x)](sin_squared_average.png)
+
+By plotting the running average against the number of samples, we can observe convergence toward the true value of 1/2.
+
+## Comparison with Other Simulation Techniques
+
+Monte Carlo methods offer distinct advantages and disadvantages compared to other approaches in computational chemistry.
+
+### Monte Carlo vs. Molecular Dynamics
+
+While both methods sample configuration space, they differ in fundamental ways:
+
+**Molecular Dynamics:**
+- Follows physically realistic trajectories
+- Provides time-dependent information
+- Sample configurations are correlated in time
+- May struggle with rare events or high energy barriers
+
+**Monte Carlo:**
+- Makes non-physical "jumps" between configurations
+- Cannot directly provide time-dependent properties
+- Can be designed to reduce correlation between samples
+- Often better at sampling rare events or crossing barriers
+
+The choice between MC and MD depends on the specific problem. MD excels at studying dynamic processes, while MC often works better for equilibrium properties, especially in systems with significant energy barriers.
+
+### Deterministic Numerical Methods
+
+Traditional numerical methods, such as numerical integration using the trapezoidal rule or Simpson's rule, offer alternatives to Monte Carlo for some problems. These methods:
+- Provide systematic error reduction
+- Work well in low dimensions
+- Become impractical in high-dimensional problems due to the "curse of dimensionality"
+
+Monte Carlo methods scale more favorably with dimension, making them essential for the high-dimensional spaces encountered in chemical systems.
+
+## Error Analysis in Monte Carlo Simulations
+
+Evaluating the accuracy of Monte Carlo results requires understanding both statistical and systematic errors.
+
+### Statistical Errors
+
+Statistical errors arise from the finite number of samples and follow well-understood principles:
+- The error decreases as $1/\sqrt{N}$ with sample size $N$
+- Confidence intervals can be calculated using the standard error of the mean
+- Correlated samples reduce the effective sample size
+
+For practical error estimation, the batch averaging method works well:
+1. Divide the simulation into blocks of equal size
+2. Calculate the average within each block
+3. Compute the standard deviation of the block averages
+4. The standard error equals this standard deviation divided by $\sqrt{\text{number of blocks}}$
+
+This approach accounts for correlation between consecutive samples.
+
+### Practical Error Estimation
+
+When reporting Monte Carlo results, it's essential to include an estimate of uncertainty. For example, rather than stating $\pi \approx 3.14$, we might report $\pi \approx 3.14 \pm 0.01$, where the second number represents our statistical uncertainty.
+
+### Sources of Systematic Errors
+
+Unlike statistical errors, systematic errors don't decrease with more samples. They result from problems in the simulation setup or implementation:
+- Insufficient sampling of important regions
+- Biased random number generation
+- Programming errors
+
+Identifying systematic errors often requires running multiple simulations with different parameters or starting conditions.
+
+## Convergence Criteria
+
+A critical question in any Monte Carlo simulation is: "How do we know when we have enough samples?"
+
+### Running Averages
+
+One practical technique involves plotting the running average of your property of interest against the number of samples. As the simulation converges, this average should stabilize around the true value.
+
+```python
+def plot_running_average(num_points=10000):
+    """
+    Plot the running average of the π estimate as the number of points increases.
+    
+    Args:
+        num_points: Total number of points to simulate
+    """
+    points_in_circle = 0
+    estimates = []
+    
+    for i in range(1, num_points + 1):
+        x = random.uniform(-1, 1)
+        y = random.uniform(-1, 1)
+        
+        if x**2 + y**2 <= 1:
+            points_in_circle += 1
+        
+        # Calculate and store the current estimate
+        if i % 100 == 0:  # Store every 100th estimate to keep plot manageable
+            estimates.append(4 * points_in_circle / i)
+    
+    # Plot running average
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(100, num_points + 1, 100), estimates, 'b-')
+    plt.axhline(y=math.pi, color='r', linestyle='--', label='True value (π)')
+    plt.xlabel('Number of samples')
+    plt.ylabel('Estimate of π')
+    plt.title('Running Average of π Estimate')
+    plt.legend()
+    plt.savefig('pi_running_average.png', dpi=300)
+```
+
+![Running average of π estimate](pi_running_average.png)
+
+### Statistical Tests
+
+More formal approaches include statistical tests that evaluate whether additional samples are likely to change the result significantly. However, for introductory purposes, visual inspection of running averages often suffices.
+
+### Balancing Accuracy and Computational Cost
+
+There's always a trade-off between accuracy and computational expense. The $1/\sqrt{N}$ scaling of error means that to gain another decimal place of precision, we need 100 times more samples. At some point, the additional computational cost may not justify the marginal improvement in accuracy.
+
+## Summary
+
+Monte Carlo methods provide powerful tools for estimating averages in complex systems. Starting from the fundamental challenge of computing thermodynamic averages, we've seen how random sampling offers a practical solution. We've explored:
+- The basic principles of random sampling
+- Core probability concepts that explain why MC works
+- Simple demonstrations that illustrate MC techniques
+- Comparisons with alternative approaches
+- Methods for analyzing errors and determining convergence
+
+In the next lecture, we'll extend these concepts to chemical systems, introducing the challenge of non-uniform distributions in chemistry and exploring the Metropolis algorithm as a solution.

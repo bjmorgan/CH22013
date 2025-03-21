@@ -1,0 +1,465 @@
+# Monte Carlo Applied to Chemical Systems
+
+## From Uniform to Non-Uniform Sampling
+
+In our previous lecture, we explored Monte Carlo methods using uniform sampling—where each possible state or configuration has an equal probability of being selected. We saw how this approach works for mathematical problems like estimating π or calculating definite integrals.
+
+### The Shift to Chemical Systems
+
+When we move from mathematical problems to chemical systems, we encounter a fundamental difference: not all molecular configurations are equally likely. In chemistry, the probability of observing a particular configuration depends on its energy according to the Boltzmann distribution:
+
+$$P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)$$
+
+This means that low-energy configurations are exponentially more likely than high-energy ones. At room temperature, a configuration that is just 6 kJ/mol higher in energy is approximately 10 times less probable.
+
+### From Simple to Weighted Averages
+
+This non-uniform probability distribution changes how we must calculate averages. Instead of a simple arithmetic mean, we need a weighted average:
+
+**Uniform sampling (Lecture 1)**: $\langle A \rangle \approx \frac{1}{N} \times \sum_{i=1}^{N} A(\mathbf{r}_i)$
+
+**Weighted sampling (Chemical systems)**: $\langle A \rangle \approx \frac{\sum_{i=1}^{N} A(\mathbf{r}_i) \times w(\mathbf{r}_i)}{\sum_{i=1}^{N} w(\mathbf{r}_i)}$
+
+Where $w(\mathbf{r}_i)$ represents the statistical weight of each configuration, proportional to its Boltzmann factor $\exp(-U(\mathbf{r}_i)/kT)$.
+
+The challenge becomes: how do we generate samples with the correct Boltzmann weighting?
+
+## Probability Distributions in Chemistry
+
+Before addressing this challenge, let's examine probability distributions more carefully, as they play a central role in computational chemistry.
+
+### What is a Probability Distribution?
+
+A probability distribution is a function that describes the relative likelihood of different outcomes in a random process. For discrete systems, it gives the probability of each possible state. For continuous systems (like molecular configurations), it gives the probability density.
+
+In chemistry, several distributions are particularly important:
+- The Boltzmann distribution for energies and configurations
+- Maxwell-Boltzmann distribution for molecular velocities
+- Radial distribution functions for atomic distances
+
+### The Boltzmann Distribution in Detail
+
+The Boltzmann distribution determines the probability of finding a system in a particular configuration:
+
+$$P(\mathbf{r}) = C \times \exp(-U(\mathbf{r})/kT)$$
+
+Where:
+- $U(\mathbf{r})$ is the potential energy of configuration $\mathbf{r}$
+- $k$ is Boltzmann's constant
+- $T$ is the temperature
+- $C$ is a normalization constant that ensures all probabilities sum to 1
+
+The physical meaning is that systems spend more time in lower-energy states. The temperature determines how strongly the system favors low-energy states:
+- At high temperatures, the distribution becomes more uniform
+- At low temperatures, the system is increasingly restricted to the lowest energy states
+
+### The Normalization Problem
+
+The normalization constant $C$ must ensure that the total probability across all possible configurations equals 1:
+
+$$C = \frac{1}{\sum \exp(-U(\mathbf{r})/kT)}$$
+
+This normalization constant has a special name in statistical mechanics: the "partition function" (often denoted as $Z$). You'll encounter this important concept again in your later studies of physical chemistry and thermodynamics.
+
+The partition function presents a challenge—calculating it requires summing over the same large number of configurations that we were trying to avoid in the first place.
+
+This creates a practical dilemma: to calculate the correct probabilities for our weighted average, we need to know the partition function, but calculating it requires evaluating all possible states.
+
+Monte Carlo methods offer a solution to this dilemma.
+
+## The Curse of Dimensionality
+
+Before discussing that solution, we need to understand another challenge that makes chemical systems difficult: the "curse of dimensionality."
+
+### The Problem of High Dimensions
+
+As the dimensionality of a problem increases, the volume of the configuration space grows exponentially. This has implications for sampling efficiency.
+
+Consider the volume ratio of a hypersphere inscribed within a hypercube:
+- In 2D: A circle within a square occupies $\pi/4 \approx 78.5\%$ of the square's area
+- In 3D: A sphere within a cube occupies $4\pi/3 \times (0.5)^3 \approx 52.4\%$ of the cube's volume
+- In 10D: The hypersphere occupies only about 0.25% of the hypercube's hypervolume
+- In 100D: The ratio becomes very small (approximately $10^{-70}$)
+
+### Implications for Molecular Systems
+
+For molecular systems, the dimensionality is determined by the number of degrees of freedom. A system with $N$ atoms typically has $3N-6$ internal degrees of freedom (3N coordinates minus 3 for overall translation and 3 for rotation).
+
+Even a small protein with 1000 atoms has approximately 3000 dimensions in its configuration space. If we were to use uniform sampling in this space, almost all random configurations would have negligible Boltzmann weight (likely corresponding to configurations with severe atomic overlaps and very high energies).
+
+This means that uniform sampling becomes inefficient as system size increases. The majority of randomly generated configurations would contribute little to our thermodynamic averages.
+
+### The Double Challenge
+
+We now face two interconnected challenges:
+1. We don't know the exact Boltzmann distribution without calculating the partition function
+2. Even if we did, uniform sampling would be inefficient in high dimensions
+
+This is where Markov Chain Monte Carlo (MCMC) methods become useful.
+
+## Markov Chain Monte Carlo Fundamentals
+
+MCMC methods provide a solution to both challenges by generating a sequence of samples that follow the desired probability distribution, without requiring knowledge of the normalization factor.
+
+### The MCMC Concept
+
+The idea behind MCMC is to construct a "chain" of configurations, where each new configuration is generated based only on the current one. This sequence is constructed so that the long-term visitation frequency of each state matches the desired probability distribution.
+
+Rather than generating independent random samples, we create a "random walk" through configuration space that naturally spends the appropriate amount of time in each region.
+
+### Markov Chains
+
+A Markov chain is a mathematical system that transitions from one state to another according to certain probabilistic rules. The defining property is that the next state depends only on the current state, not on the sequence of states that preceded it.
+
+A Markov chain is characterized by:
+- A set of possible states
+- A transition matrix $P$, where $P(i\rightarrow j)$ gives the probability of moving from state $i$ to state $j$
+- The "Markov property": the future depends only on the present, not the past
+
+Over time, many Markov chains converge to a unique "stationary distribution," where the probability of finding the system in each state no longer changes.
+
+### An Illustrative Example
+
+Consider a simple Markov chain representing a random walk on a line:
+- States: Positions 1, 2, 3, ..., N
+- Transition rules: From position $i$, move to $i+1$ with probability 0.5, or to $i-1$ with probability 0.5 (with appropriate adjustments at the boundaries)
+
+If we run this Markov chain for a long time, it will spend equal time at each position—its stationary distribution is uniform.
+
+The key insight for MCMC methods is that we can design the transition rules to achieve any desired stationary distribution, including the Boltzmann distribution.
+
+## Detailed Balance - The Key Principle
+
+To ensure that our Markov chain converges to the correct Boltzmann distribution, we need to satisfy a condition known as "detailed balance."
+
+### Equilibrium in Markov Chains
+
+At equilibrium, the population of each state remains constant over time. This means that the total probability flow into a state must equal the total flow out of that state.
+
+Mathematically, if $\pi(i)$ represents the equilibrium probability of state $i$, then:
+
+$$\sum_i \pi(i)P(i\rightarrow j) = \pi(j)$$
+
+This is sometimes called the "global balance" condition.
+
+### The Detailed Balance Condition
+
+Detailed balance is a stronger condition that ensures global balance. It requires that for each pair of states $i$ and $j$, the flow from $i$ to $j$ exactly balances the flow from $j$ to $i$:
+
+$$\pi(i)P(i\rightarrow j) = \pi(j)P(j\rightarrow i)$$
+
+In other words: at equilibrium, the frequency of transitions $i\rightarrow j$ equals the frequency of transitions $j\rightarrow i$.
+
+Detailed balance is sufficient (though not necessary) to ensure that $\pi$ is the stationary distribution of the Markov chain. It provides a way to design Markov chains with a specific target distribution.
+
+### Applying Detailed Balance to the Boltzmann Distribution
+
+For chemical systems, we want $\pi(i)$ to be the Boltzmann distribution:
+
+$$\pi(i) \propto \exp(-U(i)/kT)$$
+
+Substituting this into the detailed balance equation:
+
+$$\exp(-U(i)/kT)P(i\rightarrow j) = \exp(-U(j)/kT)P(j\rightarrow i)$$
+
+Rearranging:
+
+$$\frac{P(i\rightarrow j)}{P(j\rightarrow i)} = \exp\left(-\frac{U(j)-U(i)}{kT}\right)$$
+
+This equation tells us how to design the transition probabilities to ensure that our Markov chain samples from the Boltzmann distribution.
+
+## The Metropolis Algorithm
+
+The Metropolis algorithm, developed in the 1950s, provides a way to satisfy detailed balance and generate samples from the Boltzmann distribution.
+
+### Separating Transition Probabilities
+
+The Metropolis approach separates the transition probability $P(i\rightarrow j)$ into two components:
+
+$$P(i\rightarrow j) = \alpha(i\rightarrow j) \times \text{acc}(i\rightarrow j)$$
+
+Where:
+- $\alpha(i\rightarrow j)$ is the probability of proposing a move from $i$ to $j$
+- $\text{acc}(i\rightarrow j)$ is the probability of accepting the proposed move
+
+### Satisfying Detailed Balance
+
+Substituting this into our detailed balance equation:
+
+$$\exp(-U(i)/kT)\alpha(i\rightarrow j)\text{acc}(i\rightarrow j) = \exp(-U(j)/kT)\alpha(j\rightarrow i)\text{acc}(j\rightarrow i)$$
+
+Rearranging to isolate the ratio of acceptance probabilities:
+
+$$\frac{\text{acc}(i\rightarrow j)}{\text{acc}(j\rightarrow i)} = \frac{\exp(-U(j)/kT)\alpha(j\rightarrow i)}{\exp(-U(i)/kT)\alpha(i\rightarrow j)}$$
+
+### The Metropolis Choice
+
+The Metropolis algorithm makes a specific choice for the acceptance probabilities that satisfies this equation. First, it typically uses symmetric proposal probabilities:
+
+$$\alpha(i\rightarrow j) = \alpha(j\rightarrow i)$$
+
+With this simplification, the detailed balance condition becomes:
+
+$$\frac{\text{acc}(i\rightarrow j)}{\text{acc}(j\rightarrow i)} = \exp\left(-\frac{U(j)-U(i)}{kT}\right)$$
+
+The Metropolis solution is:
+
+$$\text{acc}(i\rightarrow j) = \min\left(1, \exp\left(-\frac{U(j)-U(i)}{kT}\right)\right)$$
+
+This formula means:
+- If the new state has lower energy $(U(j) < U(i))$, accept the move with certainty
+- If the new state has higher energy, accept with probability $\exp(-(U(j)-U(i))/kT)$
+
+### The Significance of the Metropolis Approach
+
+The Metropolis algorithm has several important properties:
+- It samples from the correct Boltzmann distribution without requiring calculation of the partition function
+- It focuses computational effort on the relevant regions of configuration space (those with significant Boltzmann weight)
+- It works effectively in high-dimensional spaces
+- It only requires the ability to calculate energy differences, not absolute probabilities
+
+This method has expanded the capability to calculate thermodynamic averages for complex molecular systems.
+
+## Implementing Metropolis MC for Chemical Systems
+
+Let's now examine how to implement the Metropolis algorithm for practical chemical simulations.
+
+### Basic Algorithm
+
+The basic Metropolis Monte Carlo algorithm follows these steps:
+
+1. Start with an initial configuration $\mathbf{r}$
+2. Calculate its energy $U(\mathbf{r})$
+3. Repeat many times:
+   a. Propose a move $\mathbf{r} \rightarrow \mathbf{r}'$
+   b. Calculate the energy of the new configuration $U(\mathbf{r}')$
+   c. Calculate the energy difference $\Delta U = U(\mathbf{r}') - U(\mathbf{r})$
+   d. If $\Delta U \leq 0$: accept the move
+   e. Else: generate a random number $\xi$ between 0 and 1
+      - If $\xi < \exp(-\Delta U/kT)$: accept the move
+      - Else: reject the move (keep the original configuration)
+   f. If the move is accepted, update $\mathbf{r} = \mathbf{r}'$
+   g. Calculate and store properties of interest for the current configuration
+4. Calculate the average of the stored properties
+
+Here's a simple Python implementation of the Metropolis algorithm for a 1D system:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def metropolis_1d(potential_energy, initial_position, kT, step_size, n_steps):
+    """
+    Implement the Metropolis algorithm for a 1D system.
+    
+    Args:
+        potential_energy: Function that calculates the potential energy
+        initial_position: Starting position
+        kT: Boltzmann constant times temperature
+        step_size: Maximum displacement in a single move
+        n_steps: Number of Monte Carlo steps
+        
+    Returns:
+        Array of positions sampled according to the Boltzmann distribution
+    """
+    positions = np.zeros(n_steps)
+    positions[0] = initial_position
+    
+    current_position = initial_position
+    current_energy = potential_energy(current_position)
+    
+    accepted = 0
+    
+    for i in range(1, n_steps):
+        # Propose a move
+        proposed_position = current_position + np.random.uniform(-step_size, step_size)
+        proposed_energy = potential_energy(proposed_position)
+        
+        # Calculate energy difference
+        delta_U = proposed_energy - current_energy
+        
+        # Apply Metropolis criterion
+        if delta_U <= 0 or np.random.random() < np.exp(-delta_U / kT):
+            # Accept the move
+            current_position = proposed_position
+            current_energy = proposed_energy
+            accepted += 1
+        
+        # Store current position
+        positions[i] = current_position
+    
+    acceptance_rate = accepted / (n_steps - 1)
+    print(f"Acceptance rate: {acceptance_rate:.2f}")
+    
+    return positions
+```
+
+### Move Proposal Mechanisms
+
+The effectiveness of Metropolis MC depends on how we propose new configurations. Common approaches include:
+
+**Atomic displacements**: Randomly select an atom and displace it by a small random vector.
+```
+r_new(i) = r_old(i) + δr
+```
+Where δr is typically drawn from a uniform or Gaussian distribution.
+
+**Dihedral angle rotations**: For molecules, rotate a portion of the molecule around a bond.
+```
+φ_new = φ_old + δφ
+```
+Where δφ is a small random angle change.
+
+**Molecule translations/rotations**: For multi-molecule systems, move entire molecules.
+
+### Step Size Adjustment
+
+The choice of step size (magnitude of δr or δφ) affects sampling efficiency:
+- If steps are too small, the simulation explores configuration space slowly
+- If steps are too large, most moves will be rejected due to high energy increases
+
+As a rule of thumb, aim for an acceptance rate of approximately 50%. During the simulation setup phase, the step size can be adjusted to achieve this target.
+
+### System Representation
+
+To implement Metropolis MC, we need:
+- A way to represent the system's configuration (typically atomic coordinates)
+- A method to calculate the potential energy (force field or quantum mechanical calculation)
+- Appropriate boundary conditions (periodic boundaries for bulk systems)
+
+### Practical Considerations
+
+**Equilibration period**: The initial configuration may be far from typical equilibrium configurations. Therefore, we typically discard data from an initial "equilibration" phase before collecting statistics. The simulation should run until any memory of the initial state is lost.
+
+**Correlation between samples**: Successive configurations in a Metropolis simulation are correlated. When calculating statistical errors, we must account for this correlation, typically using block averaging methods.
+
+**Convergence assessment**: Multiple independent runs starting from different initial configurations can help verify convergence. If they yield consistent results, we can be more confident in our sampling.
+
+## Chemical Example: Conformational Sampling of Butane
+
+To illustrate the application of Metropolis Monte Carlo to a chemical system, let's consider the conformational preferences of butane (C₄H₁₀).
+
+### The Butane Molecule
+
+Butane has three main conformations determined by the dihedral angle φ around the central C-C bond:
+- Anti (φ = 180°): The lowest energy conformation
+- Gauche+ (φ ≈ 60°): Slightly higher in energy
+- Gauche- (φ ≈ -60°): Symmetrically equivalent to gauche+
+
+The potential energy as a function of this dihedral angle can be approximated by:
+
+$$U(\phi) = A_0 + A_1(1+\cos\phi) + A_2(1-\cos2\phi) + A_3(1+\cos3\phi)$$
+
+Where the constants $A_0$, $A_1$, $A_2$, and $A_3$ are determined from either experimental data or quantum mechanical calculations. This function has minima at the anti and gauche positions, with energy barriers between them.
+
+Here's how we might implement this for butane:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def butane_potential(phi, A0=0, A1=1.522, A2=0.627, A3=3.080):
+    """
+    Calculate the torsional potential energy of butane.
+    
+    Args:
+        phi: Dihedral angle in radians
+        A0, A1, A2, A3: Parameters for the torsional potential
+        
+    Returns:
+        Potential energy in kJ/mol
+    """
+    return A0 + A1*(1+np.cos(phi)) + A2*(1-np.cos(2*phi)) + A3*(1+np.cos(3*phi))
+
+# Plot the potential energy function
+phi_values = np.linspace(-np.pi, np.pi, 1000)
+energy_values = [butane_potential(phi) for phi in phi_values]
+
+plt.figure(figsize=(10, 6))
+plt.plot(phi_values * 180/np.pi, energy_values)
+plt.xlabel('Dihedral angle (degrees)')
+plt.ylabel('Potential energy (kJ/mol)')
+plt.title('Butane torsional potential')
+plt.grid(True)
+plt.axvline(x=-60, color='r', linestyle='--', label='Gauche-')
+plt.axvline(x=60, color='g', linestyle='--', label='Gauche+')
+plt.axvline(x=180, color='b', linestyle='--', label='Anti')
+plt.legend()
+plt.savefig('butane_potential.png', dpi=300)
+
+# Run Metropolis MC simulation
+kT = 2.5  # kJ/mol (approximately room temperature)
+initial_angle = 0  # radians
+step_size = 0.2  # radians
+n_steps = 100000
+
+angles = metropolis_1d(butane_potential, initial_angle, kT, step_size, n_steps)
+
+# Plot distribution of sampled angles
+plt.figure(figsize=(10, 6))
+plt.hist(angles * 180/np.pi, bins=50, density=True, alpha=0.7)
+plt.xlabel('Dihedral angle (degrees)')
+plt.ylabel('Probability density')
+plt.title('Butane conformational distribution from Metropolis MC')
+plt.grid(True)
+plt.axvline(x=-60, color='r', linestyle='--', label='Gauche-')
+plt.axvline(x=60, color='g', linestyle='--', label='Gauche+')
+plt.axvline(x=180, color='b', linestyle='--', label='Anti')
+plt.legend()
+plt.savefig('butane_distribution.png', dpi=300)
+```
+
+![Butane potential energy function](butane_potential.png)
+
+![Butane conformational distribution](butane_distribution.png)
+
+### Monte Carlo Simulation Approach
+
+For this system, our Monte Carlo simulation would use:
+
+**State representation**: The dihedral angle φ (we simplify by focusing on just this degree of freedom)
+
+**Move proposal**: Small random changes in the dihedral angle:
+```
+φ_new = φ_old + δφ
+```
+Where δφ might be drawn from a uniform distribution between -15° and +15°.
+
+**Energy evaluation**: Calculate U(φ_new) using the torsional potential function
+
+**Acceptance criterion**: Apply the Metropolis rule:
+```
+acc = min(1, exp(-(U(φ_new)-U(φ_old))/kT))
+```
+
+**Properties to calculate**: We might be interested in:
+- The probability distribution of dihedral angles
+- The average end-to-end distance of the molecule
+- The ratio of populations in gauche vs. anti conformations
+
+### Expected Results and Analysis
+
+After running the simulation, we would expect to see:
+
+**Dihedral angle distribution**: A probability distribution with peaks at φ = 180° (anti) and φ = ±60° (gauche), with the anti peak being higher due to its lower energy.
+
+**Temperature dependence**: At higher temperatures, the gauche conformations become more populated due to their greater entropy (there are two gauche conformations but only one anti).
+
+**Comparison with analytical results**: For this simple system, we can also calculate the exact Boltzmann-weighted averages analytically and compare them with our Monte Carlo results as a validation.
+
+**Physical insights**: The simulation helps us understand the flexibility of alkane chains and the balance between energetic preferences (favoring anti) and entropic factors (favoring gauche). These concepts are directly relevant to understanding polymer conformations and the behavior of lipid chains in biological membranes.
+
+## Summary
+
+In this lecture, we've expanded our Monte Carlo toolkit to handle the complexities of chemical systems:
+
+- We've seen why chemical systems require Boltzmann-weighted sampling rather than uniform sampling
+- We've explored the challenges posed by the partition function and high dimensionality
+- We've introduced Markov Chain Monte Carlo as a general approach for sampling from complex distributions
+- We've derived the Metropolis algorithm from detailed balance principles
+- We've examined practical aspects of implementing Monte Carlo for molecular systems
+- We've applied these concepts to a concrete chemical example: butane conformations
+
+The Metropolis algorithm allows us to calculate thermodynamic averages without knowing the partition function, while focusing our computational effort on the relevant regions of configuration space.
+
+In our next lecture, we'll take Monte Carlo methods in a new direction by incorporating time evolution. While the Metropolis algorithm is useful for equilibrium properties, Kinetic Monte Carlo methods allow us to simulate the dynamic evolution of systems over time.
