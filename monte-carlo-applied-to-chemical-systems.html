@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Lecture 2 Monte Carlo Applied to Chemical Systems | CH22013 Lecture Notes</title>
+  <meta name="description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Lecture 2 Monte Carlo Applied to Chemical Systems | CH22013 Lecture Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Lecture 2 Monte Carlo Applied to Chemical Systems | CH22013 Lecture Notes" />
+  
+  <meta name="twitter:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  
+
+<meta name="author" content="Benjamin J. Morgan" />
+
+
+<meta name="date" content="2025-03-21" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="introduction-to-monte-carlo-methods.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">CH22013 Monte Carlo Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a></li>
+<li class="chapter" data-level="1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html"><i class="fa fa-check"></i><b>1</b> Introduction to Monte Carlo Methods</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#introduction-to-averaging-sampling"><i class="fa fa-check"></i><b>1.1</b> Introduction to Averaging &amp; Sampling</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-computational-chemistry-challenge"><i class="fa fa-check"></i><b>1.1.1</b> The Computational Chemistry Challenge</a></li>
+<li class="chapter" data-level="1.1.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#potential-energy-and-configurations"><i class="fa fa-check"></i><b>1.1.2</b> Potential Energy and Configurations</a></li>
+<li class="chapter" data-level="1.1.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-averaging-problem"><i class="fa fa-check"></i><b>1.1.3</b> The Averaging Problem</a></li>
+<li class="chapter" data-level="1.1.4" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-general-idea-of-sampling"><i class="fa fa-check"></i><b>1.1.4</b> The General Idea of Sampling</a></li>
+<li class="chapter" data-level="1.1.5" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-special-challenge-of-chemical-systems"><i class="fa fa-check"></i><b>1.1.5</b> The Special Challenge of Chemical Systems</a></li>
+<li class="chapter" data-level="1.1.6" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#a-brief-look-at-md-sampling"><i class="fa fa-check"></i><b>1.1.6</b> A Brief Look at MD Sampling</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#essentials-of-random-sampling"><i class="fa fa-check"></i><b>1.2</b> Essentials of Random Sampling</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#basic-concept"><i class="fa fa-check"></i><b>1.2.1</b> Basic Concept</a></li>
+<li class="chapter" data-level="1.2.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#simple-uniform-sampling"><i class="fa fa-check"></i><b>1.2.2</b> Simple Uniform Sampling</a></li>
+<li class="chapter" data-level="1.2.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#accessing-random-numbers-in-practice"><i class="fa fa-check"></i><b>1.2.3</b> Accessing Random Numbers in Practice</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#core-probability-concepts-for-monte-carlo"><i class="fa fa-check"></i><b>1.3</b> Core Probability Concepts for Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#expected-values"><i class="fa fa-check"></i><b>1.3.1</b> Expected Values</a></li>
+<li class="chapter" data-level="1.3.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-law-of-large-numbers"><i class="fa fa-check"></i><b>1.3.2</b> The Law of Large Numbers</a></li>
+<li class="chapter" data-level="1.3.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#uncertainty-in-monte-carlo-estimates"><i class="fa fa-check"></i><b>1.3.3</b> Uncertainty in Monte Carlo Estimates</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#simple-demonstrations-of-monte-carlo-methods"><i class="fa fa-check"></i><b>1.4</b> Simple Demonstrations of Monte Carlo Methods</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#estimating-π-by-monte-carlo-integration"><i class="fa fa-check"></i><b>1.4.1</b> Estimating π by Monte Carlo Integration</a></li>
+<li class="chapter" data-level="1.4.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#function-averaging-numerical-integration"><i class="fa fa-check"></i><b>1.4.2</b> Function Averaging / Numerical Integration</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#comparison-with-other-simulation-techniques"><i class="fa fa-check"></i><b>1.5</b> Comparison with Other Simulation Techniques</a>
+<ul>
+<li class="chapter" data-level="1.5.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#monte-carlo-vs.-molecular-dynamics"><i class="fa fa-check"></i><b>1.5.1</b> Monte Carlo vs. Molecular Dynamics</a></li>
+<li class="chapter" data-level="1.5.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#deterministic-numerical-methods"><i class="fa fa-check"></i><b>1.5.2</b> Deterministic Numerical Methods</a></li>
+</ul></li>
+<li class="chapter" data-level="1.6" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#error-analysis-in-monte-carlo-simulations"><i class="fa fa-check"></i><b>1.6</b> Error Analysis in Monte Carlo Simulations</a>
+<ul>
+<li class="chapter" data-level="1.6.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#statistical-errors"><i class="fa fa-check"></i><b>1.6.1</b> Statistical Errors</a></li>
+<li class="chapter" data-level="1.6.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#practical-error-estimation"><i class="fa fa-check"></i><b>1.6.2</b> Practical Error Estimation</a></li>
+<li class="chapter" data-level="1.6.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#sources-of-systematic-errors"><i class="fa fa-check"></i><b>1.6.3</b> Sources of Systematic Errors</a></li>
+</ul></li>
+<li class="chapter" data-level="1.7" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#convergence-criteria"><i class="fa fa-check"></i><b>1.7</b> Convergence Criteria</a>
+<ul>
+<li class="chapter" data-level="1.7.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#running-averages"><i class="fa fa-check"></i><b>1.7.1</b> Running Averages</a></li>
+<li class="chapter" data-level="1.7.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#statistical-tests"><i class="fa fa-check"></i><b>1.7.2</b> Statistical Tests</a></li>
+<li class="chapter" data-level="1.7.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#balancing-accuracy-and-computational-cost"><i class="fa fa-check"></i><b>1.7.3</b> Balancing Accuracy and Computational Cost</a></li>
+</ul></li>
+<li class="chapter" data-level="1.8" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#summary"><i class="fa fa-check"></i><b>1.8</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html"><i class="fa fa-check"></i><b>2</b> Monte Carlo Applied to Chemical Systems</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#from-uniform-to-non-uniform-sampling"><i class="fa fa-check"></i><b>2.1</b> From Uniform to Non-Uniform Sampling</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-shift-to-chemical-systems"><i class="fa fa-check"></i><b>2.1.1</b> The Shift to Chemical Systems</a></li>
+<li class="chapter" data-level="2.1.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#from-simple-to-weighted-averages"><i class="fa fa-check"></i><b>2.1.2</b> From Simple to Weighted Averages</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#probability-distributions-in-chemistry"><i class="fa fa-check"></i><b>2.2</b> Probability Distributions in Chemistry</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#what-is-a-probability-distribution"><i class="fa fa-check"></i><b>2.2.1</b> What is a Probability Distribution?</a></li>
+<li class="chapter" data-level="2.2.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-boltzmann-distribution-in-detail"><i class="fa fa-check"></i><b>2.2.2</b> The Boltzmann Distribution in Detail</a></li>
+<li class="chapter" data-level="2.2.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-normalization-problem"><i class="fa fa-check"></i><b>2.2.3</b> The Normalization Problem</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-curse-of-dimensionality"><i class="fa fa-check"></i><b>2.3</b> The Curse of Dimensionality</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-problem-of-high-dimensions"><i class="fa fa-check"></i><b>2.3.1</b> The Problem of High Dimensions</a></li>
+<li class="chapter" data-level="2.3.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#implications-for-molecular-systems"><i class="fa fa-check"></i><b>2.3.2</b> Implications for Molecular Systems</a></li>
+<li class="chapter" data-level="2.3.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-double-challenge"><i class="fa fa-check"></i><b>2.3.3</b> The Double Challenge</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#markov-chain-monte-carlo-fundamentals"><i class="fa fa-check"></i><b>2.4</b> Markov Chain Monte Carlo Fundamentals</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-mcmc-concept"><i class="fa fa-check"></i><b>2.4.1</b> The MCMC Concept</a></li>
+<li class="chapter" data-level="2.4.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#markov-chains"><i class="fa fa-check"></i><b>2.4.2</b> Markov Chains</a></li>
+<li class="chapter" data-level="2.4.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#an-illustrative-example"><i class="fa fa-check"></i><b>2.4.3</b> An Illustrative Example</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#detailed-balance---the-key-principle"><i class="fa fa-check"></i><b>2.5</b> Detailed Balance - The Key Principle</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#equilibrium-in-markov-chains"><i class="fa fa-check"></i><b>2.5.1</b> Equilibrium in Markov Chains</a></li>
+<li class="chapter" data-level="2.5.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-detailed-balance-condition"><i class="fa fa-check"></i><b>2.5.2</b> The Detailed Balance Condition</a></li>
+<li class="chapter" data-level="2.5.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#applying-detailed-balance-to-the-boltzmann-distribution"><i class="fa fa-check"></i><b>2.5.3</b> Applying Detailed Balance to the Boltzmann Distribution</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-metropolis-algorithm"><i class="fa fa-check"></i><b>2.6</b> The Metropolis Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#separating-transition-probabilities"><i class="fa fa-check"></i><b>2.6.1</b> Separating Transition Probabilities</a></li>
+<li class="chapter" data-level="2.6.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#satisfying-detailed-balance"><i class="fa fa-check"></i><b>2.6.2</b> Satisfying Detailed Balance</a></li>
+<li class="chapter" data-level="2.6.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-metropolis-choice"><i class="fa fa-check"></i><b>2.6.3</b> The Metropolis Choice</a></li>
+<li class="chapter" data-level="2.6.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-significance-of-the-metropolis-approach"><i class="fa fa-check"></i><b>2.6.4</b> The Significance of the Metropolis Approach</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#implementing-metropolis-mc-for-chemical-systems"><i class="fa fa-check"></i><b>2.7</b> Implementing Metropolis MC for Chemical Systems</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#basic-algorithm"><i class="fa fa-check"></i><b>2.7.1</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.7.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#move-proposal-mechanisms"><i class="fa fa-check"></i><b>2.7.2</b> Move Proposal Mechanisms</a></li>
+<li class="chapter" data-level="2.7.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#step-size-adjustment"><i class="fa fa-check"></i><b>2.7.3</b> Step Size Adjustment</a></li>
+<li class="chapter" data-level="2.7.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#system-representation"><i class="fa fa-check"></i><b>2.7.4</b> System Representation</a></li>
+<li class="chapter" data-level="2.7.5" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#practical-considerations"><i class="fa fa-check"></i><b>2.7.5</b> Practical Considerations</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#chemical-example-conformational-sampling-of-butane"><i class="fa fa-check"></i><b>2.8</b> Chemical Example: Conformational Sampling of Butane</a>
+<ul>
+<li class="chapter" data-level="2.8.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-butane-molecule"><i class="fa fa-check"></i><b>2.8.1</b> The Butane Molecule</a></li>
+<li class="chapter" data-level="2.8.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#monte-carlo-simulation-approach"><i class="fa fa-check"></i><b>2.8.2</b> Monte Carlo Simulation Approach</a></li>
+<li class="chapter" data-level="2.8.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#expected-results-and-analysis"><i class="fa fa-check"></i><b>2.8.3</b> Expected Results and Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="2.9" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#summary-1"><i class="fa fa-check"></i><b>2.9</b> Summary</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">CH22013 Lecture Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="monte-carlo-applied-to-chemical-systems" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Lecture 2</span> Monte Carlo Applied to Chemical Systems<a href="monte-carlo-applied-to-chemical-systems.html#monte-carlo-applied-to-chemical-systems" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="from-uniform-to-non-uniform-sampling" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> From Uniform to Non-Uniform Sampling<a href="monte-carlo-applied-to-chemical-systems.html#from-uniform-to-non-uniform-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In our previous lecture, we explored Monte Carlo methods using uniform sampling—where each possible state or configuration has an equal probability of being selected. We saw how this approach works for mathematical problems like estimating π or calculating definite integrals.</p>
+<div id="the-shift-to-chemical-systems" class="section level3 hasAnchor" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> The Shift to Chemical Systems<a href="monte-carlo-applied-to-chemical-systems.html#the-shift-to-chemical-systems" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>When we move from mathematical problems to chemical systems, we encounter a fundamental difference: not all molecular configurations are equally likely. In chemistry, the probability of observing a particular configuration depends on its energy according to the Boltzmann distribution:</p>
+<p><span class="math display">\[P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)\]</span></p>
+<p>This means that low-energy configurations are exponentially more likely than high-energy ones. At room temperature, a configuration that is just 6 kJ/mol higher in energy is approximately 10 times less probable.</p>
+</div>
+<div id="from-simple-to-weighted-averages" class="section level3 hasAnchor" number="2.1.2">
+<h3><span class="header-section-number">2.1.2</span> From Simple to Weighted Averages<a href="monte-carlo-applied-to-chemical-systems.html#from-simple-to-weighted-averages" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This non-uniform probability distribution changes how we must calculate averages. Instead of a simple arithmetic mean, we need a weighted average:</p>
+<p><strong>Uniform sampling (Lecture 1)</strong>: <span class="math inline">\(\langle A \rangle \approx \frac{1}{N} \times \sum_{i=1}^{N} A(\mathbf{r}_i)\)</span></p>
+<p><strong>Weighted sampling (Chemical systems)</strong>: <span class="math inline">\(\langle A \rangle \approx \frac{\sum_{i=1}^{N} A(\mathbf{r}_i) \times w(\mathbf{r}_i)}{\sum_{i=1}^{N} w(\mathbf{r}_i)}\)</span></p>
+<p>Where <span class="math inline">\(w(\mathbf{r}_i)\)</span> represents the statistical weight of each configuration, proportional to its Boltzmann factor <span class="math inline">\(\exp(-U(\mathbf{r}_i)/kT)\)</span>.</p>
+<p>The challenge becomes: how do we generate samples with the correct Boltzmann weighting?</p>
+</div>
+</div>
+<div id="probability-distributions-in-chemistry" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Probability Distributions in Chemistry<a href="monte-carlo-applied-to-chemical-systems.html#probability-distributions-in-chemistry" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Before addressing this challenge, let’s examine probability distributions more carefully, as they play a central role in computational chemistry.</p>
+<div id="what-is-a-probability-distribution" class="section level3 hasAnchor" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> What is a Probability Distribution?<a href="monte-carlo-applied-to-chemical-systems.html#what-is-a-probability-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A probability distribution is a function that describes the relative likelihood of different outcomes in a random process. For discrete systems, it gives the probability of each possible state. For continuous systems (like molecular configurations), it gives the probability density.</p>
+<p>In chemistry, several distributions are particularly important:
+- The Boltzmann distribution for energies and configurations
+- Maxwell-Boltzmann distribution for molecular velocities
+- Radial distribution functions for atomic distances</p>
+</div>
+<div id="the-boltzmann-distribution-in-detail" class="section level3 hasAnchor" number="2.2.2">
+<h3><span class="header-section-number">2.2.2</span> The Boltzmann Distribution in Detail<a href="monte-carlo-applied-to-chemical-systems.html#the-boltzmann-distribution-in-detail" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The Boltzmann distribution determines the probability of finding a system in a particular configuration:</p>
+<p><span class="math display">\[P(\mathbf{r}) = C \times \exp(-U(\mathbf{r})/kT)\]</span></p>
+<p>Where:
+- <span class="math inline">\(U(\mathbf{r})\)</span> is the potential energy of configuration <span class="math inline">\(\mathbf{r}\)</span>
+- <span class="math inline">\(k\)</span> is Boltzmann’s constant
+- <span class="math inline">\(T\)</span> is the temperature
+- <span class="math inline">\(C\)</span> is a normalization constant that ensures all probabilities sum to 1</p>
+<p>The physical meaning is that systems spend more time in lower-energy states. The temperature determines how strongly the system favors low-energy states:
+- At high temperatures, the distribution becomes more uniform
+- At low temperatures, the system is increasingly restricted to the lowest energy states</p>
+</div>
+<div id="the-normalization-problem" class="section level3 hasAnchor" number="2.2.3">
+<h3><span class="header-section-number">2.2.3</span> The Normalization Problem<a href="monte-carlo-applied-to-chemical-systems.html#the-normalization-problem" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The normalization constant <span class="math inline">\(C\)</span> must ensure that the total probability across all possible configurations equals 1:</p>
+<p><span class="math display">\[C = \frac{1}{\sum \exp(-U(\mathbf{r})/kT)}\]</span></p>
+<p>This normalization constant has a special name in statistical mechanics: the “partition function” (often denoted as <span class="math inline">\(Z\)</span>). You’ll encounter this important concept again in your later studies of physical chemistry and thermodynamics.</p>
+<p>The partition function presents a challenge—calculating it requires summing over the same large number of configurations that we were trying to avoid in the first place.</p>
+<p>This creates a practical dilemma: to calculate the correct probabilities for our weighted average, we need to know the partition function, but calculating it requires evaluating all possible states.</p>
+<p>Monte Carlo methods offer a solution to this dilemma.</p>
+</div>
+</div>
+<div id="the-curse-of-dimensionality" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> The Curse of Dimensionality<a href="monte-carlo-applied-to-chemical-systems.html#the-curse-of-dimensionality" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Before discussing that solution, we need to understand another challenge that makes chemical systems difficult: the “curse of dimensionality.”</p>
+<div id="the-problem-of-high-dimensions" class="section level3 hasAnchor" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> The Problem of High Dimensions<a href="monte-carlo-applied-to-chemical-systems.html#the-problem-of-high-dimensions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>As the dimensionality of a problem increases, the volume of the configuration space grows exponentially. This has implications for sampling efficiency.</p>
+<p>Consider the volume ratio of a hypersphere inscribed within a hypercube:
+- In 2D: A circle within a square occupies <span class="math inline">\(\pi/4 \approx 78.5\%\)</span> of the square’s area
+- In 3D: A sphere within a cube occupies <span class="math inline">\(4\pi/3 \times (0.5)^3 \approx 52.4\%\)</span> of the cube’s volume
+- In 10D: The hypersphere occupies only about 0.25% of the hypercube’s hypervolume
+- In 100D: The ratio becomes very small (approximately <span class="math inline">\(10^{-70}\)</span>)</p>
+</div>
+<div id="implications-for-molecular-systems" class="section level3 hasAnchor" number="2.3.2">
+<h3><span class="header-section-number">2.3.2</span> Implications for Molecular Systems<a href="monte-carlo-applied-to-chemical-systems.html#implications-for-molecular-systems" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For molecular systems, the dimensionality is determined by the number of degrees of freedom. A system with <span class="math inline">\(N\)</span> atoms typically has <span class="math inline">\(3N-6\)</span> internal degrees of freedom (3N coordinates minus 3 for overall translation and 3 for rotation).</p>
+<p>Even a small protein with 1000 atoms has approximately 3000 dimensions in its configuration space. If we were to use uniform sampling in this space, almost all random configurations would have negligible Boltzmann weight (likely corresponding to configurations with severe atomic overlaps and very high energies).</p>
+<p>This means that uniform sampling becomes inefficient as system size increases. The majority of randomly generated configurations would contribute little to our thermodynamic averages.</p>
+</div>
+<div id="the-double-challenge" class="section level3 hasAnchor" number="2.3.3">
+<h3><span class="header-section-number">2.3.3</span> The Double Challenge<a href="monte-carlo-applied-to-chemical-systems.html#the-double-challenge" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We now face two interconnected challenges:
+1. We don’t know the exact Boltzmann distribution without calculating the partition function
+2. Even if we did, uniform sampling would be inefficient in high dimensions</p>
+<p>This is where Markov Chain Monte Carlo (MCMC) methods become useful.</p>
+</div>
+</div>
+<div id="markov-chain-monte-carlo-fundamentals" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> Markov Chain Monte Carlo Fundamentals<a href="monte-carlo-applied-to-chemical-systems.html#markov-chain-monte-carlo-fundamentals" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>MCMC methods provide a solution to both challenges by generating a sequence of samples that follow the desired probability distribution, without requiring knowledge of the normalization factor.</p>
+<div id="the-mcmc-concept" class="section level3 hasAnchor" number="2.4.1">
+<h3><span class="header-section-number">2.4.1</span> The MCMC Concept<a href="monte-carlo-applied-to-chemical-systems.html#the-mcmc-concept" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The idea behind MCMC is to construct a “chain” of configurations, where each new configuration is generated based only on the current one. This sequence is constructed so that the long-term visitation frequency of each state matches the desired probability distribution.</p>
+<p>Rather than generating independent random samples, we create a “random walk” through configuration space that naturally spends the appropriate amount of time in each region.</p>
+</div>
+<div id="markov-chains" class="section level3 hasAnchor" number="2.4.2">
+<h3><span class="header-section-number">2.4.2</span> Markov Chains<a href="monte-carlo-applied-to-chemical-systems.html#markov-chains" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A Markov chain is a mathematical system that transitions from one state to another according to certain probabilistic rules. The defining property is that the next state depends only on the current state, not on the sequence of states that preceded it.</p>
+<p>A Markov chain is characterized by:
+- A set of possible states
+- A transition matrix <span class="math inline">\(P\)</span>, where <span class="math inline">\(P(i\rightarrow j)\)</span> gives the probability of moving from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span>
+- The “Markov property”: the future depends only on the present, not the past</p>
+<p>Over time, many Markov chains converge to a unique “stationary distribution,” where the probability of finding the system in each state no longer changes.</p>
+</div>
+<div id="an-illustrative-example" class="section level3 hasAnchor" number="2.4.3">
+<h3><span class="header-section-number">2.4.3</span> An Illustrative Example<a href="monte-carlo-applied-to-chemical-systems.html#an-illustrative-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider a simple Markov chain representing a random walk on a line:
+- States: Positions 1, 2, 3, …, N
+- Transition rules: From position <span class="math inline">\(i\)</span>, move to <span class="math inline">\(i+1\)</span> with probability 0.5, or to <span class="math inline">\(i-1\)</span> with probability 0.5 (with appropriate adjustments at the boundaries)</p>
+<p>If we run this Markov chain for a long time, it will spend equal time at each position—its stationary distribution is uniform.</p>
+<p>The key insight for MCMC methods is that we can design the transition rules to achieve any desired stationary distribution, including the Boltzmann distribution.</p>
+</div>
+</div>
+<div id="detailed-balance---the-key-principle" class="section level2 hasAnchor" number="2.5">
+<h2><span class="header-section-number">2.5</span> Detailed Balance - The Key Principle<a href="monte-carlo-applied-to-chemical-systems.html#detailed-balance---the-key-principle" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To ensure that our Markov chain converges to the correct Boltzmann distribution, we need to satisfy a condition known as “detailed balance.”</p>
+<div id="equilibrium-in-markov-chains" class="section level3 hasAnchor" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Equilibrium in Markov Chains<a href="monte-carlo-applied-to-chemical-systems.html#equilibrium-in-markov-chains" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>At equilibrium, the population of each state remains constant over time. This means that the total probability flow into a state must equal the total flow out of that state.</p>
+<p>Mathematically, if <span class="math inline">\(\pi(i)\)</span> represents the equilibrium probability of state <span class="math inline">\(i\)</span>, then:</p>
+<p><span class="math display">\[\sum_i \pi(i)P(i\rightarrow j) = \pi(j)\]</span></p>
+<p>This is sometimes called the “global balance” condition.</p>
+</div>
+<div id="the-detailed-balance-condition" class="section level3 hasAnchor" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> The Detailed Balance Condition<a href="monte-carlo-applied-to-chemical-systems.html#the-detailed-balance-condition" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Detailed balance is a stronger condition that ensures global balance. It requires that for each pair of states <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, the flow from <span class="math inline">\(i\)</span> to <span class="math inline">\(j\)</span> exactly balances the flow from <span class="math inline">\(j\)</span> to <span class="math inline">\(i\)</span>:</p>
+<p><span class="math display">\[\pi(i)P(i\rightarrow j) = \pi(j)P(j\rightarrow i)\]</span></p>
+<p>In other words: at equilibrium, the frequency of transitions <span class="math inline">\(i\rightarrow j\)</span> equals the frequency of transitions <span class="math inline">\(j\rightarrow i\)</span>.</p>
+<p>Detailed balance is sufficient (though not necessary) to ensure that <span class="math inline">\(\pi\)</span> is the stationary distribution of the Markov chain. It provides a way to design Markov chains with a specific target distribution.</p>
+</div>
+<div id="applying-detailed-balance-to-the-boltzmann-distribution" class="section level3 hasAnchor" number="2.5.3">
+<h3><span class="header-section-number">2.5.3</span> Applying Detailed Balance to the Boltzmann Distribution<a href="monte-carlo-applied-to-chemical-systems.html#applying-detailed-balance-to-the-boltzmann-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For chemical systems, we want <span class="math inline">\(\pi(i)\)</span> to be the Boltzmann distribution:</p>
+<p><span class="math display">\[\pi(i) \propto \exp(-U(i)/kT)\]</span></p>
+<p>Substituting this into the detailed balance equation:</p>
+<p><span class="math display">\[\exp(-U(i)/kT)P(i\rightarrow j) = \exp(-U(j)/kT)P(j\rightarrow i)\]</span></p>
+<p>Rearranging:</p>
+<p><span class="math display">\[\frac{P(i\rightarrow j)}{P(j\rightarrow i)} = \exp\left(-\frac{U(j)-U(i)}{kT}\right)\]</span></p>
+<p>This equation tells us how to design the transition probabilities to ensure that our Markov chain samples from the Boltzmann distribution.</p>
+</div>
+</div>
+<div id="the-metropolis-algorithm" class="section level2 hasAnchor" number="2.6">
+<h2><span class="header-section-number">2.6</span> The Metropolis Algorithm<a href="monte-carlo-applied-to-chemical-systems.html#the-metropolis-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The Metropolis algorithm, developed in the 1950s, provides a way to satisfy detailed balance and generate samples from the Boltzmann distribution.</p>
+<div id="separating-transition-probabilities" class="section level3 hasAnchor" number="2.6.1">
+<h3><span class="header-section-number">2.6.1</span> Separating Transition Probabilities<a href="monte-carlo-applied-to-chemical-systems.html#separating-transition-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The Metropolis approach separates the transition probability <span class="math inline">\(P(i\rightarrow j)\)</span> into two components:</p>
+<p><span class="math display">\[P(i\rightarrow j) = \alpha(i\rightarrow j) \times \text{acc}(i\rightarrow j)\]</span></p>
+<p>Where:
+- <span class="math inline">\(\alpha(i\rightarrow j)\)</span> is the probability of proposing a move from <span class="math inline">\(i\)</span> to <span class="math inline">\(j\)</span>
+- <span class="math inline">\(\text{acc}(i\rightarrow j)\)</span> is the probability of accepting the proposed move</p>
+</div>
+<div id="satisfying-detailed-balance" class="section level3 hasAnchor" number="2.6.2">
+<h3><span class="header-section-number">2.6.2</span> Satisfying Detailed Balance<a href="monte-carlo-applied-to-chemical-systems.html#satisfying-detailed-balance" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Substituting this into our detailed balance equation:</p>
+<p><span class="math display">\[\exp(-U(i)/kT)\alpha(i\rightarrow j)\text{acc}(i\rightarrow j) = \exp(-U(j)/kT)\alpha(j\rightarrow i)\text{acc}(j\rightarrow i)\]</span></p>
+<p>Rearranging to isolate the ratio of acceptance probabilities:</p>
+<p><span class="math display">\[\frac{\text{acc}(i\rightarrow j)}{\text{acc}(j\rightarrow i)} = \frac{\exp(-U(j)/kT)\alpha(j\rightarrow i)}{\exp(-U(i)/kT)\alpha(i\rightarrow j)}\]</span></p>
+</div>
+<div id="the-metropolis-choice" class="section level3 hasAnchor" number="2.6.3">
+<h3><span class="header-section-number">2.6.3</span> The Metropolis Choice<a href="monte-carlo-applied-to-chemical-systems.html#the-metropolis-choice" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The Metropolis algorithm makes a specific choice for the acceptance probabilities that satisfies this equation. First, it typically uses symmetric proposal probabilities:</p>
+<p><span class="math display">\[\alpha(i\rightarrow j) = \alpha(j\rightarrow i)\]</span></p>
+<p>With this simplification, the detailed balance condition becomes:</p>
+<p><span class="math display">\[\frac{\text{acc}(i\rightarrow j)}{\text{acc}(j\rightarrow i)} = \exp\left(-\frac{U(j)-U(i)}{kT}\right)\]</span></p>
+<p>The Metropolis solution is:</p>
+<p><span class="math display">\[\text{acc}(i\rightarrow j) = \min\left(1, \exp\left(-\frac{U(j)-U(i)}{kT}\right)\right)\]</span></p>
+<p>This formula means:
+- If the new state has lower energy <span class="math inline">\((U(j) &lt; U(i))\)</span>, accept the move with certainty
+- If the new state has higher energy, accept with probability <span class="math inline">\(\exp(-(U(j)-U(i))/kT)\)</span></p>
+</div>
+<div id="the-significance-of-the-metropolis-approach" class="section level3 hasAnchor" number="2.6.4">
+<h3><span class="header-section-number">2.6.4</span> The Significance of the Metropolis Approach<a href="monte-carlo-applied-to-chemical-systems.html#the-significance-of-the-metropolis-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The Metropolis algorithm has several important properties:
+- It samples from the correct Boltzmann distribution without requiring calculation of the partition function
+- It focuses computational effort on the relevant regions of configuration space (those with significant Boltzmann weight)
+- It works effectively in high-dimensional spaces
+- It only requires the ability to calculate energy differences, not absolute probabilities</p>
+<p>This method has expanded the capability to calculate thermodynamic averages for complex molecular systems.</p>
+</div>
+</div>
+<div id="implementing-metropolis-mc-for-chemical-systems" class="section level2 hasAnchor" number="2.7">
+<h2><span class="header-section-number">2.7</span> Implementing Metropolis MC for Chemical Systems<a href="monte-carlo-applied-to-chemical-systems.html#implementing-metropolis-mc-for-chemical-systems" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let’s now examine how to implement the Metropolis algorithm for practical chemical simulations.</p>
+<div id="basic-algorithm" class="section level3 hasAnchor" number="2.7.1">
+<h3><span class="header-section-number">2.7.1</span> Basic Algorithm<a href="monte-carlo-applied-to-chemical-systems.html#basic-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The basic Metropolis Monte Carlo algorithm follows these steps:</p>
+<ol style="list-style-type: decimal">
+<li>Start with an initial configuration <span class="math inline">\(\mathbf{r}\)</span></li>
+<li>Calculate its energy <span class="math inline">\(U(\mathbf{r})\)</span></li>
+<li>Repeat many times:
+<ol style="list-style-type: lower-alpha">
+<li>Propose a move <span class="math inline">\(\mathbf{r} \rightarrow \mathbf{r}&#39;\)</span></li>
+<li>Calculate the energy of the new configuration <span class="math inline">\(U(\mathbf{r}&#39;)\)</span></li>
+<li>Calculate the energy difference <span class="math inline">\(\Delta U = U(\mathbf{r}&#39;) - U(\mathbf{r})\)</span></li>
+<li>If <span class="math inline">\(\Delta U \leq 0\)</span>: accept the move</li>
+<li>Else: generate a random number <span class="math inline">\(\xi\)</span> between 0 and 1
+<ul>
+<li>If <span class="math inline">\(\xi &lt; \exp(-\Delta U/kT)\)</span>: accept the move</li>
+<li>Else: reject the move (keep the original configuration)</li>
+</ul></li>
+<li>If the move is accepted, update <span class="math inline">\(\mathbf{r} = \mathbf{r}&#39;\)</span></li>
+<li>Calculate and store properties of interest for the current configuration</li>
+</ol></li>
+<li>Calculate the average of the stored properties</li>
+</ol>
+<p>Here’s a simple Python implementation of the Metropolis algorithm for a 1D system:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-2"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-3"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> metropolis_1d(potential_energy, initial_position, kT, step_size, n_steps):</span>
+<span id="cb4-5"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb4-6"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Implement the Metropolis algorithm for a 1D system.</span></span>
+<span id="cb4-7"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb4-8"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb4-9"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">        potential_energy: Function that calculates the potential energy</span></span>
+<span id="cb4-10"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">        initial_position: Starting position</span></span>
+<span id="cb4-11"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">        kT: Boltzmann constant times temperature</span></span>
+<span id="cb4-12"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">        step_size: Maximum displacement in a single move</span></span>
+<span id="cb4-13"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">        n_steps: Number of Monte Carlo steps</span></span>
+<span id="cb4-14"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb4-15"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb4-16"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">        Array of positions sampled according to the Boltzmann distribution</span></span>
+<span id="cb4-17"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb4-18"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-18" aria-hidden="true" tabindex="-1"></a>    positions <span class="op">=</span> np.zeros(n_steps)</span>
+<span id="cb4-19"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-19" aria-hidden="true" tabindex="-1"></a>    positions[<span class="dv">0</span>] <span class="op">=</span> initial_position</span>
+<span id="cb4-20"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-21"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-21" aria-hidden="true" tabindex="-1"></a>    current_position <span class="op">=</span> initial_position</span>
+<span id="cb4-22"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-22" aria-hidden="true" tabindex="-1"></a>    current_energy <span class="op">=</span> potential_energy(current_position)</span>
+<span id="cb4-23"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-24"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-24" aria-hidden="true" tabindex="-1"></a>    accepted <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-25"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-26"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, n_steps):</span>
+<span id="cb4-27"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Propose a move</span></span>
+<span id="cb4-28"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-28" aria-hidden="true" tabindex="-1"></a>        proposed_position <span class="op">=</span> current_position <span class="op">+</span> np.random.uniform(<span class="op">-</span>step_size, step_size)</span>
+<span id="cb4-29"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-29" aria-hidden="true" tabindex="-1"></a>        proposed_energy <span class="op">=</span> potential_energy(proposed_position)</span>
+<span id="cb4-30"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-31"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate energy difference</span></span>
+<span id="cb4-32"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-32" aria-hidden="true" tabindex="-1"></a>        delta_U <span class="op">=</span> proposed_energy <span class="op">-</span> current_energy</span>
+<span id="cb4-33"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-33" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-34"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Apply Metropolis criterion</span></span>
+<span id="cb4-35"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> delta_U <span class="op">&lt;=</span> <span class="dv">0</span> <span class="kw">or</span> np.random.random() <span class="op">&lt;</span> np.exp(<span class="op">-</span>delta_U <span class="op">/</span> kT):</span>
+<span id="cb4-36"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-36" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Accept the move</span></span>
+<span id="cb4-37"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-37" aria-hidden="true" tabindex="-1"></a>            current_position <span class="op">=</span> proposed_position</span>
+<span id="cb4-38"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-38" aria-hidden="true" tabindex="-1"></a>            current_energy <span class="op">=</span> proposed_energy</span>
+<span id="cb4-39"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-39" aria-hidden="true" tabindex="-1"></a>            accepted <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb4-40"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-40" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-41"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Store current position</span></span>
+<span id="cb4-42"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-42" aria-hidden="true" tabindex="-1"></a>        positions[i] <span class="op">=</span> current_position</span>
+<span id="cb4-43"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-44"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-44" aria-hidden="true" tabindex="-1"></a>    acceptance_rate <span class="op">=</span> accepted <span class="op">/</span> (n_steps <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb4-45"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-45" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Acceptance rate: </span><span class="sc">{</span>acceptance_rate<span class="sc">:.2f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb4-46"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-47"><a href="monte-carlo-applied-to-chemical-systems.html#cb4-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> positions</span></code></pre></div>
+</div>
+<div id="move-proposal-mechanisms" class="section level3 hasAnchor" number="2.7.2">
+<h3><span class="header-section-number">2.7.2</span> Move Proposal Mechanisms<a href="monte-carlo-applied-to-chemical-systems.html#move-proposal-mechanisms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The effectiveness of Metropolis MC depends on how we propose new configurations. Common approaches include:</p>
+<p><strong>Atomic displacements</strong>: Randomly select an atom and displace it by a small random vector.</p>
+<pre><code>r_new(i) = r_old(i) + δr</code></pre>
+<p>Where δr is typically drawn from a uniform or Gaussian distribution.</p>
+<p><strong>Dihedral angle rotations</strong>: For molecules, rotate a portion of the molecule around a bond.</p>
+<pre><code>φ_new = φ_old + δφ</code></pre>
+<p>Where δφ is a small random angle change.</p>
+<p><strong>Molecule translations/rotations</strong>: For multi-molecule systems, move entire molecules.</p>
+</div>
+<div id="step-size-adjustment" class="section level3 hasAnchor" number="2.7.3">
+<h3><span class="header-section-number">2.7.3</span> Step Size Adjustment<a href="monte-carlo-applied-to-chemical-systems.html#step-size-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The choice of step size (magnitude of δr or δφ) affects sampling efficiency:
+- If steps are too small, the simulation explores configuration space slowly
+- If steps are too large, most moves will be rejected due to high energy increases</p>
+<p>As a rule of thumb, aim for an acceptance rate of approximately 50%. During the simulation setup phase, the step size can be adjusted to achieve this target.</p>
+</div>
+<div id="system-representation" class="section level3 hasAnchor" number="2.7.4">
+<h3><span class="header-section-number">2.7.4</span> System Representation<a href="monte-carlo-applied-to-chemical-systems.html#system-representation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To implement Metropolis MC, we need:
+- A way to represent the system’s configuration (typically atomic coordinates)
+- A method to calculate the potential energy (force field or quantum mechanical calculation)
+- Appropriate boundary conditions (periodic boundaries for bulk systems)</p>
+</div>
+<div id="practical-considerations" class="section level3 hasAnchor" number="2.7.5">
+<h3><span class="header-section-number">2.7.5</span> Practical Considerations<a href="monte-carlo-applied-to-chemical-systems.html#practical-considerations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Equilibration period</strong>: The initial configuration may be far from typical equilibrium configurations. Therefore, we typically discard data from an initial “equilibration” phase before collecting statistics. The simulation should run until any memory of the initial state is lost.</p>
+<p><strong>Correlation between samples</strong>: Successive configurations in a Metropolis simulation are correlated. When calculating statistical errors, we must account for this correlation, typically using block averaging methods.</p>
+<p><strong>Convergence assessment</strong>: Multiple independent runs starting from different initial configurations can help verify convergence. If they yield consistent results, we can be more confident in our sampling.</p>
+</div>
+</div>
+<div id="chemical-example-conformational-sampling-of-butane" class="section level2 hasAnchor" number="2.8">
+<h2><span class="header-section-number">2.8</span> Chemical Example: Conformational Sampling of Butane<a href="monte-carlo-applied-to-chemical-systems.html#chemical-example-conformational-sampling-of-butane" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To illustrate the application of Metropolis Monte Carlo to a chemical system, let’s consider the conformational preferences of butane (C₄H₁₀).</p>
+<div id="the-butane-molecule" class="section level3 hasAnchor" number="2.8.1">
+<h3><span class="header-section-number">2.8.1</span> The Butane Molecule<a href="monte-carlo-applied-to-chemical-systems.html#the-butane-molecule" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Butane has three main conformations determined by the dihedral angle φ around the central C-C bond:
+- Anti (φ = 180°): The lowest energy conformation
+- Gauche+ (φ ≈ 60°): Slightly higher in energy
+- Gauche- (φ ≈ -60°): Symmetrically equivalent to gauche+</p>
+<p>The potential energy as a function of this dihedral angle can be approximated by:</p>
+<p><span class="math display">\[U(\phi) = A_0 + A_1(1+\cos\phi) + A_2(1-\cos2\phi) + A_3(1+\cos3\phi)\]</span></p>
+<p>Where the constants <span class="math inline">\(A_0\)</span>, <span class="math inline">\(A_1\)</span>, <span class="math inline">\(A_2\)</span>, and <span class="math inline">\(A_3\)</span> are determined from either experimental data or quantum mechanical calculations. This function has minima at the anti and gauche positions, with energy barriers between them.</p>
+<p>Here’s how we might implement this for butane:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb7-2"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb7-3"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> butane_potential(phi, A0<span class="op">=</span><span class="dv">0</span>, A1<span class="op">=</span><span class="fl">1.522</span>, A2<span class="op">=</span><span class="fl">0.627</span>, A3<span class="op">=</span><span class="fl">3.080</span>):</span>
+<span id="cb7-5"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb7-6"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Calculate the torsional potential energy of butane.</span></span>
+<span id="cb7-7"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb7-8"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb7-9"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">        phi: Dihedral angle in radians</span></span>
+<span id="cb7-10"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">        A0, A1, A2, A3: Parameters for the torsional potential</span></span>
+<span id="cb7-11"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb7-12"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb7-13"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">        Potential energy in kJ/mol</span></span>
+<span id="cb7-14"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb7-15"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> A0 <span class="op">+</span> A1<span class="op">*</span>(<span class="dv">1</span><span class="op">+</span>np.cos(phi)) <span class="op">+</span> A2<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>np.cos(<span class="dv">2</span><span class="op">*</span>phi)) <span class="op">+</span> A3<span class="op">*</span>(<span class="dv">1</span><span class="op">+</span>np.cos(<span class="dv">3</span><span class="op">*</span>phi))</span>
+<span id="cb7-16"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the potential energy function</span></span>
+<span id="cb7-18"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-18" aria-hidden="true" tabindex="-1"></a>phi_values <span class="op">=</span> np.linspace(<span class="op">-</span>np.pi, np.pi, <span class="dv">1000</span>)</span>
+<span id="cb7-19"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-19" aria-hidden="true" tabindex="-1"></a>energy_values <span class="op">=</span> [butane_potential(phi) <span class="cf">for</span> phi <span class="kw">in</span> phi_values]</span>
+<span id="cb7-20"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-21" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb7-22"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-22" aria-hidden="true" tabindex="-1"></a>plt.plot(phi_values <span class="op">*</span> <span class="dv">180</span><span class="op">/</span>np.pi, energy_values)</span>
+<span id="cb7-23"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-23" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Dihedral angle (degrees)&#39;</span>)</span>
+<span id="cb7-24"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-24" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Potential energy (kJ/mol)&#39;</span>)</span>
+<span id="cb7-25"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-25" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Butane torsional potential&#39;</span>)</span>
+<span id="cb7-26"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-26" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb7-27"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-27" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=-</span><span class="dv">60</span>, color<span class="op">=</span><span class="st">&#39;r&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="st">&#39;Gauche-&#39;</span>)</span>
+<span id="cb7-28"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-28" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=</span><span class="dv">60</span>, color<span class="op">=</span><span class="st">&#39;g&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="st">&#39;Gauche+&#39;</span>)</span>
+<span id="cb7-29"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-29" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=</span><span class="dv">180</span>, color<span class="op">=</span><span class="st">&#39;b&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="st">&#39;Anti&#39;</span>)</span>
+<span id="cb7-30"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-30" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb7-31"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-31" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&#39;butane_potential.png&#39;</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb7-32"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Metropolis MC simulation</span></span>
+<span id="cb7-34"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-34" aria-hidden="true" tabindex="-1"></a>kT <span class="op">=</span> <span class="fl">2.5</span>  <span class="co"># kJ/mol (approximately room temperature)</span></span>
+<span id="cb7-35"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-35" aria-hidden="true" tabindex="-1"></a>initial_angle <span class="op">=</span> <span class="dv">0</span>  <span class="co"># radians</span></span>
+<span id="cb7-36"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-36" aria-hidden="true" tabindex="-1"></a>step_size <span class="op">=</span> <span class="fl">0.2</span>  <span class="co"># radians</span></span>
+<span id="cb7-37"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-37" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">100000</span></span>
+<span id="cb7-38"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-39" aria-hidden="true" tabindex="-1"></a>angles <span class="op">=</span> metropolis_1d(butane_potential, initial_angle, kT, step_size, n_steps)</span>
+<span id="cb7-40"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot distribution of sampled angles</span></span>
+<span id="cb7-42"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-42" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb7-43"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-43" aria-hidden="true" tabindex="-1"></a>plt.hist(angles <span class="op">*</span> <span class="dv">180</span><span class="op">/</span>np.pi, bins<span class="op">=</span><span class="dv">50</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb7-44"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-44" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Dihedral angle (degrees)&#39;</span>)</span>
+<span id="cb7-45"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-45" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Probability density&#39;</span>)</span>
+<span id="cb7-46"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-46" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Butane conformational distribution from Metropolis MC&#39;</span>)</span>
+<span id="cb7-47"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-47" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb7-48"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-48" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=-</span><span class="dv">60</span>, color<span class="op">=</span><span class="st">&#39;r&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="st">&#39;Gauche-&#39;</span>)</span>
+<span id="cb7-49"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-49" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=</span><span class="dv">60</span>, color<span class="op">=</span><span class="st">&#39;g&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="st">&#39;Gauche+&#39;</span>)</span>
+<span id="cb7-50"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-50" aria-hidden="true" tabindex="-1"></a>plt.axvline(x<span class="op">=</span><span class="dv">180</span>, color<span class="op">=</span><span class="st">&#39;b&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="st">&#39;Anti&#39;</span>)</span>
+<span id="cb7-51"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-51" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb7-52"><a href="monte-carlo-applied-to-chemical-systems.html#cb7-52" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&#39;butane_distribution.png&#39;</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span></code></pre></div>
+<div class="figure">
+<img src="butane_potential.png" alt="" />
+<p class="caption">Butane potential energy function</p>
+</div>
+<div class="figure">
+<img src="butane_distribution.png" alt="" />
+<p class="caption">Butane conformational distribution</p>
+</div>
+</div>
+<div id="monte-carlo-simulation-approach" class="section level3 hasAnchor" number="2.8.2">
+<h3><span class="header-section-number">2.8.2</span> Monte Carlo Simulation Approach<a href="monte-carlo-applied-to-chemical-systems.html#monte-carlo-simulation-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For this system, our Monte Carlo simulation would use:</p>
+<p><strong>State representation</strong>: The dihedral angle φ (we simplify by focusing on just this degree of freedom)</p>
+<p><strong>Move proposal</strong>: Small random changes in the dihedral angle:</p>
+<pre><code>φ_new = φ_old + δφ</code></pre>
+<p>Where δφ might be drawn from a uniform distribution between -15° and +15°.</p>
+<p><strong>Energy evaluation</strong>: Calculate U(φ_new) using the torsional potential function</p>
+<p><strong>Acceptance criterion</strong>: Apply the Metropolis rule:</p>
+<pre><code>acc = min(1, exp(-(U(φ_new)-U(φ_old))/kT))</code></pre>
+<p><strong>Properties to calculate</strong>: We might be interested in:
+- The probability distribution of dihedral angles
+- The average end-to-end distance of the molecule
+- The ratio of populations in gauche vs. anti conformations</p>
+</div>
+<div id="expected-results-and-analysis" class="section level3 hasAnchor" number="2.8.3">
+<h3><span class="header-section-number">2.8.3</span> Expected Results and Analysis<a href="monte-carlo-applied-to-chemical-systems.html#expected-results-and-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>After running the simulation, we would expect to see:</p>
+<p><strong>Dihedral angle distribution</strong>: A probability distribution with peaks at φ = 180° (anti) and φ = ±60° (gauche), with the anti peak being higher due to its lower energy.</p>
+<p><strong>Temperature dependence</strong>: At higher temperatures, the gauche conformations become more populated due to their greater entropy (there are two gauche conformations but only one anti).</p>
+<p><strong>Comparison with analytical results</strong>: For this simple system, we can also calculate the exact Boltzmann-weighted averages analytically and compare them with our Monte Carlo results as a validation.</p>
+<p><strong>Physical insights</strong>: The simulation helps us understand the flexibility of alkane chains and the balance between energetic preferences (favoring anti) and entropic factors (favoring gauche). These concepts are directly relevant to understanding polymer conformations and the behavior of lipid chains in biological membranes.</p>
+</div>
+</div>
+<div id="summary-1" class="section level2 hasAnchor" number="2.9">
+<h2><span class="header-section-number">2.9</span> Summary<a href="monte-carlo-applied-to-chemical-systems.html#summary-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this lecture, we’ve expanded our Monte Carlo toolkit to handle the complexities of chemical systems:</p>
+<ul>
+<li>We’ve seen why chemical systems require Boltzmann-weighted sampling rather than uniform sampling</li>
+<li>We’ve explored the challenges posed by the partition function and high dimensionality</li>
+<li>We’ve introduced Markov Chain Monte Carlo as a general approach for sampling from complex distributions</li>
+<li>We’ve derived the Metropolis algorithm from detailed balance principles</li>
+<li>We’ve examined practical aspects of implementing Monte Carlo for molecular systems</li>
+<li>We’ve applied these concepts to a concrete chemical example: butane conformations</li>
+</ul>
+<p>The Metropolis algorithm allows us to calculate thermodynamic averages without knowing the partition function, while focusing our computational effort on the relevant regions of configuration space.</p>
+<p>In our next lecture, we’ll take Monte Carlo methods in a new direction by incorporating time evolution. While the Metropolis algorithm is useful for equilibrium properties, Kinetic Monte Carlo methods allow us to simulate the dynamic evolution of systems over time.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="introduction-to-monte-carlo-methods.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/bjmorgan/CH22013/main/lecture_02/lecture_02.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section"
+  },
+  "mathjax": {
+    "extensions": "mhchem.js"
+  },
+  "mathjax_config": {
+    "TeX": {
+      "Macros": {
+        "conc": [
+          "[\mathrm{#1}]",
+          1
+        ],
+        "diffc": [
+          "\frac{\mathrm{d}\conc{#1}}{\mathrm{d}t}",
+          1
+        ]
+      }
+    }
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

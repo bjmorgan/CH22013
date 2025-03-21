@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>CH22013 Lecture Notes</title>
+  <meta name="description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="CH22013 Lecture Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="CH22013 Lecture Notes" />
+  
+  <meta name="twitter:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  
+
+<meta name="author" content="Benjamin J. Morgan" />
+
+
+<meta name="date" content="2025-03-21" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="introduction-to-monte-carlo-methods.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">CH22013 Monte Carlo Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a></li>
+<li class="chapter" data-level="1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html"><i class="fa fa-check"></i><b>1</b> Introduction to Monte Carlo Methods</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#introduction-to-averaging-sampling"><i class="fa fa-check"></i><b>1.1</b> Introduction to Averaging &amp; Sampling</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-computational-chemistry-challenge"><i class="fa fa-check"></i><b>1.1.1</b> The Computational Chemistry Challenge</a></li>
+<li class="chapter" data-level="1.1.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#potential-energy-and-configurations"><i class="fa fa-check"></i><b>1.1.2</b> Potential Energy and Configurations</a></li>
+<li class="chapter" data-level="1.1.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-averaging-problem"><i class="fa fa-check"></i><b>1.1.3</b> The Averaging Problem</a></li>
+<li class="chapter" data-level="1.1.4" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-general-idea-of-sampling"><i class="fa fa-check"></i><b>1.1.4</b> The General Idea of Sampling</a></li>
+<li class="chapter" data-level="1.1.5" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-special-challenge-of-chemical-systems"><i class="fa fa-check"></i><b>1.1.5</b> The Special Challenge of Chemical Systems</a></li>
+<li class="chapter" data-level="1.1.6" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#a-brief-look-at-md-sampling"><i class="fa fa-check"></i><b>1.1.6</b> A Brief Look at MD Sampling</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#essentials-of-random-sampling"><i class="fa fa-check"></i><b>1.2</b> Essentials of Random Sampling</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#basic-concept"><i class="fa fa-check"></i><b>1.2.1</b> Basic Concept</a></li>
+<li class="chapter" data-level="1.2.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#simple-uniform-sampling"><i class="fa fa-check"></i><b>1.2.2</b> Simple Uniform Sampling</a></li>
+<li class="chapter" data-level="1.2.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#accessing-random-numbers-in-practice"><i class="fa fa-check"></i><b>1.2.3</b> Accessing Random Numbers in Practice</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#core-probability-concepts-for-monte-carlo"><i class="fa fa-check"></i><b>1.3</b> Core Probability Concepts for Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#expected-values"><i class="fa fa-check"></i><b>1.3.1</b> Expected Values</a></li>
+<li class="chapter" data-level="1.3.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-law-of-large-numbers"><i class="fa fa-check"></i><b>1.3.2</b> The Law of Large Numbers</a></li>
+<li class="chapter" data-level="1.3.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#uncertainty-in-monte-carlo-estimates"><i class="fa fa-check"></i><b>1.3.3</b> Uncertainty in Monte Carlo Estimates</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#simple-demonstrations-of-monte-carlo-methods"><i class="fa fa-check"></i><b>1.4</b> Simple Demonstrations of Monte Carlo Methods</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#estimating-π-by-monte-carlo-integration"><i class="fa fa-check"></i><b>1.4.1</b> Estimating π by Monte Carlo Integration</a></li>
+<li class="chapter" data-level="1.4.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#function-averaging-numerical-integration"><i class="fa fa-check"></i><b>1.4.2</b> Function Averaging / Numerical Integration</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#comparison-with-other-simulation-techniques"><i class="fa fa-check"></i><b>1.5</b> Comparison with Other Simulation Techniques</a>
+<ul>
+<li class="chapter" data-level="1.5.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#monte-carlo-vs.-molecular-dynamics"><i class="fa fa-check"></i><b>1.5.1</b> Monte Carlo vs. Molecular Dynamics</a></li>
+<li class="chapter" data-level="1.5.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#deterministic-numerical-methods"><i class="fa fa-check"></i><b>1.5.2</b> Deterministic Numerical Methods</a></li>
+</ul></li>
+<li class="chapter" data-level="1.6" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#error-analysis-in-monte-carlo-simulations"><i class="fa fa-check"></i><b>1.6</b> Error Analysis in Monte Carlo Simulations</a>
+<ul>
+<li class="chapter" data-level="1.6.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#statistical-errors"><i class="fa fa-check"></i><b>1.6.1</b> Statistical Errors</a></li>
+<li class="chapter" data-level="1.6.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#practical-error-estimation"><i class="fa fa-check"></i><b>1.6.2</b> Practical Error Estimation</a></li>
+<li class="chapter" data-level="1.6.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#sources-of-systematic-errors"><i class="fa fa-check"></i><b>1.6.3</b> Sources of Systematic Errors</a></li>
+</ul></li>
+<li class="chapter" data-level="1.7" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#convergence-criteria"><i class="fa fa-check"></i><b>1.7</b> Convergence Criteria</a>
+<ul>
+<li class="chapter" data-level="1.7.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#running-averages"><i class="fa fa-check"></i><b>1.7.1</b> Running Averages</a></li>
+<li class="chapter" data-level="1.7.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#statistical-tests"><i class="fa fa-check"></i><b>1.7.2</b> Statistical Tests</a></li>
+<li class="chapter" data-level="1.7.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#balancing-accuracy-and-computational-cost"><i class="fa fa-check"></i><b>1.7.3</b> Balancing Accuracy and Computational Cost</a></li>
+</ul></li>
+<li class="chapter" data-level="1.8" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#summary"><i class="fa fa-check"></i><b>1.8</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html"><i class="fa fa-check"></i><b>2</b> Monte Carlo Applied to Chemical Systems</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#from-uniform-to-non-uniform-sampling"><i class="fa fa-check"></i><b>2.1</b> From Uniform to Non-Uniform Sampling</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-shift-to-chemical-systems"><i class="fa fa-check"></i><b>2.1.1</b> The Shift to Chemical Systems</a></li>
+<li class="chapter" data-level="2.1.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#from-simple-to-weighted-averages"><i class="fa fa-check"></i><b>2.1.2</b> From Simple to Weighted Averages</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#probability-distributions-in-chemistry"><i class="fa fa-check"></i><b>2.2</b> Probability Distributions in Chemistry</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#what-is-a-probability-distribution"><i class="fa fa-check"></i><b>2.2.1</b> What is a Probability Distribution?</a></li>
+<li class="chapter" data-level="2.2.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-boltzmann-distribution-in-detail"><i class="fa fa-check"></i><b>2.2.2</b> The Boltzmann Distribution in Detail</a></li>
+<li class="chapter" data-level="2.2.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-normalization-problem"><i class="fa fa-check"></i><b>2.2.3</b> The Normalization Problem</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-curse-of-dimensionality"><i class="fa fa-check"></i><b>2.3</b> The Curse of Dimensionality</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-problem-of-high-dimensions"><i class="fa fa-check"></i><b>2.3.1</b> The Problem of High Dimensions</a></li>
+<li class="chapter" data-level="2.3.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#implications-for-molecular-systems"><i class="fa fa-check"></i><b>2.3.2</b> Implications for Molecular Systems</a></li>
+<li class="chapter" data-level="2.3.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-double-challenge"><i class="fa fa-check"></i><b>2.3.3</b> The Double Challenge</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#markov-chain-monte-carlo-fundamentals"><i class="fa fa-check"></i><b>2.4</b> Markov Chain Monte Carlo Fundamentals</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-mcmc-concept"><i class="fa fa-check"></i><b>2.4.1</b> The MCMC Concept</a></li>
+<li class="chapter" data-level="2.4.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#markov-chains"><i class="fa fa-check"></i><b>2.4.2</b> Markov Chains</a></li>
+<li class="chapter" data-level="2.4.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#an-illustrative-example"><i class="fa fa-check"></i><b>2.4.3</b> An Illustrative Example</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#detailed-balance---the-key-principle"><i class="fa fa-check"></i><b>2.5</b> Detailed Balance - The Key Principle</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#equilibrium-in-markov-chains"><i class="fa fa-check"></i><b>2.5.1</b> Equilibrium in Markov Chains</a></li>
+<li class="chapter" data-level="2.5.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-detailed-balance-condition"><i class="fa fa-check"></i><b>2.5.2</b> The Detailed Balance Condition</a></li>
+<li class="chapter" data-level="2.5.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#applying-detailed-balance-to-the-boltzmann-distribution"><i class="fa fa-check"></i><b>2.5.3</b> Applying Detailed Balance to the Boltzmann Distribution</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-metropolis-algorithm"><i class="fa fa-check"></i><b>2.6</b> The Metropolis Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#separating-transition-probabilities"><i class="fa fa-check"></i><b>2.6.1</b> Separating Transition Probabilities</a></li>
+<li class="chapter" data-level="2.6.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#satisfying-detailed-balance"><i class="fa fa-check"></i><b>2.6.2</b> Satisfying Detailed Balance</a></li>
+<li class="chapter" data-level="2.6.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-metropolis-choice"><i class="fa fa-check"></i><b>2.6.3</b> The Metropolis Choice</a></li>
+<li class="chapter" data-level="2.6.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-significance-of-the-metropolis-approach"><i class="fa fa-check"></i><b>2.6.4</b> The Significance of the Metropolis Approach</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#implementing-metropolis-mc-for-chemical-systems"><i class="fa fa-check"></i><b>2.7</b> Implementing Metropolis MC for Chemical Systems</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#basic-algorithm"><i class="fa fa-check"></i><b>2.7.1</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.7.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#move-proposal-mechanisms"><i class="fa fa-check"></i><b>2.7.2</b> Move Proposal Mechanisms</a></li>
+<li class="chapter" data-level="2.7.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#step-size-adjustment"><i class="fa fa-check"></i><b>2.7.3</b> Step Size Adjustment</a></li>
+<li class="chapter" data-level="2.7.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#system-representation"><i class="fa fa-check"></i><b>2.7.4</b> System Representation</a></li>
+<li class="chapter" data-level="2.7.5" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#practical-considerations"><i class="fa fa-check"></i><b>2.7.5</b> Practical Considerations</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#chemical-example-conformational-sampling-of-butane"><i class="fa fa-check"></i><b>2.8</b> Chemical Example: Conformational Sampling of Butane</a>
+<ul>
+<li class="chapter" data-level="2.8.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-butane-molecule"><i class="fa fa-check"></i><b>2.8.1</b> The Butane Molecule</a></li>
+<li class="chapter" data-level="2.8.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#monte-carlo-simulation-approach"><i class="fa fa-check"></i><b>2.8.2</b> Monte Carlo Simulation Approach</a></li>
+<li class="chapter" data-level="2.8.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#expected-results-and-analysis"><i class="fa fa-check"></i><b>2.8.3</b> Expected Results and Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="2.9" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#summary-1"><i class="fa fa-check"></i><b>2.9</b> Summary</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">CH22013 Lecture Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">CH22013 Lecture Notes</h1>
+<p class="author"><em>Benjamin J. Morgan</em></p>
+<p class="date"><em>2025-03-21</em></p>
+</div>
+<div id="about" class="section level1 unnumbered hasAnchor">
+<h1>About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>These notes accompany the 2025 CH22013 lecture course on Monte Carlo methods.</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="introduction-to-monte-carlo-methods.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/bjmorgan/CH22013/main/index.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section"
+  },
+  "mathjax": {
+    "extensions": "mhchem.js"
+  },
+  "mathjax_config": {
+    "TeX": {
+      "Macros": {
+        "conc": [
+          "[\mathrm{#1}]",
+          1
+        ],
+        "diffc": [
+          "\frac{\mathrm{d}\conc{#1}}{\mathrm{d}t}",
+          1
+        ]
+      }
+    }
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Lecture 1 Introduction to Monte Carlo Methods | CH22013 Lecture Notes</title>
+  <meta name="description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Lecture 1 Introduction to Monte Carlo Methods | CH22013 Lecture Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Lecture 1 Introduction to Monte Carlo Methods | CH22013 Lecture Notes" />
+  
+  <meta name="twitter:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  
+
+<meta name="author" content="Benjamin J. Morgan" />
+
+
+<meta name="date" content="2025-03-21" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="monte-carlo-applied-to-chemical-systems.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">CH22013 Monte Carlo Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a></li>
+<li class="chapter" data-level="1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html"><i class="fa fa-check"></i><b>1</b> Introduction to Monte Carlo Methods</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#introduction-to-averaging-sampling"><i class="fa fa-check"></i><b>1.1</b> Introduction to Averaging &amp; Sampling</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-computational-chemistry-challenge"><i class="fa fa-check"></i><b>1.1.1</b> The Computational Chemistry Challenge</a></li>
+<li class="chapter" data-level="1.1.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#potential-energy-and-configurations"><i class="fa fa-check"></i><b>1.1.2</b> Potential Energy and Configurations</a></li>
+<li class="chapter" data-level="1.1.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-averaging-problem"><i class="fa fa-check"></i><b>1.1.3</b> The Averaging Problem</a></li>
+<li class="chapter" data-level="1.1.4" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-general-idea-of-sampling"><i class="fa fa-check"></i><b>1.1.4</b> The General Idea of Sampling</a></li>
+<li class="chapter" data-level="1.1.5" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-special-challenge-of-chemical-systems"><i class="fa fa-check"></i><b>1.1.5</b> The Special Challenge of Chemical Systems</a></li>
+<li class="chapter" data-level="1.1.6" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#a-brief-look-at-md-sampling"><i class="fa fa-check"></i><b>1.1.6</b> A Brief Look at MD Sampling</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#essentials-of-random-sampling"><i class="fa fa-check"></i><b>1.2</b> Essentials of Random Sampling</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#basic-concept"><i class="fa fa-check"></i><b>1.2.1</b> Basic Concept</a></li>
+<li class="chapter" data-level="1.2.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#simple-uniform-sampling"><i class="fa fa-check"></i><b>1.2.2</b> Simple Uniform Sampling</a></li>
+<li class="chapter" data-level="1.2.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#accessing-random-numbers-in-practice"><i class="fa fa-check"></i><b>1.2.3</b> Accessing Random Numbers in Practice</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#core-probability-concepts-for-monte-carlo"><i class="fa fa-check"></i><b>1.3</b> Core Probability Concepts for Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#expected-values"><i class="fa fa-check"></i><b>1.3.1</b> Expected Values</a></li>
+<li class="chapter" data-level="1.3.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-law-of-large-numbers"><i class="fa fa-check"></i><b>1.3.2</b> The Law of Large Numbers</a></li>
+<li class="chapter" data-level="1.3.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#uncertainty-in-monte-carlo-estimates"><i class="fa fa-check"></i><b>1.3.3</b> Uncertainty in Monte Carlo Estimates</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#simple-demonstrations-of-monte-carlo-methods"><i class="fa fa-check"></i><b>1.4</b> Simple Demonstrations of Monte Carlo Methods</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#estimating-π-by-monte-carlo-integration"><i class="fa fa-check"></i><b>1.4.1</b> Estimating π by Monte Carlo Integration</a></li>
+<li class="chapter" data-level="1.4.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#function-averaging-numerical-integration"><i class="fa fa-check"></i><b>1.4.2</b> Function Averaging / Numerical Integration</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#comparison-with-other-simulation-techniques"><i class="fa fa-check"></i><b>1.5</b> Comparison with Other Simulation Techniques</a>
+<ul>
+<li class="chapter" data-level="1.5.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#monte-carlo-vs.-molecular-dynamics"><i class="fa fa-check"></i><b>1.5.1</b> Monte Carlo vs. Molecular Dynamics</a></li>
+<li class="chapter" data-level="1.5.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#deterministic-numerical-methods"><i class="fa fa-check"></i><b>1.5.2</b> Deterministic Numerical Methods</a></li>
+</ul></li>
+<li class="chapter" data-level="1.6" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#error-analysis-in-monte-carlo-simulations"><i class="fa fa-check"></i><b>1.6</b> Error Analysis in Monte Carlo Simulations</a>
+<ul>
+<li class="chapter" data-level="1.6.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#statistical-errors"><i class="fa fa-check"></i><b>1.6.1</b> Statistical Errors</a></li>
+<li class="chapter" data-level="1.6.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#practical-error-estimation"><i class="fa fa-check"></i><b>1.6.2</b> Practical Error Estimation</a></li>
+<li class="chapter" data-level="1.6.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#sources-of-systematic-errors"><i class="fa fa-check"></i><b>1.6.3</b> Sources of Systematic Errors</a></li>
+</ul></li>
+<li class="chapter" data-level="1.7" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#convergence-criteria"><i class="fa fa-check"></i><b>1.7</b> Convergence Criteria</a>
+<ul>
+<li class="chapter" data-level="1.7.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#running-averages"><i class="fa fa-check"></i><b>1.7.1</b> Running Averages</a></li>
+<li class="chapter" data-level="1.7.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#statistical-tests"><i class="fa fa-check"></i><b>1.7.2</b> Statistical Tests</a></li>
+<li class="chapter" data-level="1.7.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#balancing-accuracy-and-computational-cost"><i class="fa fa-check"></i><b>1.7.3</b> Balancing Accuracy and Computational Cost</a></li>
+</ul></li>
+<li class="chapter" data-level="1.8" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#summary"><i class="fa fa-check"></i><b>1.8</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html"><i class="fa fa-check"></i><b>2</b> Monte Carlo Applied to Chemical Systems</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#from-uniform-to-non-uniform-sampling"><i class="fa fa-check"></i><b>2.1</b> From Uniform to Non-Uniform Sampling</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-shift-to-chemical-systems"><i class="fa fa-check"></i><b>2.1.1</b> The Shift to Chemical Systems</a></li>
+<li class="chapter" data-level="2.1.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#from-simple-to-weighted-averages"><i class="fa fa-check"></i><b>2.1.2</b> From Simple to Weighted Averages</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#probability-distributions-in-chemistry"><i class="fa fa-check"></i><b>2.2</b> Probability Distributions in Chemistry</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#what-is-a-probability-distribution"><i class="fa fa-check"></i><b>2.2.1</b> What is a Probability Distribution?</a></li>
+<li class="chapter" data-level="2.2.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-boltzmann-distribution-in-detail"><i class="fa fa-check"></i><b>2.2.2</b> The Boltzmann Distribution in Detail</a></li>
+<li class="chapter" data-level="2.2.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-normalization-problem"><i class="fa fa-check"></i><b>2.2.3</b> The Normalization Problem</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-curse-of-dimensionality"><i class="fa fa-check"></i><b>2.3</b> The Curse of Dimensionality</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-problem-of-high-dimensions"><i class="fa fa-check"></i><b>2.3.1</b> The Problem of High Dimensions</a></li>
+<li class="chapter" data-level="2.3.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#implications-for-molecular-systems"><i class="fa fa-check"></i><b>2.3.2</b> Implications for Molecular Systems</a></li>
+<li class="chapter" data-level="2.3.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-double-challenge"><i class="fa fa-check"></i><b>2.3.3</b> The Double Challenge</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#markov-chain-monte-carlo-fundamentals"><i class="fa fa-check"></i><b>2.4</b> Markov Chain Monte Carlo Fundamentals</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-mcmc-concept"><i class="fa fa-check"></i><b>2.4.1</b> The MCMC Concept</a></li>
+<li class="chapter" data-level="2.4.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#markov-chains"><i class="fa fa-check"></i><b>2.4.2</b> Markov Chains</a></li>
+<li class="chapter" data-level="2.4.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#an-illustrative-example"><i class="fa fa-check"></i><b>2.4.3</b> An Illustrative Example</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#detailed-balance---the-key-principle"><i class="fa fa-check"></i><b>2.5</b> Detailed Balance - The Key Principle</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#equilibrium-in-markov-chains"><i class="fa fa-check"></i><b>2.5.1</b> Equilibrium in Markov Chains</a></li>
+<li class="chapter" data-level="2.5.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-detailed-balance-condition"><i class="fa fa-check"></i><b>2.5.2</b> The Detailed Balance Condition</a></li>
+<li class="chapter" data-level="2.5.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#applying-detailed-balance-to-the-boltzmann-distribution"><i class="fa fa-check"></i><b>2.5.3</b> Applying Detailed Balance to the Boltzmann Distribution</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-metropolis-algorithm"><i class="fa fa-check"></i><b>2.6</b> The Metropolis Algorithm</a>
+<ul>
+<li class="chapter" data-level="2.6.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#separating-transition-probabilities"><i class="fa fa-check"></i><b>2.6.1</b> Separating Transition Probabilities</a></li>
+<li class="chapter" data-level="2.6.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#satisfying-detailed-balance"><i class="fa fa-check"></i><b>2.6.2</b> Satisfying Detailed Balance</a></li>
+<li class="chapter" data-level="2.6.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-metropolis-choice"><i class="fa fa-check"></i><b>2.6.3</b> The Metropolis Choice</a></li>
+<li class="chapter" data-level="2.6.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-significance-of-the-metropolis-approach"><i class="fa fa-check"></i><b>2.6.4</b> The Significance of the Metropolis Approach</a></li>
+</ul></li>
+<li class="chapter" data-level="2.7" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#implementing-metropolis-mc-for-chemical-systems"><i class="fa fa-check"></i><b>2.7</b> Implementing Metropolis MC for Chemical Systems</a>
+<ul>
+<li class="chapter" data-level="2.7.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#basic-algorithm"><i class="fa fa-check"></i><b>2.7.1</b> Basic Algorithm</a></li>
+<li class="chapter" data-level="2.7.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#move-proposal-mechanisms"><i class="fa fa-check"></i><b>2.7.2</b> Move Proposal Mechanisms</a></li>
+<li class="chapter" data-level="2.7.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#step-size-adjustment"><i class="fa fa-check"></i><b>2.7.3</b> Step Size Adjustment</a></li>
+<li class="chapter" data-level="2.7.4" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#system-representation"><i class="fa fa-check"></i><b>2.7.4</b> System Representation</a></li>
+<li class="chapter" data-level="2.7.5" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#practical-considerations"><i class="fa fa-check"></i><b>2.7.5</b> Practical Considerations</a></li>
+</ul></li>
+<li class="chapter" data-level="2.8" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#chemical-example-conformational-sampling-of-butane"><i class="fa fa-check"></i><b>2.8</b> Chemical Example: Conformational Sampling of Butane</a>
+<ul>
+<li class="chapter" data-level="2.8.1" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#the-butane-molecule"><i class="fa fa-check"></i><b>2.8.1</b> The Butane Molecule</a></li>
+<li class="chapter" data-level="2.8.2" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#monte-carlo-simulation-approach"><i class="fa fa-check"></i><b>2.8.2</b> Monte Carlo Simulation Approach</a></li>
+<li class="chapter" data-level="2.8.3" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#expected-results-and-analysis"><i class="fa fa-check"></i><b>2.8.3</b> Expected Results and Analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="2.9" data-path="monte-carlo-applied-to-chemical-systems.html"><a href="monte-carlo-applied-to-chemical-systems.html#summary-1"><i class="fa fa-check"></i><b>2.9</b> Summary</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">CH22013 Lecture Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="introduction-to-monte-carlo-methods" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Lecture 1</span> Introduction to Monte Carlo Methods<a href="introduction-to-monte-carlo-methods.html#introduction-to-monte-carlo-methods" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="introduction-to-averaging-sampling" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Introduction to Averaging &amp; Sampling<a href="introduction-to-monte-carlo-methods.html#introduction-to-averaging-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In computational chemistry, we seek to calculate observable properties of molecular systems. These properties—such as energy, density, or heat capacity—represent the average behaviour of countless molecules interacting over time. The challenge lies in computing these averages efficiently and accurately.</p>
+<div id="the-computational-chemistry-challenge" class="section level3 hasAnchor" number="1.1.1">
+<h3><span class="header-section-number">1.1.1</span> The Computational Chemistry Challenge<a href="introduction-to-monte-carlo-methods.html#the-computational-chemistry-challenge" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>How do we calculate measurable properties of chemical systems? The properties we care about in chemistry—energy, structure, heat capacity—are statistical averages across many possible molecular arrangements. At finite temperature, molecules constantly move and explore different configurations, making the calculation of properties more complex than simply evaluating a single structure.</p>
+</div>
+<div id="potential-energy-and-configurations" class="section level3 hasAnchor" number="1.1.2">
+<h3><span class="header-section-number">1.1.2</span> Potential Energy and Configurations<a href="introduction-to-monte-carlo-methods.html#potential-energy-and-configurations" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The starting point for most computational chemistry methods is the potential energy function, denoted as <span class="math inline">\(U(\mathbf{r})\)</span>. This function gives us the energy for any particular arrangement of atoms (configuration) in our system. The variable <span class="math inline">\(\mathbf{r}\)</span> represents the coordinates of all atoms.</p>
+<p>For a system at finite temperature, molecules constantly move and explore many different configurations. Some configurations are more likely than others, with lower-energy states being favoured. The probability of finding a system in a particular configuration follows the Boltzmann distribution:</p>
+<p><span class="math display">\[P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)\]</span></p>
+<p>Where <span class="math inline">\(k\)</span> is Boltzmann’s constant and <span class="math inline">\(T\)</span> is the temperature.</p>
+</div>
+<div id="the-averaging-problem" class="section level3 hasAnchor" number="1.1.3">
+<h3><span class="header-section-number">1.1.3</span> The Averaging Problem<a href="introduction-to-monte-carlo-methods.html#the-averaging-problem" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To calculate a thermodynamic property <span class="math inline">\(A\)</span>, we need to compute its average across all possible configurations, with each configuration weighted by its probability:</p>
+<p><span class="math display">\[\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})\]</span></p>
+<p>Where the sum runs over all possible configurations.</p>
+<p>This seemingly simple equation presents an enormous computational challenge. Consider a modest molecular system with just 20 atoms. If each atom could occupy only 10 possible positions (a gross simplification), we would need to evaluate <span class="math inline">\(10^{20}\)</span> different configurations. This number exceeds the count of stars in the observable universe!</p>
+<p>Clearly, direct summation is impossible for any realistic chemical system.</p>
+</div>
+<div id="the-general-idea-of-sampling" class="section level3 hasAnchor" number="1.1.4">
+<h3><span class="header-section-number">1.1.4</span> The General Idea of Sampling<a href="introduction-to-monte-carlo-methods.html#the-general-idea-of-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Rather than attempting to evaluate every possible configuration, we can estimate the average by examining only a representative sample of configurations. This approach mirrors how we might estimate the average height of people in Britain—we measure a carefully chosen subset rather than the entire population.</p>
+<p>For many mathematical problems, uniform random sampling works well. Estimating the area of irregular shapes or performing numerical integration can be effectively done with uniform sampling techniques.</p>
+</div>
+<div id="the-special-challenge-of-chemical-systems" class="section level3 hasAnchor" number="1.1.5">
+<h3><span class="header-section-number">1.1.5</span> The Special Challenge of Chemical Systems<a href="introduction-to-monte-carlo-methods.html#the-special-challenge-of-chemical-systems" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For chemistry, there’s a critical distinction—some configurations are much more likely than others. The Boltzmann distribution tells us that lower-energy configurations are exponentially more likely than higher-energy ones.</p>
+<p>This means we need a <em>weighted</em> sample that favors important (lower energy) configurations.</p>
+</div>
+<div id="a-brief-look-at-md-sampling" class="section level3 hasAnchor" number="1.1.6">
+<h3><span class="header-section-number">1.1.6</span> A Brief Look at MD Sampling<a href="introduction-to-monte-carlo-methods.html#a-brief-look-at-md-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In Molecular Dynamics (MD), we simulate the physical motion of atoms over time, which naturally visits configurations according to their probability. The average of a property <span class="math inline">\(A\)</span> can then be estimated by:</p>
+<p><span class="math display">\[\langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)\]</span></p>
+<p>Where <span class="math inline">\(M\)</span> is the number of time steps (frames) in our trajectory.</p>
+<p>However, MD faces significant challenges. Energy barriers between different states can trap the system in local energy minima for extended periods, preventing adequate sampling of all relevant configurations. Some configurations may be rarely visited, leading to incomplete sampling.</p>
+</div>
+</div>
+<div id="essentials-of-random-sampling" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Essentials of Random Sampling<a href="introduction-to-monte-carlo-methods.html#essentials-of-random-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Monte Carlo methods employ random numbers to solve deterministic mathematical problems. This seemingly counterintuitive approach is powerful because it allows us to estimate properties that would be impossible to calculate directly.</p>
+<div id="basic-concept" class="section level3 hasAnchor" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> Basic Concept<a href="introduction-to-monte-carlo-methods.html#basic-concept" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The fundamental idea behind Monte Carlo methods is using random sampling to solve problems that might otherwise be intractable. By drawing random samples and evaluating the function of interest at these points, we can estimate averages, integrals, and other mathematical quantities.</p>
+</div>
+<div id="simple-uniform-sampling" class="section level3 hasAnchor" number="1.2.2">
+<h3><span class="header-section-number">1.2.2</span> Simple Uniform Sampling<a href="introduction-to-monte-carlo-methods.html#simple-uniform-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In its most basic form, Monte Carlo sampling involves drawing random points uniformly within a defined region. Each point has an equal probability of being selected, meaning we sample the space without any bias toward particular regions.</p>
+<p>This approach forms the foundation for our initial examples and is particularly effective for many mathematical problems where all regions of the domain are equally important.</p>
+</div>
+<div id="accessing-random-numbers-in-practice" class="section level3 hasAnchor" number="1.2.3">
+<h3><span class="header-section-number">1.2.3</span> Accessing Random Numbers in Practice<a href="introduction-to-monte-carlo-methods.html#accessing-random-numbers-in-practice" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Most programming languages provide built-in functions that generate random numbers uniformly distributed between 0 and 1. For example:
+- Python: <code>random.random()</code>
+- MATLAB: <code>rand()</code>
+- C++: <code>rand() / RAND_MAX</code></p>
+<p>An important practical consideration is setting the random number generator’s “seed”—a value that initializes the sequence. Using the same seed ensures reproducible results, which is essential for scientific work and debugging.</p>
+</div>
+</div>
+<div id="core-probability-concepts-for-monte-carlo" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Core Probability Concepts for Monte Carlo<a href="introduction-to-monte-carlo-methods.html#core-probability-concepts-for-monte-carlo" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To understand why Monte Carlo methods work, we need a few key concepts from probability theory.</p>
+<div id="expected-values" class="section level3 hasAnchor" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> Expected Values<a href="introduction-to-monte-carlo-methods.html#expected-values" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The expected value of a property <span class="math inline">\(A\)</span>, denoted <span class="math inline">\(E[A]\)</span> or <span class="math inline">\(\langle A \rangle\)</span>, represents the long-term average value we would obtain if we could measure <span class="math inline">\(A\)</span> over all possible configurations. Mathematically:</p>
+<p><span class="math display">\[E[A] = \sum A(\mathbf{r}) \times P(\mathbf{r})\]</span></p>
+<p>This is precisely the thermodynamic average we seek to calculate. The challenge lies in estimating this value efficiently.</p>
+<p>In simple terms, the expected value is “the value we would get with infinite samples”—it’s our target for estimation.</p>
+</div>
+<div id="the-law-of-large-numbers" class="section level3 hasAnchor" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> The Law of Large Numbers<a href="introduction-to-monte-carlo-methods.html#the-law-of-large-numbers" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The Law of Large Numbers provides the mathematical foundation for Monte Carlo methods. It states that as the sample size increases, the average of the samples approaches the true expected value.</p>
+<p>For example, if we flip a fair coin many times, the proportion of heads will converge to 0.5 as the number of flips increases. With 10 flips, we might see 7 heads (0.7), but with 10,000 flips, the proportion will be much closer to 0.5.</p>
+<p>In Monte Carlo simulations, this law guarantees that with sufficient samples, our estimate will approach the true average. The convergence can be visualized by plotting the running average against the number of samples.</p>
+</div>
+<div id="uncertainty-in-monte-carlo-estimates" class="section level3 hasAnchor" number="1.3.3">
+<h3><span class="header-section-number">1.3.3</span> Uncertainty in Monte Carlo Estimates<a href="introduction-to-monte-carlo-methods.html#uncertainty-in-monte-carlo-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Every Monte Carlo estimate comes with statistical uncertainty. As the number of samples (<span class="math inline">\(N\)</span>) increases, the uncertainty decreases proportionally to <span class="math inline">\(1/\sqrt{N}\)</span>. This means that to halve the uncertainty, we need four times as many samples.</p>
+<p>For students applying Monte Carlo methods, a simple approach to estimating uncertainty involves:
+1. Breaking the samples into several batches
+2. Computing the average for each batch
+3. Calculating the standard deviation of these batch averages</p>
+<p>This gives a reasonable estimate of the statistical error in our results.</p>
+</div>
+</div>
+<div id="simple-demonstrations-of-monte-carlo-methods" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Simple Demonstrations of Monte Carlo Methods<a href="introduction-to-monte-carlo-methods.html#simple-demonstrations-of-monte-carlo-methods" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let’s examine two classic examples that illustrate the power of Monte Carlo methods.</p>
+<div id="estimating-π-by-monte-carlo-integration" class="section level3 hasAnchor" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> Estimating π by Monte Carlo Integration<a href="introduction-to-monte-carlo-methods.html#estimating-π-by-monte-carlo-integration" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>One of the simplest demonstrations of Monte Carlo methods is estimating the value of <span class="math inline">\(\pi\)</span>. Consider a circle with radius 1 inscribed inside a square with side length 2. The area of the circle is <span class="math inline">\(\pi\)</span>, while the area of the square is 4. Therefore, the ratio of these areas is <span class="math inline">\(\pi/4\)</span>.</p>
+<p>We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. A point <span class="math inline">\((x,y)\)</span> falls inside the circle if <span class="math inline">\(x^2 + y^2 \leq 1\)</span>.</p>
+<p>The procedure works as follows:
+1. Generate <span class="math inline">\(N\)</span> random points with coordinates <span class="math inline">\((x,y)\)</span>, where <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are uniformly distributed between -1 and 1
+2. Count how many points <span class="math inline">\(M\)</span> satisfy <span class="math inline">\(x^2 + y^2 \leq 1\)</span>
+3. The estimate for <span class="math inline">\(\pi\)</span> is given by: <span class="math inline">\(\pi \approx 4 \times M/N\)</span></p>
+<p>This method converges slowly—doubling the precision requires quadrupling the number of points—but it elegantly demonstrates the Monte Carlo approach.</p>
+<p>A simple implementation might look like:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="introduction-to-monte-carlo-methods.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb1-2"><a href="introduction-to-monte-carlo-methods.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="introduction-to-monte-carlo-methods.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="introduction-to-monte-carlo-methods.html#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="introduction-to-monte-carlo-methods.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_pi(num_points):</span>
+<span id="cb1-6"><a href="introduction-to-monte-carlo-methods.html#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-7"><a href="introduction-to-monte-carlo-methods.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate the value of pi using Monte Carlo method.</span></span>
+<span id="cb1-8"><a href="introduction-to-monte-carlo-methods.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb1-9"><a href="introduction-to-monte-carlo-methods.html#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb1-10"><a href="introduction-to-monte-carlo-methods.html#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">        num_points: Number of random points to generate</span></span>
+<span id="cb1-11"><a href="introduction-to-monte-carlo-methods.html#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb1-12"><a href="introduction-to-monte-carlo-methods.html#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb1-13"><a href="introduction-to-monte-carlo-methods.html#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">        Estimate of pi</span></span>
+<span id="cb1-14"><a href="introduction-to-monte-carlo-methods.html#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb1-15"><a href="introduction-to-monte-carlo-methods.html#cb1-15" aria-hidden="true" tabindex="-1"></a>    points_in_circle <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-16"><a href="introduction-to-monte-carlo-methods.html#cb1-16" aria-hidden="true" tabindex="-1"></a>    points_x <span class="op">=</span> []</span>
+<span id="cb1-17"><a href="introduction-to-monte-carlo-methods.html#cb1-17" aria-hidden="true" tabindex="-1"></a>    points_y <span class="op">=</span> []</span>
+<span id="cb1-18"><a href="introduction-to-monte-carlo-methods.html#cb1-18" aria-hidden="true" tabindex="-1"></a>    circle_x <span class="op">=</span> []</span>
+<span id="cb1-19"><a href="introduction-to-monte-carlo-methods.html#cb1-19" aria-hidden="true" tabindex="-1"></a>    circle_y <span class="op">=</span> []</span>
+<span id="cb1-20"><a href="introduction-to-monte-carlo-methods.html#cb1-20" aria-hidden="true" tabindex="-1"></a>    square_x <span class="op">=</span> []</span>
+<span id="cb1-21"><a href="introduction-to-monte-carlo-methods.html#cb1-21" aria-hidden="true" tabindex="-1"></a>    square_y <span class="op">=</span> []</span>
+<span id="cb1-22"><a href="introduction-to-monte-carlo-methods.html#cb1-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-23"><a href="introduction-to-monte-carlo-methods.html#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_points):</span>
+<span id="cb1-24"><a href="introduction-to-monte-carlo-methods.html#cb1-24" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb1-25"><a href="introduction-to-monte-carlo-methods.html#cb1-25" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb1-26"><a href="introduction-to-monte-carlo-methods.html#cb1-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-27"><a href="introduction-to-monte-carlo-methods.html#cb1-27" aria-hidden="true" tabindex="-1"></a>        points_x.append(x)</span>
+<span id="cb1-28"><a href="introduction-to-monte-carlo-methods.html#cb1-28" aria-hidden="true" tabindex="-1"></a>        points_y.append(y)</span>
+<span id="cb1-29"><a href="introduction-to-monte-carlo-methods.html#cb1-29" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-30"><a href="introduction-to-monte-carlo-methods.html#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> y<span class="op">**</span><span class="dv">2</span> <span class="op">&lt;=</span> <span class="dv">1</span>:</span>
+<span id="cb1-31"><a href="introduction-to-monte-carlo-methods.html#cb1-31" aria-hidden="true" tabindex="-1"></a>            points_in_circle <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb1-32"><a href="introduction-to-monte-carlo-methods.html#cb1-32" aria-hidden="true" tabindex="-1"></a>            circle_x.append(x)</span>
+<span id="cb1-33"><a href="introduction-to-monte-carlo-methods.html#cb1-33" aria-hidden="true" tabindex="-1"></a>            circle_y.append(y)</span>
+<span id="cb1-34"><a href="introduction-to-monte-carlo-methods.html#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb1-35"><a href="introduction-to-monte-carlo-methods.html#cb1-35" aria-hidden="true" tabindex="-1"></a>            square_x.append(x)</span>
+<span id="cb1-36"><a href="introduction-to-monte-carlo-methods.html#cb1-36" aria-hidden="true" tabindex="-1"></a>            square_y.append(y)</span>
+<span id="cb1-37"><a href="introduction-to-monte-carlo-methods.html#cb1-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-38"><a href="introduction-to-monte-carlo-methods.html#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot the points</span></span>
+<span id="cb1-39"><a href="introduction-to-monte-carlo-methods.html#cb1-39" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb1-40"><a href="introduction-to-monte-carlo-methods.html#cb1-40" aria-hidden="true" tabindex="-1"></a>    plt.scatter(circle_x, circle_y, color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, s<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-41"><a href="introduction-to-monte-carlo-methods.html#cb1-41" aria-hidden="true" tabindex="-1"></a>    plt.scatter(square_x, square_y, color<span class="op">=</span><span class="st">&#39;red&#39;</span>, s<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-42"><a href="introduction-to-monte-carlo-methods.html#cb1-42" aria-hidden="true" tabindex="-1"></a>    plt.axis(<span class="st">&#39;equal&#39;</span>)</span>
+<span id="cb1-43"><a href="introduction-to-monte-carlo-methods.html#cb1-43" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f&#39;Estimating π: </span><span class="sc">{</span><span class="dv">4</span> <span class="op">*</span> points_in_circle <span class="op">/</span> num_points<span class="sc">:.6f}</span><span class="ss">&#39;</span>)</span>
+<span id="cb1-44"><a href="introduction-to-monte-carlo-methods.html#cb1-44" aria-hidden="true" tabindex="-1"></a>    plt.savefig(<span class="st">&#39;pi_estimation.png&#39;</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb1-45"><a href="introduction-to-monte-carlo-methods.html#cb1-45" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-46"><a href="introduction-to-monte-carlo-methods.html#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">4</span> <span class="op">*</span> points_in_circle <span class="op">/</span> num_points</span></code></pre></div>
+<p>When we visualize this process, we can color points based on whether they fall inside the circle (e.g., blue) or outside (e.g., red). As the number of points increases, our estimate becomes more accurate.</p>
+<div class="figure">
+<img src="pi_estimation.png" alt="" />
+<p class="caption">Estimating π with Monte Carlo</p>
+</div>
+<p>We can also analyze how the error in our estimation decreases with sample size, demonstrating the <span class="math inline">\(1/\sqrt{N}\)</span> scaling of uncertainty.</p>
+</div>
+<div id="function-averaging-numerical-integration" class="section level3 hasAnchor" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> Function Averaging / Numerical Integration<a href="introduction-to-monte-carlo-methods.html#function-averaging-numerical-integration" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Our second example involves calculating the average value of a function over a specific interval. Consider finding the average value of <span class="math inline">\(\sin^2(x)\)</span> over the interval <span class="math inline">\([0,\pi]\)</span>.</p>
+<p>Mathematically, this average is defined as:</p>
+<p><span class="math display">\[\text{Average value} = \frac{1}{\pi} \times \int_0^{\pi} \sin^2(x) dx\]</span></p>
+<p>The analytical solution to this integral is <span class="math inline">\(1/2\)</span>.</p>
+<p>Using Monte Carlo methods, we can estimate this average by:
+1. Generating uniform random <span class="math inline">\(x\)</span>-values between 0 and <span class="math inline">\(\pi\)</span>
+2. Calculating <span class="math inline">\(\sin^2(x)\)</span> for each point
+3. Averaging the results</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="introduction-to-monte-carlo-methods.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb2-2"><a href="introduction-to-monte-carlo-methods.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb2-3"><a href="introduction-to-monte-carlo-methods.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-4"><a href="introduction-to-monte-carlo-methods.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-5"><a href="introduction-to-monte-carlo-methods.html#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="introduction-to-monte-carlo-methods.html#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> average_sin_squared(num_points):</span>
+<span id="cb2-7"><a href="introduction-to-monte-carlo-methods.html#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb2-8"><a href="introduction-to-monte-carlo-methods.html#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate the average value of sin^2(x) over [0,π] using Monte Carlo.</span></span>
+<span id="cb2-9"><a href="introduction-to-monte-carlo-methods.html#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb2-10"><a href="introduction-to-monte-carlo-methods.html#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb2-11"><a href="introduction-to-monte-carlo-methods.html#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">        num_points: Number of random points to generate</span></span>
+<span id="cb2-12"><a href="introduction-to-monte-carlo-methods.html#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb2-13"><a href="introduction-to-monte-carlo-methods.html#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb2-14"><a href="introduction-to-monte-carlo-methods.html#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">        Estimated average</span></span>
+<span id="cb2-15"><a href="introduction-to-monte-carlo-methods.html#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb2-16"><a href="introduction-to-monte-carlo-methods.html#cb2-16" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-17"><a href="introduction-to-monte-carlo-methods.html#cb2-17" aria-hidden="true" tabindex="-1"></a>    x_values <span class="op">=</span> []</span>
+<span id="cb2-18"><a href="introduction-to-monte-carlo-methods.html#cb2-18" aria-hidden="true" tabindex="-1"></a>    y_values <span class="op">=</span> []</span>
+<span id="cb2-19"><a href="introduction-to-monte-carlo-methods.html#cb2-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-20"><a href="introduction-to-monte-carlo-methods.html#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_points):</span>
+<span id="cb2-21"><a href="introduction-to-monte-carlo-methods.html#cb2-21" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> random.uniform(<span class="dv">0</span>, math.pi)</span>
+<span id="cb2-22"><a href="introduction-to-monte-carlo-methods.html#cb2-22" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> math.sin(x)<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb2-23"><a href="introduction-to-monte-carlo-methods.html#cb2-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-24"><a href="introduction-to-monte-carlo-methods.html#cb2-24" aria-hidden="true" tabindex="-1"></a>        total <span class="op">+=</span> y</span>
+<span id="cb2-25"><a href="introduction-to-monte-carlo-methods.html#cb2-25" aria-hidden="true" tabindex="-1"></a>        x_values.append(x)</span>
+<span id="cb2-26"><a href="introduction-to-monte-carlo-methods.html#cb2-26" aria-hidden="true" tabindex="-1"></a>        y_values.append(y)</span>
+<span id="cb2-27"><a href="introduction-to-monte-carlo-methods.html#cb2-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-28"><a href="introduction-to-monte-carlo-methods.html#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot the function and sample points</span></span>
+<span id="cb2-29"><a href="introduction-to-monte-carlo-methods.html#cb2-29" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb2-30"><a href="introduction-to-monte-carlo-methods.html#cb2-30" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.linspace(<span class="dv">0</span>, math.pi, <span class="dv">1000</span>)</span>
+<span id="cb2-31"><a href="introduction-to-monte-carlo-methods.html#cb2-31" aria-hidden="true" tabindex="-1"></a>    plt.plot(x, np.sin(x)<span class="op">**</span><span class="dv">2</span>, <span class="st">&#39;b-&#39;</span>, label<span class="op">=</span><span class="st">&#39;$\sin^2(x)$&#39;</span>)</span>
+<span id="cb2-32"><a href="introduction-to-monte-carlo-methods.html#cb2-32" aria-hidden="true" tabindex="-1"></a>    plt.scatter(x_values[:<span class="dv">100</span>], y_values[:<span class="dv">100</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, s<span class="op">=</span><span class="dv">20</span>, label<span class="op">=</span><span class="st">&#39;Sample points&#39;</span>)</span>
+<span id="cb2-33"><a href="introduction-to-monte-carlo-methods.html#cb2-33" aria-hidden="true" tabindex="-1"></a>    plt.axhline(y<span class="op">=</span><span class="fl">0.5</span>, color<span class="op">=</span><span class="st">&#39;g&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="st">&#39;True average (0.5)&#39;</span>)</span>
+<span id="cb2-34"><a href="introduction-to-monte-carlo-methods.html#cb2-34" aria-hidden="true" tabindex="-1"></a>    plt.axhline(y<span class="op">=</span>total<span class="op">/</span>num_points, color<span class="op">=</span><span class="st">&#39;r&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="ss">f&#39;MC estimate (</span><span class="sc">{</span>total<span class="op">/</span>num_points<span class="sc">:.4f}</span><span class="ss">)&#39;</span>)</span>
+<span id="cb2-35"><a href="introduction-to-monte-carlo-methods.html#cb2-35" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">&#39;x&#39;</span>)</span>
+<span id="cb2-36"><a href="introduction-to-monte-carlo-methods.html#cb2-36" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">&#39;$\sin^2(x)$&#39;</span>)</span>
+<span id="cb2-37"><a href="introduction-to-monte-carlo-methods.html#cb2-37" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb2-38"><a href="introduction-to-monte-carlo-methods.html#cb2-38" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f&#39;Monte Carlo Integration: Average of $\sin^2(x)$ over [0,π]&#39;</span>)</span>
+<span id="cb2-39"><a href="introduction-to-monte-carlo-methods.html#cb2-39" aria-hidden="true" tabindex="-1"></a>    plt.savefig(<span class="st">&#39;sin_squared_average.png&#39;</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb2-40"><a href="introduction-to-monte-carlo-methods.html#cb2-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-41"><a href="introduction-to-monte-carlo-methods.html#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total <span class="op">/</span> num_points</span></code></pre></div>
+<p>This example directly parallels the calculation of thermodynamic averages in chemistry. Both involve computing the average of a function weighted by some probability distribution. The only difference is that in this simple case, our probability distribution is uniform, whereas in chemical systems, we use the Boltzmann distribution.</p>
+<div class="figure">
+<img src="sin_squared_average.png" alt="" />
+<p class="caption">Estimating the average of sin²(x)</p>
+</div>
+<p>By plotting the running average against the number of samples, we can observe convergence toward the true value of 1/2.</p>
+</div>
+</div>
+<div id="comparison-with-other-simulation-techniques" class="section level2 hasAnchor" number="1.5">
+<h2><span class="header-section-number">1.5</span> Comparison with Other Simulation Techniques<a href="introduction-to-monte-carlo-methods.html#comparison-with-other-simulation-techniques" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Monte Carlo methods offer distinct advantages and disadvantages compared to other approaches in computational chemistry.</p>
+<div id="monte-carlo-vs.-molecular-dynamics" class="section level3 hasAnchor" number="1.5.1">
+<h3><span class="header-section-number">1.5.1</span> Monte Carlo vs. Molecular Dynamics<a href="introduction-to-monte-carlo-methods.html#monte-carlo-vs.-molecular-dynamics" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>While both methods sample configuration space, they differ in fundamental ways:</p>
+<p><strong>Molecular Dynamics:</strong>
+- Follows physically realistic trajectories
+- Provides time-dependent information
+- Sample configurations are correlated in time
+- May struggle with rare events or high energy barriers</p>
+<p><strong>Monte Carlo:</strong>
+- Makes non-physical “jumps” between configurations
+- Cannot directly provide time-dependent properties
+- Can be designed to reduce correlation between samples
+- Often better at sampling rare events or crossing barriers</p>
+<p>The choice between MC and MD depends on the specific problem. MD excels at studying dynamic processes, while MC often works better for equilibrium properties, especially in systems with significant energy barriers.</p>
+</div>
+<div id="deterministic-numerical-methods" class="section level3 hasAnchor" number="1.5.2">
+<h3><span class="header-section-number">1.5.2</span> Deterministic Numerical Methods<a href="introduction-to-monte-carlo-methods.html#deterministic-numerical-methods" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Traditional numerical methods, such as numerical integration using the trapezoidal rule or Simpson’s rule, offer alternatives to Monte Carlo for some problems. These methods:
+- Provide systematic error reduction
+- Work well in low dimensions
+- Become impractical in high-dimensional problems due to the “curse of dimensionality”</p>
+<p>Monte Carlo methods scale more favorably with dimension, making them essential for the high-dimensional spaces encountered in chemical systems.</p>
+</div>
+</div>
+<div id="error-analysis-in-monte-carlo-simulations" class="section level2 hasAnchor" number="1.6">
+<h2><span class="header-section-number">1.6</span> Error Analysis in Monte Carlo Simulations<a href="introduction-to-monte-carlo-methods.html#error-analysis-in-monte-carlo-simulations" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Evaluating the accuracy of Monte Carlo results requires understanding both statistical and systematic errors.</p>
+<div id="statistical-errors" class="section level3 hasAnchor" number="1.6.1">
+<h3><span class="header-section-number">1.6.1</span> Statistical Errors<a href="introduction-to-monte-carlo-methods.html#statistical-errors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Statistical errors arise from the finite number of samples and follow well-understood principles:
+- The error decreases as <span class="math inline">\(1/\sqrt{N}\)</span> with sample size <span class="math inline">\(N\)</span>
+- Confidence intervals can be calculated using the standard error of the mean
+- Correlated samples reduce the effective sample size</p>
+<p>For practical error estimation, the batch averaging method works well:
+1. Divide the simulation into blocks of equal size
+2. Calculate the average within each block
+3. Compute the standard deviation of the block averages
+4. The standard error equals this standard deviation divided by <span class="math inline">\(\sqrt{\text{number of blocks}}\)</span></p>
+<p>This approach accounts for correlation between consecutive samples.</p>
+</div>
+<div id="practical-error-estimation" class="section level3 hasAnchor" number="1.6.2">
+<h3><span class="header-section-number">1.6.2</span> Practical Error Estimation<a href="introduction-to-monte-carlo-methods.html#practical-error-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>When reporting Monte Carlo results, it’s essential to include an estimate of uncertainty. For example, rather than stating <span class="math inline">\(\pi \approx 3.14\)</span>, we might report <span class="math inline">\(\pi \approx 3.14 \pm 0.01\)</span>, where the second number represents our statistical uncertainty.</p>
+</div>
+<div id="sources-of-systematic-errors" class="section level3 hasAnchor" number="1.6.3">
+<h3><span class="header-section-number">1.6.3</span> Sources of Systematic Errors<a href="introduction-to-monte-carlo-methods.html#sources-of-systematic-errors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Unlike statistical errors, systematic errors don’t decrease with more samples. They result from problems in the simulation setup or implementation:
+- Insufficient sampling of important regions
+- Biased random number generation
+- Programming errors</p>
+<p>Identifying systematic errors often requires running multiple simulations with different parameters or starting conditions.</p>
+</div>
+</div>
+<div id="convergence-criteria" class="section level2 hasAnchor" number="1.7">
+<h2><span class="header-section-number">1.7</span> Convergence Criteria<a href="introduction-to-monte-carlo-methods.html#convergence-criteria" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A critical question in any Monte Carlo simulation is: “How do we know when we have enough samples?”</p>
+<div id="running-averages" class="section level3 hasAnchor" number="1.7.1">
+<h3><span class="header-section-number">1.7.1</span> Running Averages<a href="introduction-to-monte-carlo-methods.html#running-averages" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>One practical technique involves plotting the running average of your property of interest against the number of samples. As the simulation converges, this average should stabilize around the true value.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="introduction-to-monte-carlo-methods.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_running_average(num_points<span class="op">=</span><span class="dv">10000</span>):</span>
+<span id="cb3-2"><a href="introduction-to-monte-carlo-methods.html#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb3-3"><a href="introduction-to-monte-carlo-methods.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Plot the running average of the π estimate as the number of points increases.</span></span>
+<span id="cb3-4"><a href="introduction-to-monte-carlo-methods.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb3-5"><a href="introduction-to-monte-carlo-methods.html#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb3-6"><a href="introduction-to-monte-carlo-methods.html#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">        num_points: Total number of points to simulate</span></span>
+<span id="cb3-7"><a href="introduction-to-monte-carlo-methods.html#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb3-8"><a href="introduction-to-monte-carlo-methods.html#cb3-8" aria-hidden="true" tabindex="-1"></a>    points_in_circle <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-9"><a href="introduction-to-monte-carlo-methods.html#cb3-9" aria-hidden="true" tabindex="-1"></a>    estimates <span class="op">=</span> []</span>
+<span id="cb3-10"><a href="introduction-to-monte-carlo-methods.html#cb3-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-11"><a href="introduction-to-monte-carlo-methods.html#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, num_points <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb3-12"><a href="introduction-to-monte-carlo-methods.html#cb3-12" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb3-13"><a href="introduction-to-monte-carlo-methods.html#cb3-13" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> random.uniform(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb3-14"><a href="introduction-to-monte-carlo-methods.html#cb3-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-15"><a href="introduction-to-monte-carlo-methods.html#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> y<span class="op">**</span><span class="dv">2</span> <span class="op">&lt;=</span> <span class="dv">1</span>:</span>
+<span id="cb3-16"><a href="introduction-to-monte-carlo-methods.html#cb3-16" aria-hidden="true" tabindex="-1"></a>            points_in_circle <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb3-17"><a href="introduction-to-monte-carlo-methods.html#cb3-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-18"><a href="introduction-to-monte-carlo-methods.html#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate and store the current estimate</span></span>
+<span id="cb3-19"><a href="introduction-to-monte-carlo-methods.html#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> i <span class="op">%</span> <span class="dv">100</span> <span class="op">==</span> <span class="dv">0</span>:  <span class="co"># Store every 100th estimate to keep plot manageable</span></span>
+<span id="cb3-20"><a href="introduction-to-monte-carlo-methods.html#cb3-20" aria-hidden="true" tabindex="-1"></a>            estimates.append(<span class="dv">4</span> <span class="op">*</span> points_in_circle <span class="op">/</span> i)</span>
+<span id="cb3-21"><a href="introduction-to-monte-carlo-methods.html#cb3-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-22"><a href="introduction-to-monte-carlo-methods.html#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot running average</span></span>
+<span id="cb3-23"><a href="introduction-to-monte-carlo-methods.html#cb3-23" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb3-24"><a href="introduction-to-monte-carlo-methods.html#cb3-24" aria-hidden="true" tabindex="-1"></a>    plt.plot(<span class="bu">range</span>(<span class="dv">100</span>, num_points <span class="op">+</span> <span class="dv">1</span>, <span class="dv">100</span>), estimates, <span class="st">&#39;b-&#39;</span>)</span>
+<span id="cb3-25"><a href="introduction-to-monte-carlo-methods.html#cb3-25" aria-hidden="true" tabindex="-1"></a>    plt.axhline(y<span class="op">=</span>math.pi, color<span class="op">=</span><span class="st">&#39;r&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, label<span class="op">=</span><span class="st">&#39;True value (π)&#39;</span>)</span>
+<span id="cb3-26"><a href="introduction-to-monte-carlo-methods.html#cb3-26" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">&#39;Number of samples&#39;</span>)</span>
+<span id="cb3-27"><a href="introduction-to-monte-carlo-methods.html#cb3-27" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">&#39;Estimate of π&#39;</span>)</span>
+<span id="cb3-28"><a href="introduction-to-monte-carlo-methods.html#cb3-28" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">&#39;Running Average of π Estimate&#39;</span>)</span>
+<span id="cb3-29"><a href="introduction-to-monte-carlo-methods.html#cb3-29" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb3-30"><a href="introduction-to-monte-carlo-methods.html#cb3-30" aria-hidden="true" tabindex="-1"></a>    plt.savefig(<span class="st">&#39;pi_running_average.png&#39;</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span></code></pre></div>
+<div class="figure">
+<img src="pi_running_average.png" alt="" />
+<p class="caption">Running average of π estimate</p>
+</div>
+</div>
+<div id="statistical-tests" class="section level3 hasAnchor" number="1.7.2">
+<h3><span class="header-section-number">1.7.2</span> Statistical Tests<a href="introduction-to-monte-carlo-methods.html#statistical-tests" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>More formal approaches include statistical tests that evaluate whether additional samples are likely to change the result significantly. However, for introductory purposes, visual inspection of running averages often suffices.</p>
+</div>
+<div id="balancing-accuracy-and-computational-cost" class="section level3 hasAnchor" number="1.7.3">
+<h3><span class="header-section-number">1.7.3</span> Balancing Accuracy and Computational Cost<a href="introduction-to-monte-carlo-methods.html#balancing-accuracy-and-computational-cost" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>There’s always a trade-off between accuracy and computational expense. The <span class="math inline">\(1/\sqrt{N}\)</span> scaling of error means that to gain another decimal place of precision, we need 100 times more samples. At some point, the additional computational cost may not justify the marginal improvement in accuracy.</p>
+</div>
+</div>
+<div id="summary" class="section level2 hasAnchor" number="1.8">
+<h2><span class="header-section-number">1.8</span> Summary<a href="introduction-to-monte-carlo-methods.html#summary" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Monte Carlo methods provide powerful tools for estimating averages in complex systems. Starting from the fundamental challenge of computing thermodynamic averages, we’ve seen how random sampling offers a practical solution. We’ve explored:
+- The basic principles of random sampling
+- Core probability concepts that explain why MC works
+- Simple demonstrations that illustrate MC techniques
+- Comparisons with alternative approaches
+- Methods for analyzing errors and determining convergence</p>
+<p>In the next lecture, we’ll extend these concepts to chemical systems, introducing the challenge of non-uniform distributions in chemistry and exploring the Metropolis algorithm as a solution.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="monte-carlo-applied-to-chemical-systems.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/bjmorgan/CH22013/main/lecture_01/lecture_01.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section"
+  },
+  "mathjax": {
+    "extensions": "mhchem.js"
+  },
+  "mathjax_config": {
+    "TeX": {
+      "Macros": {
+        "conc": [
+          "[\mathrm{#1}]",
+          1
+        ],
+        "diffc": [
+          "\frac{\mathrm{d}\conc{#1}}{\mathrm{d}t}",
+          1
+        ]
+      }
+    }
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
