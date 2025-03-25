@@ -1,12 +1,10 @@
-# Monte Carlo Methods in Computational Chemistry
+# Introduction to Monte Carlo Methods
 
-## Lecture 1: Introduction to Monte Carlo Methods
-
-### Introduction to Averaging & Sampling
+## Introduction to Averaging & Sampling
 
 Chemistry is fundamentally a statistical science. Macroscopic properties such as pressure, temperature, and heat capacity emerge from the collective behavior of approximately $10^{23}$ atoms or molecules. These observable quantities represent averages over an immense number of microscopic states. A central challenge in computational chemistry is how to accurately estimate these macroscopic properties without having to evaluate every possible molecular arrangement.
 
-#### The Statistical Nature of Chemical Systems
+### The Statistical Nature of Chemical Systems
 
 When we measure properties of chemical systems in the laboratory, we observe the average behavior of countless molecules over the duration of our measurement. Even the simplest systems—gases, liquids, or solids—involve enormous numbers of possible arrangements of atoms, with molecules constantly moving, rotating, and vibrating at finite temperatures.
 
@@ -14,27 +12,31 @@ To accurately predict these macroscopic measurements, we need to account for thi
 
 The mathematical expression for this average is:
 
-$$\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})$$
+\begin{equation}
+\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})
+\end{equation}
 
 Where $\mathbf{r}$ represents a particular configuration of the system, and $P(\mathbf{r})$ is the probability of finding the system in that configuration.
 
-#### Probability Distributions
+### Probability Distributions
 
 $P(\mathbf{r})$ represents a probability distribution, which describes the likelihood of finding the system in each possible configuration. Probability distributions form the mathematical foundation for describing systems with inherent variability.
 
 Probability distributions come in two forms:
 
-**Discrete distributions** apply when a variable can only take specific, countable values. For these, we use a probability mass function (PMF) that gives the probability of each possible outcome. For example, when rolling a fair six-sided die, each number (1-6) has a probability of 1/6. Another example is counting heads in four coin flips, which follows a binomial distribution where the probability of k heads is $\binom{4}{k} \times (1/2)^4$.
+**Discrete distributions** apply when a variable can only take specific, countable values. For these, we use a probability mass function (PMF) that gives the probability of each possible outcome. For example, when rolling a fair six-sided die, each number (1&mdash;6) has a probability of 1/6. Another example is counting heads in four coin flips, which follows a binomial distribution where the probability of $k$ heads is $\binom{4}{k} \times (1/2)^4$.
 
 **Continuous distributions** apply when a variable can take any value within a continuous range. These use a probability density function (PDF) where the probability of finding the variable in a specific range equals the area under the PDF curve over that range. A simple example is a random point selected along a line segment from 0 to 1, which follows a uniform continuous distribution with constant probability density.
 
 In all probability distributions, the total probability must equal 1, meaning the system must exist in some state. The average (expected value) of any property A is calculated by weighting each possible value by its probability and summing over all possibilities—exactly the formula we saw earlier for chemical systems.
 
-#### The Boltzmann Distribution
+### The Boltzmann Distribution
 
 In chemical systems, the probability distribution that governs molecular configurations is the Boltzmann distribution:
 
-$$P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)$$
+\begin{equation}
+P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)
+\end{equation}
 
 Here, $U(\mathbf{r})$ is the potential energy of configuration $\mathbf{r}$, $k$ is Boltzmann's constant, and $T$ is the temperature.
 
@@ -42,64 +44,75 @@ This relationship reveals a fundamental principle in physical chemistry: lower-e
 
 To create a valid probability distribution, the probabilities must sum to 1:
 
-$$\sum_i P(\mathbf{r}) = 1$$
+\begin{equation}
+\sum_i P(\mathbf{r}) = 1
+\end{equation}
 
 We achieve this by including a normalization constant, $Z$:
 
-$$P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}$$
+\begin{equation}
+P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
+\end{equation}
 
 This constant $Z$ is called the "partition function," defined as:
 
-$$Z = \sum \exp(-U(\mathbf{r})/kT)$$
+\begin{equation}
+Z = \sum \exp(-U(\mathbf{r})/kT)
+\end{equation}
 
 The partition function plays a central role in statistical mechanics and thermodynamics, connecting microscopic configurations to macroscopic properties.
 
-#### The Computational Challenge
+### The Computational Challenge
 
 Let's revisit our fundamental problem. To calculate the thermodynamic average of a property A, we need to evaluate:
 
-$$\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})$$
+\begin{equation}
+\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})
+\end{equation}
 
 Where $P(\mathbf{r})$ is the Boltzmann distribution: 
 
-$$P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}$$
+\begin{equation}
+P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
+\end{equation}
 
 A direct approach to this calculation would require:
 1. Generating all possible configurations of our system
 2. Computing the property A and energy for each configuration
 3. Calculating the weighted sum
 
-The obstacle lies in the sheer number of possible configurations for any realistic chemical system. Consider a simple example: a 10×10 array of surface sites where we want to model the adsorption of 50 molecules. This system has approximately $10^{29}$ possible configurations—more than the number of stars in the observable universe. Direct enumeration becomes impossible.
+The obstacle lies in the sheer number of possible configurations for any realistic chemical system. Consider a simple example: a $10 \times 10$ array of surface sites where we want to model the adsorption of 50 molecules. This system has approximately $10^{29}$ possible configurations—more than the number of stars in the observable universe. Direct enumeration becomes impossible.
 
 For most chemical systems, the situation is even more extreme. A small protein in solution might have millions of relevant conformations. A metal catalyst with multiple reaction pathways or a polymer chain sampling different spatial arrangements presents an effectively infinite configuration space. This combinatorial explosion makes direct evaluation computationally intractable—even the most powerful supercomputers cannot handle such calculations.
 
-### The Solution: Statistical Sampling
+## The Solution: Statistical Sampling
 
 Rather than calculating the exact sum, which we've established is computationally intractable, we can estimate it through sampling—selecting a subset of configurations that represent the full distribution, evaluating our property of interest for these samples, and calculating their average.
 
 This concept of sampling is fundamental throughout science and statistics. Consider estimating the average height of people in Britain. Measuring everyone's height is impractical, but we can measure a representative sample and use that sample's average as an estimate of the true population average. The key requirement is that our sample must be representative—it should reflect the true probability distribution of the property we're measuring. For instance, sampling players arriving for a basketball tournament would likely produce a significant overestimate of the average British height, as basketball players tend to be taller than the general population. In contrast, measuring the heights of people passing by on a street corner on a Saturday afternoon would provide a more representative sample of the British population.
 
-For chemical systems, this means generating configurations according to the Boltzmann distribution, calculating our property of interest for each configuration, and then averaging these values:
+When we sample directly from the correct probability distribution (for example, by randomly selecting British citizens with equal probability), we can use simple averaging without additional weighting factors. However, if our sampling method is biased (like measuring only basketball players), we would need to apply appropriate weighting corrections.
 
-$$\langle A \rangle \approx \frac{1}{N} \sum_{i=1}^{N} A(\mathbf{r}_i)$$
+This principle applies to chemical systems as well. If we could generate configurations directly according to the Boltzmann distribution, calculating thermodynamic properties would simply require averaging the property values:
+
+
+\begin{equation}
+\langle A \rangle \approx \frac{1}{N} \sum_{i=1}^{N} A(\mathbf{r}_i)
+\end{equation}
 
 Where the configurations $\mathbf{r}_i$ are selected with probability proportional to $\exp(-U(\mathbf{r}_i)/kT)$.
 
-Note that when we sample configurations with the correct Boltzmann weighting, we do not need to apply additional weighting factors in our averaging formula. This simplification occurs because the probability distribution is already incorporated into our sampling process. This principle applies to any sampling problem—if we sample observations directly from the true probability distribution of the population, we can use simple averaging; otherwise, we must apply appropriate weighting factors to correct for sampling bias.
-
-#### Statistical Uncertainty and Sample Size
-
-An important aspect of sampling is that we always obtain estimates that carry statistical uncertainty. If we were to sample heights of passers-by on consecutive weekends, we would almost certainly observe different individuals and calculate different estimates of the mean British height. This variability is intrinsic to sampling methods.
-
-### Two Approaches to Sampling
+## Two Approaches to Sampling
 
 Two principal methods have been developed to address the sampling challenge in computational chemistry:
 
-#### Molecular Dynamics Approach
+### Molecular Dynamics Approach
 
 Molecular Dynamics (MD) simulates atomic motion according to Newton's laws. By following these physical trajectories, MD can sample configurations according to their Boltzmann probabilities. When a simulation trajectory visits a suitably representative set of configurations in the relevant regions of configuration space, the time average provides a good approximation of the desired ensemble average:
 
-$$\langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)$$
+\begin{equation}
+\langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)
+\end{equation}
 
 Where $M$ is the number of time steps.
 
@@ -109,55 +122,59 @@ Timescales present another challenge. Many important chemical processes occur on
 
 Additionally, some systems inherently resist treatment via continuous dynamics. Lattice models with discrete site occupancies, magnetic materials with fixed spin orientations, or any problem where variables can only take discrete values often require different sampling approaches altogether.
 
-#### Monte Carlo Approach
+### Monte Carlo Approach
 
 Monte Carlo (MC) methods, named after the famous casino district in Monaco, use random numbers to estimate complex averages through sampling. This approach offers a powerful alternative to Molecular Dynamics for calculating equilibrium properties.
 
 In its simplest form, Monte Carlo sampling involves generating configurations using random numbers, evaluating the property of interest for each configuration, and computing the average of these values.
 
-### Fundamental Monte Carlo Examples
+## Fundamental Monte Carlo Examples
 
 Before addressing the sampling challenges in chemical systems, let's examine two classic examples that illustrate the power of Monte Carlo methods with uniform sampling. These examples demonstrate the core principles using simple problems where each possible outcome has an equal probability of occurring.
 
-#### Estimating π by Monte Carlo Integration
+### Estimating &pi; by Monte Carlo Integration
 
-One of the simplest demonstrations of Monte Carlo methods is estimating the value of π. Consider a circle with radius 1 inscribed inside a square with side length 2. The area of the circle is π, while the area of the square is 4. Therefore, the ratio of these areas is π/4.
+One of the simplest demonstrations of Monte Carlo methods is estimating the value of $\pi$. Consider a circle with radius 1 inscribed inside a square with side length 2. The area of the circle is $\pi$, while the area of the square is 4. Therefore, the ratio of these areas is $\pi/4$.
 
-We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. The procedure involves generating N random points with coordinates (x,y), where x and y are uniformly distributed between -1 and 1. We then count how many points M satisfy $x^2 + y^2 \leq 1$, which indicates they fall within the circle. The estimate for π is given by: $\pi \approx 4 \times M/N$. This approach demonstrates how random sampling can solve a deterministic problem.
+We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. The procedure involves generating $N$ random points with coordinates $(x,y)$, where $x$ and $y$ are uniformly distributed between &minus;1 and 1. We then count how many points $M$ satisfy $x^2 + y^2 \leq 1$, which indicates they fall within the circle. The estimate for $\pi$ is given by: $\pi \approx 4 \times M/N$. This approach demonstrates how random sampling can solve a deterministic problem.
 
-#### Function Averaging and Numerical Integration
+### Function Averaging and Numerical Integration
 
-Our second example involves calculating the average value of a function over a specific interval. Consider finding the average value of $\sin^2(x)$ over the interval [0,π].
+Our second example involves calculating the average value of a function over a specific interval. Consider finding the average value of $\sin^2(x)$ over the interval $[0,\pi]$.
 
 Mathematically, this average is defined as:
 
-$$\text{Average value} = \frac{1}{\pi} \times \int_0^{\pi} \sin^2(x) dx$$
+\begin{equation}
+\text{Average value} = \frac{1}{\pi} \times \int_0^{\pi} \sin^2(x) dx
+\end{equation}
 
 The analytical solution to this integral is 1/2.
 
-Using Monte Carlo methods, we can estimate this average by generating uniform random x-values between 0 and π, calculating $\sin^2(x)$ for each point, and then averaging these results.
+Using Monte Carlo methods, we can estimate this average by generating uniform random $x$-values between 0 and $\pi$, calculating $\sin^2(x)$ for each point, and then averaging these results.
 
 This procedure can be generalized to estimate any definite integral:
 
-$$\int_a^b f(x) dx \approx (b-a) \times \frac{1}{N} \sum_{i=1}^{N} f(x_i)$$
+\begin{equation}
+\int_a^b f(x) dx \approx (b-a) \times \frac{1}{N} \sum_{i=1}^{N} f(x_i)
+\end{equation}
 
-Where $x_1, x_2, ..., x_N$ are uniform random numbers between a and b.
+Where $x_1$, $x_2$, ..., $x_n$ are uniform random numbers between $a$ and $b$.
 
 The strength of this approach becomes apparent when dealing with multi-dimensional integrals, where traditional numerical methods become exponentially more expensive as dimensionality increases.
 
-### Statistical Uncertainty in Monte Carlo Methods
+## Statistical Uncertainty in Monte Carlo Methods
 
 A fundamental characteristic of all Monte Carlo methods is that they produce estimates rather than exact answers. Each time we run a Monte Carlo simulation with a different sequence of random numbers, we get a slightly different result. This variation is the source of statistical uncertainty in Monte Carlo methods.
 
 Unlike deterministic methods, which might have errors from approximations but give the same answer every time, Monte Carlo methods produce different answers on different runs. This inherent variability means we must consider Monte Carlo results as estimates with associated uncertainty.
 
-The precision of these estimates improves as we increase the number of samples. Statistical uncertainty decreases proportionally to $1/\sqrt{N}$, where N is the number of random samples. To reduce the uncertainty by half, we need to use four times as many samples. This scaling behavior is characteristic of random sampling methods and remains independent of the dimensionality of the problem—a significant advantage in high-dimensional applications.
+The precision of these estimates improves as we increase the number of samples. Statistical uncertainty decreases proportionally to $1/\sqrt{N}$, where $N$ is the number of random samples. To reduce the uncertainty by half, we need to use four times as many samples. This scaling behavior is characteristic of random sampling methods and remains independent of the dimensionality of the problem—a significant advantage in high-dimensional applications.
 
 When reporting results from Monte Carlo simulations, it is essential to always include the associated uncertainties alongside the estimated values. This practice is a fundamental aspect of scientific reporting in computational chemistry and allows others to properly evaluate the reliability of the results.
 
-### Summary and Preview
+## Summary and Preview
 
-#### Key Takeaways from Lecture 1
+### Key Takeaways from Lecture 1
 
 Monte Carlo methods provide powerful tools for estimating averages in complex systems through statistical sampling. We've explored:
 
@@ -167,7 +184,7 @@ Monte Carlo methods provide powerful tools for estimating averages in complex sy
 
 The examples in this lecture have all used uniform sampling—where each possible outcome has an equal probability of being selected. This approach works well for many mathematical problems, including certain numerical integration tasks and geometrical probability calculations.
 
-#### Looking Ahead to Lecture 2
+### Looking Ahead to Lecture 2
 
 In the next lecture, we'll extend Monte Carlo methods to chemical systems, which present additional challenges. We'll explore how to sample molecular configurations according to the Boltzmann distribution introduced earlier, allowing us to calculate thermodynamic properties of realistic chemical systems.
 
