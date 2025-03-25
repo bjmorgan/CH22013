@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Lecture 1 Introduction to Monte Carlo Methods | CH22013 Lecture Notes</title>
+  <meta name="description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Lecture 1 Introduction to Monte Carlo Methods | CH22013 Lecture Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Lecture 1 Introduction to Monte Carlo Methods | CH22013 Lecture Notes" />
+  
+  <meta name="twitter:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  
+
+<meta name="author" content="Benjamin J. Morgan" />
+
+
+<meta name="date" content="2025-03-25" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">CH22013 Monte Carlo Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a></li>
+<li class="chapter" data-level="1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html"><i class="fa fa-check"></i><b>1</b> Introduction to Monte Carlo Methods</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#introduction-to-averaging-sampling"><i class="fa fa-check"></i><b>1.1</b> Introduction to Averaging &amp; Sampling</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-statistical-nature-of-chemical-systems"><i class="fa fa-check"></i><b>1.1.1</b> The Statistical Nature of Chemical Systems</a></li>
+<li class="chapter" data-level="1.1.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#probability-distributions"><i class="fa fa-check"></i><b>1.1.2</b> Probability Distributions</a></li>
+<li class="chapter" data-level="1.1.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-boltzmann-distribution"><i class="fa fa-check"></i><b>1.1.3</b> The Boltzmann Distribution</a></li>
+<li class="chapter" data-level="1.1.4" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-computational-challenge"><i class="fa fa-check"></i><b>1.1.4</b> The Computational Challenge</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#the-solution-statistical-sampling"><i class="fa fa-check"></i><b>1.2</b> The Solution: Statistical Sampling</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#two-approaches-to-sampling"><i class="fa fa-check"></i><b>1.3</b> Two Approaches to Sampling</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#molecular-dynamics-approach"><i class="fa fa-check"></i><b>1.3.1</b> Molecular Dynamics Approach</a></li>
+<li class="chapter" data-level="1.3.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#monte-carlo-approach"><i class="fa fa-check"></i><b>1.3.2</b> Monte Carlo Approach</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#fundamental-monte-carlo-examples"><i class="fa fa-check"></i><b>1.4</b> Fundamental Monte Carlo Examples</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#estimating-π-by-monte-carlo-integration"><i class="fa fa-check"></i><b>1.4.1</b> Estimating π by Monte Carlo Integration</a></li>
+<li class="chapter" data-level="1.4.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#function-averaging-and-numerical-integration"><i class="fa fa-check"></i><b>1.4.2</b> Function Averaging and Numerical Integration</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#statistical-uncertainty-in-monte-carlo-methods"><i class="fa fa-check"></i><b>1.5</b> Statistical Uncertainty in Monte Carlo Methods</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#summary-and-preview"><i class="fa fa-check"></i><b>1.6</b> Summary and Preview</a>
+<ul>
+<li class="chapter" data-level="1.6.1" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#key-takeaways-from-lecture-1"><i class="fa fa-check"></i><b>1.6.1</b> Key Takeaways from Lecture 1</a></li>
+<li class="chapter" data-level="1.6.2" data-path="introduction-to-monte-carlo-methods.html"><a href="introduction-to-monte-carlo-methods.html#looking-ahead-to-lecture-2"><i class="fa fa-check"></i><b>1.6.2</b> Looking Ahead to Lecture 2</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">CH22013 Lecture Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="introduction-to-monte-carlo-methods" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Lecture 1</span> Introduction to Monte Carlo Methods<a href="introduction-to-monte-carlo-methods.html#introduction-to-monte-carlo-methods" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="introduction-to-averaging-sampling" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Introduction to Averaging &amp; Sampling<a href="introduction-to-monte-carlo-methods.html#introduction-to-averaging-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Chemistry is fundamentally a statistical science. Macroscopic properties such as pressure, temperature, and heat capacity emerge from the collective behavior of approximately <span class="math inline">\(10^{23}\)</span> atoms or molecules. These observable quantities represent averages over an immense number of microscopic states. A central challenge in computational chemistry is how to accurately estimate these macroscopic properties without having to evaluate every possible molecular arrangement.</p>
+<div id="the-statistical-nature-of-chemical-systems" class="section level3 hasAnchor" number="1.1.1">
+<h3><span class="header-section-number">1.1.1</span> The Statistical Nature of Chemical Systems<a href="introduction-to-monte-carlo-methods.html#the-statistical-nature-of-chemical-systems" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>When we measure properties of chemical systems in the laboratory, we observe the average behavior of countless molecules over the duration of our measurement. Even the simplest systems—gases, liquids, or solids—involve enormous numbers of possible arrangements of atoms, with molecules constantly moving, rotating, and vibrating at finite temperatures.</p>
+<p>To accurately predict these macroscopic measurements, we need to account for this diversity of molecular configurations. Ideally, we would calculate our property of interest for every possible configuration, weight each result by the probability of that configuration occurring, and then sum these weighted values.</p>
+<p>The mathematical expression for this average is:</p>
+<p><span class="math display">\[\begin{equation}
+\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})
+\end{equation}\]</span></p>
+<p>Where <span class="math inline">\(\mathbf{r}\)</span> represents a particular configuration of the system, and <span class="math inline">\(P(\mathbf{r})\)</span> is the probability of finding the system in that configuration.</p>
+</div>
+<div id="probability-distributions" class="section level3 hasAnchor" number="1.1.2">
+<h3><span class="header-section-number">1.1.2</span> Probability Distributions<a href="introduction-to-monte-carlo-methods.html#probability-distributions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><span class="math inline">\(P(\mathbf{r})\)</span> represents a probability distribution, which describes the likelihood of finding the system in each possible configuration. Probability distributions form the mathematical foundation for describing systems with inherent variability.</p>
+<p>Probability distributions come in two forms:</p>
+<p><strong>Discrete distributions</strong> apply when a variable can only take specific, countable values. For these, we use a probability mass function (PMF) that gives the probability of each possible outcome. For example, when rolling a fair six-sided die, each number (1—6) has a probability of 1/6. Another example is counting heads in four coin flips, which follows a binomial distribution where the probability of <span class="math inline">\(k\)</span> heads is <span class="math inline">\(\binom{4}{k} \times (1/2)^4\)</span>.</p>
+<p><strong>Continuous distributions</strong> apply when a variable can take any value within a continuous range. These use a probability density function (PDF) where the probability of finding the variable in a specific range equals the area under the PDF curve over that range. A simple example is a random point selected along a line segment from 0 to 1, which follows a uniform continuous distribution with constant probability density.</p>
+<p>In all probability distributions, the total probability must equal 1, meaning the system must exist in some state. The average (expected value) of any property A is calculated by weighting each possible value by its probability and summing over all possibilities—exactly the formula we saw earlier for chemical systems.</p>
+</div>
+<div id="the-boltzmann-distribution" class="section level3 hasAnchor" number="1.1.3">
+<h3><span class="header-section-number">1.1.3</span> The Boltzmann Distribution<a href="introduction-to-monte-carlo-methods.html#the-boltzmann-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In chemical systems, the probability distribution that governs molecular configurations is the Boltzmann distribution:</p>
+<p><span class="math display">\[\begin{equation}
+P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)
+\end{equation}\]</span></p>
+<p>Here, <span class="math inline">\(U(\mathbf{r})\)</span> is the potential energy of configuration <span class="math inline">\(\mathbf{r}\)</span>, <span class="math inline">\(k\)</span> is Boltzmann’s constant, and <span class="math inline">\(T\)</span> is the temperature.</p>
+<p>This relationship reveals a fundamental principle in physical chemistry: lower-energy configurations are exponentially more probable than higher-energy ones. At room temperature (298 K), a configuration that is just 6 kJ/mol higher in energy is approximately 10 times less probable than the minimum energy state. Temperature determines how strongly the system favors low-energy states—at high temperatures, the distribution becomes more uniform, while at low temperatures, the system is increasingly restricted to the lowest energy states.</p>
+<p>To create a valid probability distribution, the probabilities must sum to 1:</p>
+<p><span class="math display">\[\begin{equation}
+\sum_i P(\mathbf{r}) = 1
+\end{equation}\]</span></p>
+<p>We achieve this by including a normalization constant, <span class="math inline">\(Z\)</span>:</p>
+<p><span class="math display">\[\begin{equation}
+P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
+\end{equation}\]</span></p>
+<p>This constant <span class="math inline">\(Z\)</span> is called the “partition function,” defined as:</p>
+<p><span class="math display">\[\begin{equation}
+Z = \sum \exp(-U(\mathbf{r})/kT)
+\end{equation}\]</span></p>
+<p>The partition function plays a central role in statistical mechanics and thermodynamics, connecting microscopic configurations to macroscopic properties.</p>
+</div>
+<div id="the-computational-challenge" class="section level3 hasAnchor" number="1.1.4">
+<h3><span class="header-section-number">1.1.4</span> The Computational Challenge<a href="introduction-to-monte-carlo-methods.html#the-computational-challenge" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let’s revisit our fundamental problem. To calculate the thermodynamic average of a property A, we need to evaluate:</p>
+<p><span class="math display">\[\begin{equation}
+\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})
+\end{equation}\]</span></p>
+<p>Where <span class="math inline">\(P(\mathbf{r})\)</span> is the Boltzmann distribution:</p>
+<p><span class="math display">\[\begin{equation}
+P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
+\end{equation}\]</span></p>
+<p>A direct approach to this calculation would require:
+1. Generating all possible configurations of our system
+2. Computing the property A and energy for each configuration
+3. Calculating the weighted sum</p>
+<p>The obstacle lies in the sheer number of possible configurations for any realistic chemical system. Consider a simple example: a <span class="math inline">\(10 \times 10\)</span> array of surface sites where we want to model the adsorption of 50 molecules. This system has approximately <span class="math inline">\(10^{29}\)</span> possible configurations—more than the number of stars in the observable universe. Direct enumeration becomes impossible.</p>
+<p>For most chemical systems, the situation is even more extreme. A small protein in solution might have millions of relevant conformations. A metal catalyst with multiple reaction pathways or a polymer chain sampling different spatial arrangements presents an effectively infinite configuration space. This combinatorial explosion makes direct evaluation computationally intractable—even the most powerful supercomputers cannot handle such calculations.</p>
+</div>
+</div>
+<div id="the-solution-statistical-sampling" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> The Solution: Statistical Sampling<a href="introduction-to-monte-carlo-methods.html#the-solution-statistical-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Rather than calculating the exact sum, which we’ve established is computationally intractable, we can estimate it through sampling—selecting a subset of configurations that represent the full distribution, evaluating our property of interest for these samples, and calculating their average.</p>
+<p>This concept of sampling is fundamental throughout science and statistics. Consider estimating the average height of people in Britain. Measuring everyone’s height is impractical, but we can measure a representative sample and use that sample’s average as an estimate of the true population average. The key requirement is that our sample must be representative—it should reflect the true probability distribution of the property we’re measuring. For instance, sampling players arriving for a basketball tournament would likely produce a significant overestimate of the average British height, as basketball players tend to be taller than the general population. In contrast, measuring the heights of people passing by on a street corner on a Saturday afternoon would provide a more representative sample of the British population.</p>
+<p>When we sample directly from the correct probability distribution (for example, by randomly selecting British citizens with equal probability), we can use simple averaging without additional weighting factors. However, if our sampling method is biased (like measuring only basketball players), we would need to apply appropriate weighting corrections.</p>
+<p>This principle applies to chemical systems as well. If we could generate configurations directly according to the Boltzmann distribution, calculating thermodynamic properties would simply require averaging the property values:</p>
+<p><span class="math display">\[\begin{equation}
+\langle A \rangle \approx \frac{1}{N} \sum_{i=1}^{N} A(\mathbf{r}_i)
+\end{equation}\]</span></p>
+<p>Where the configurations <span class="math inline">\(\mathbf{r}_i\)</span> are selected with probability proportional to <span class="math inline">\(\exp(-U(\mathbf{r}_i)/kT)\)</span>.</p>
+</div>
+<div id="two-approaches-to-sampling" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Two Approaches to Sampling<a href="introduction-to-monte-carlo-methods.html#two-approaches-to-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Two principal methods have been developed to address the sampling challenge in computational chemistry:</p>
+<div id="molecular-dynamics-approach" class="section level3 hasAnchor" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> Molecular Dynamics Approach<a href="introduction-to-monte-carlo-methods.html#molecular-dynamics-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Molecular Dynamics (MD) simulates atomic motion according to Newton’s laws. By following these physical trajectories, MD can sample configurations according to their Boltzmann probabilities. When a simulation trajectory visits a suitably representative set of configurations in the relevant regions of configuration space, the time average provides a good approximation of the desired ensemble average:</p>
+<p><span class="math display">\[\begin{equation}
+\langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)
+\end{equation}\]</span></p>
+<p>Where <span class="math inline">\(M\)</span> is the number of time steps.</p>
+<p>However, the effectiveness of MD sampling depends on the system’s energy landscape. Consider a protein folding example: if high energy barriers separate different conformational states, the protein may remain trapped in one conformation for the entire simulation duration. The resulting time average would reflect only a small subset of the relevant configuration space, not the true equilibrium ensemble.</p>
+<p>Timescales present another challenge. Many important chemical processes occur on microsecond to second timescales, while individual MD time steps typically represent femtoseconds. This creates a fundamental gap between simulation capability and the time needed to observe certain phenomena. For instance, studying a slow conformational change or a rare reaction event may require prohibitively long simulation times.</p>
+<p>Additionally, some systems inherently resist treatment via continuous dynamics. Lattice models with discrete site occupancies, magnetic materials with fixed spin orientations, or any problem where variables can only take discrete values often require different sampling approaches altogether.</p>
+</div>
+<div id="monte-carlo-approach" class="section level3 hasAnchor" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Monte Carlo Approach<a href="introduction-to-monte-carlo-methods.html#monte-carlo-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Monte Carlo (MC) methods, named after the famous casino district in Monaco, use random numbers to estimate complex averages through sampling. This approach offers a powerful alternative to Molecular Dynamics for calculating equilibrium properties.</p>
+<p>In its simplest form, Monte Carlo sampling involves generating configurations using random numbers, evaluating the property of interest for each configuration, and computing the average of these values.</p>
+</div>
+</div>
+<div id="fundamental-monte-carlo-examples" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Fundamental Monte Carlo Examples<a href="introduction-to-monte-carlo-methods.html#fundamental-monte-carlo-examples" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Before addressing the sampling challenges in chemical systems, let’s examine two classic examples that illustrate the power of Monte Carlo methods with uniform sampling. These examples demonstrate the core principles using simple problems where each possible outcome has an equal probability of occurring.</p>
+<div id="estimating-π-by-monte-carlo-integration" class="section level3 hasAnchor" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> Estimating π by Monte Carlo Integration<a href="introduction-to-monte-carlo-methods.html#estimating-π-by-monte-carlo-integration" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>One of the simplest demonstrations of Monte Carlo methods is estimating the value of <span class="math inline">\(\pi\)</span>. Consider a circle with radius 1 inscribed inside a square with side length 2. The area of the circle is <span class="math inline">\(\pi\)</span>, while the area of the square is 4. Therefore, the ratio of these areas is <span class="math inline">\(\pi/4\)</span>.</p>
+<p>We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. The procedure involves generating <span class="math inline">\(N\)</span> random points with coordinates <span class="math inline">\((x,y)\)</span>, where <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are uniformly distributed between −1 and 1. We then count how many points <span class="math inline">\(M\)</span> satisfy <span class="math inline">\(x^2 + y^2 \leq 1\)</span>, which indicates they fall within the circle. The estimate for <span class="math inline">\(\pi\)</span> is given by: <span class="math inline">\(\pi \approx 4 \times M/N\)</span>. This approach demonstrates how random sampling can solve a deterministic problem.</p>
+</div>
+<div id="function-averaging-and-numerical-integration" class="section level3 hasAnchor" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> Function Averaging and Numerical Integration<a href="introduction-to-monte-carlo-methods.html#function-averaging-and-numerical-integration" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Our second example involves calculating the average value of a function over a specific interval. Consider finding the average value of <span class="math inline">\(\sin^2(x)\)</span> over the interval <span class="math inline">\([0,\pi]\)</span>.</p>
+<p>Mathematically, this average is defined as:</p>
+<p><span class="math display">\[\begin{equation}
+\text{Average value} = \frac{1}{\pi} \times \int_0^{\pi} \sin^2(x) dx
+\end{equation}\]</span></p>
+<p>The analytical solution to this integral is 1/2.</p>
+<p>Using Monte Carlo methods, we can estimate this average by generating uniform random <span class="math inline">\(x\)</span>-values between 0 and <span class="math inline">\(\pi\)</span>, calculating <span class="math inline">\(\sin^2(x)\)</span> for each point, and then averaging these results.</p>
+<p>This procedure can be generalized to estimate any definite integral:</p>
+<p><span class="math display">\[\begin{equation}
+\int_a^b f(x) dx \approx (b-a) \times \frac{1}{N} \sum_{i=1}^{N} f(x_i)
+\end{equation}\]</span></p>
+<p>Where <span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, …, <span class="math inline">\(x_n\)</span> are uniform random numbers between <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>.</p>
+<p>The strength of this approach becomes apparent when dealing with multi-dimensional integrals, where traditional numerical methods become exponentially more expensive as dimensionality increases.</p>
+</div>
+</div>
+<div id="statistical-uncertainty-in-monte-carlo-methods" class="section level2 hasAnchor" number="1.5">
+<h2><span class="header-section-number">1.5</span> Statistical Uncertainty in Monte Carlo Methods<a href="introduction-to-monte-carlo-methods.html#statistical-uncertainty-in-monte-carlo-methods" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A fundamental characteristic of all Monte Carlo methods is that they produce estimates rather than exact answers. Each time we run a Monte Carlo simulation with a different sequence of random numbers, we get a slightly different result. This variation is the source of statistical uncertainty in Monte Carlo methods.</p>
+<p>Unlike deterministic methods, which might have errors from approximations but give the same answer every time, Monte Carlo methods produce different answers on different runs. This inherent variability means we must consider Monte Carlo results as estimates with associated uncertainty.</p>
+<p>The precision of these estimates improves as we increase the number of samples. Statistical uncertainty decreases proportionally to <span class="math inline">\(1/\sqrt{N}\)</span>, where <span class="math inline">\(N\)</span> is the number of random samples. To reduce the uncertainty by half, we need to use four times as many samples. This scaling behavior is characteristic of random sampling methods and remains independent of the dimensionality of the problem—a significant advantage in high-dimensional applications.</p>
+<p>When reporting results from Monte Carlo simulations, it is essential to always include the associated uncertainties alongside the estimated values. This practice is a fundamental aspect of scientific reporting in computational chemistry and allows others to properly evaluate the reliability of the results.</p>
+</div>
+<div id="summary-and-preview" class="section level2 hasAnchor" number="1.6">
+<h2><span class="header-section-number">1.6</span> Summary and Preview<a href="introduction-to-monte-carlo-methods.html#summary-and-preview" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="key-takeaways-from-lecture-1" class="section level3 hasAnchor" number="1.6.1">
+<h3><span class="header-section-number">1.6.1</span> Key Takeaways from Lecture 1<a href="introduction-to-monte-carlo-methods.html#key-takeaways-from-lecture-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Monte Carlo methods provide powerful tools for estimating averages in complex systems through statistical sampling. We’ve explored:</p>
+<ul>
+<li>The basic principles of random sampling</li>
+<li>How Monte Carlo techniques can be applied to mathematical problems</li>
+<li>The inherent statistical uncertainty in Monte Carlo results and how it decreases with sample size</li>
+</ul>
+<p>The examples in this lecture have all used uniform sampling—where each possible outcome has an equal probability of being selected. This approach works well for many mathematical problems, including certain numerical integration tasks and geometrical probability calculations.</p>
+</div>
+<div id="looking-ahead-to-lecture-2" class="section level3 hasAnchor" number="1.6.2">
+<h3><span class="header-section-number">1.6.2</span> Looking Ahead to Lecture 2<a href="introduction-to-monte-carlo-methods.html#looking-ahead-to-lecture-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In the next lecture, we’ll extend Monte Carlo methods to chemical systems, which present additional challenges. We’ll explore how to sample molecular configurations according to the Boltzmann distribution introduced earlier, allowing us to calculate thermodynamic properties of realistic chemical systems.</p>
+<p>The Metropolis algorithm will provide a solution to the challenge of sampling from the Boltzmann distribution without knowing the partition function. This method has become a cornerstone in computational chemistry, enabling Monte Carlo simulations across a wide range of applications.</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/bjmorgan/CH22013/main/lecture_01/lecture_01.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section"
+  },
+  "mathjax": {
+    "extensions": "mhchem.js"
+  },
+  "mathjax_config": {
+    "TeX": {
+      "Macros": {
+        "conc": [
+          "[\mathrm{#1}]",
+          1
+        ],
+        "diffc": [
+          "\frac{\mathrm{d}\conc{#1}}{\mathrm{d}t}",
+          1
+        ]
+      }
+    }
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
