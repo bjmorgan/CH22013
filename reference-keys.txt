@@ -2,7 +2,7 @@ fig:fig-ising-ring
 fig:fig-ising-configs
 fig:fig-mc-trajectory
 fig:fig-temp-dependence
-introduction-to-monte-carlo-methods
+monte-carlo-introduction
 introduction-to-averaging-sampling
 the-statistical-nature-of-chemical-systems
 probability-distributions
