@@ -1,3 +1,13 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  dev = 'png',
+  dpi = 300,
+  echo = FALSE
+)
+# Set global knitr options for figure handling
+knitr::opts_knit$set(process_pdf = TRUE)
+```
+
 # Introduction to Monte Carlo Methods
 
 ## Introduction to Averaging & Sampling
