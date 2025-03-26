@@ -14,7 +14,7 @@ $$
 Where $A_i$ is the value of property A in state i, and $P_i$ is the probability of state $i$ occurring. In many problems of this type, evaluating this sum exactly is impossible due to the existence of an enormous number of states.
 Monte Carlo methods allow us to estimate $\langle A \rangle$ by sampling a subset of randomly chosen states.
 
-In the examples in Lecture 1, we used uniform sampling—where each possible location in our sample space has an equal probability of being selected. In these examples, uniform sampling was effective because it allowed us to efficiently explore the regions of sample space relevant to the property we were estimating.
+In the examples in Lecture \@ref(monte-carlo-introduction), we used uniform sampling&mdash;where each possible location in our sample space has an equal probability of being selected. In these examples, uniform sampling was effective because it allowed us to efficiently explore the regions of sample space relevant to the property we were estimating.
 
 For chemical systems at equilibrium, however, uniform sampling is highly inefficient, frequently to the extent of being computationally intractable, and we instead use non-uniform sampling to more efficiently estimate $\langle A \rangle$.
 
@@ -26,7 +26,7 @@ $$
 P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
 $$
 
-Where the partition function Z is:
+Where the partition function $Z$ is:
 
 $$
 Z = \sum \exp(-U(\mathbf{r})/kT)
@@ -40,13 +40,13 @@ $$
 
 However, this approach requires knowing $Z$, which we typically cannot compute directly as it involves summing over all possible states—the very challenge we're using Monte Carlo to overcome.
 
-Fortunately, we can construct an alternative estimator that doesn't require prior knowledge of Z:
+Fortunately, we can construct an alternative estimator that doesn't require prior knowledge of $Z$:
 
 $$
 \langle A \rangle \approx \frac{\sum_{i=1}^N A(r_i) \exp(-U(r_i)/kT)}{\sum_{i=1}^N \exp(-U(r_i)/kT)}
 $$
 
-The denominator effectively estimates Z from our samples, allowing us to compute averages without knowing Z in advance.
+The denominator effectively estimates $Z$ from our samples, allowing us to compute averages without knowing $Z$ in advance.
 
 Even with this improved estimator, uniform sampling remains highly inefficient for chemical systems. The Boltzmann factor decreases exponentially as energy increases, meaning any property $\langle A \rangle$ is dominated by contributions from a relatively small number of low-energy states. The vast majority of possible states have high energies with negligible Boltzmann weights, yet these states occupy most of the configuration space.
 

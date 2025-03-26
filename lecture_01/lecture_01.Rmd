@@ -8,7 +8,7 @@ knitr::opts_chunk$set(
 knitr::opts_knit$set(process_pdf = TRUE)
 ```
 
-# Introduction to Monte Carlo Methods
+# Introduction to Monte Carlo Methods {#monte-carlo-introduction}
 
 ## Introduction to Averaging & Sampling
 
