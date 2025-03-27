@@ -7,6 +7,7 @@ rmd_files: [
   "index.Rmd",
   "lecture_01/lecture_01.Rmd",
   "lecture_02/lecture_02.Rmd"
+#  "lecture_03/lecture_03.Rmd"
 ]
 
 output:
