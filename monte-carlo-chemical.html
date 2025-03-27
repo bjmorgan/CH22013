@@ -109,18 +109,8 @@
 <li class="chapter" data-level="2.1" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#introduction-to-non-uniform-sampling"><i class="fa fa-check"></i><b>2.1</b> Introduction to Non-Uniform Sampling</a></li>
 <li class="chapter" data-level="2.2" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#boltzmann-sampling-and-the-inefficiency-of-uniform-sampling"><i class="fa fa-check"></i><b>2.2</b> Boltzmann Sampling and the Inefficiency of Uniform Sampling</a></li>
 <li class="chapter" data-level="2.3" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#the-solution-markov-chain-monte-carlo"><i class="fa fa-check"></i><b>2.3</b> The Solution: Markov Chain Monte Carlo</a></li>
-<li class="chapter" data-level="2.4" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#what-is-a-markov-chain"><i class="fa fa-check"></i><b>2.4</b> What is a Markov Chain?</a></li>
-<li class="chapter" data-level="2.5" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#the-principle-of-detailed-balance"><i class="fa fa-check"></i><b>2.5</b> The Principle of Detailed Balance</a></li>
-<li class="chapter" data-level="2.6" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#the-metropolis-algorithm"><i class="fa fa-check"></i><b>2.6</b> The Metropolis Algorithm</a></li>
-<li class="chapter" data-level="2.7" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#the-metropolis-monte-carlo-algorithm-in-practice"><i class="fa fa-check"></i><b>2.7</b> The Metropolis Monte Carlo Algorithm in Practice</a></li>
-<li class="chapter" data-level="2.8" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#why-we-record-rejected-moves-in-metropolis-monte-carlo"><i class="fa fa-check"></i><b>2.8</b> Why We Record Rejected Moves in Metropolis Monte Carlo</a>
-<ul>
-<li class="chapter" data-level="2.8.1" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#the-fundamental-principle"><i class="fa fa-check"></i><b>2.8.1</b> The Fundamental Principle</a></li>
-<li class="chapter" data-level="2.8.2" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#two-state-system-example"><i class="fa fa-check"></i><b>2.8.2</b> Two-State System Example</a></li>
-<li class="chapter" data-level="2.8.3" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#markov-chain-perspective"><i class="fa fa-check"></i><b>2.8.3</b> Markov Chain Perspective</a></li>
-</ul></li>
-<li class="chapter" data-level="2.9" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#example-4-spin-ising-model"><i class="fa fa-check"></i><b>2.9</b> Example: 4-Spin Ising Model</a></li>
-<li class="chapter" data-level="2.10" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#summary"><i class="fa fa-check"></i><b>2.10</b> Summary</a></li>
+<li class="chapter" data-level="2.4" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#markov-chain"><i class="fa fa-check"></i><b>2.4</b> What is a Markov Chain?</a></li>
+<li class="chapter" data-level="2.5" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#summary-and-preview-1"><i class="fa fa-check"></i><b>2.5</b> Summary and Preview</a></li>
 </ul></li>
 </ul>
 
@@ -149,7 +139,7 @@ In the first lecture, we focussed on the problem of calculating some property <s
 <p><span class="math display">\[
 \langle A \rangle = \sum_i A_i \times P_i
 \]</span></p>
-<p>Where <span class="math inline">\(A_i\)</span> is the value of property A in state i, and <span class="math inline">\(P_i\)</span> is the probability of state <span class="math inline">\(i\)</span> occurring. In many problems of this type, evaluating this sum exactly is impossible due to the existence of an enormous number of states.
+<p>Where <span class="math inline">\(A_i\)</span> is the value of property A in state <span class="math inline">\(i\)</span>, and <span class="math inline">\(P_i\)</span> is the probability of state <span class="math inline">\(i\)</span> occurring. In many problems of this type, evaluating this sum exactly is impossible due to the existence of an enormous number of states.
 Monte Carlo methods allow us to estimate <span class="math inline">\(\langle A \rangle\)</span> by sampling a subset of randomly chosen states.</p>
 <p>In the examples in Lecture <a href="monte-carlo-introduction.html#monte-carlo-introduction">1</a>, we used uniform sampling—where each possible location in our sample space has an equal probability of being selected. In these examples, uniform sampling was effective because it allowed us to efficiently explore the regions of sample space relevant to the property we were estimating.</p>
 <p>For chemical systems at equilibrium, however, uniform sampling is highly inefficient, frequently to the extent of being computationally intractable, and we instead use non-uniform sampling to more efficiently estimate <span class="math inline">\(\langle A \rangle\)</span>.</p>
@@ -181,7 +171,7 @@ Z = \sum \exp(-U(\mathbf{r})/kT)
 </div>
 <div id="the-solution-markov-chain-monte-carlo" class="section level2 hasAnchor" number="2.3">
 <h2><span class="header-section-number">2.3</span> The Solution: Markov Chain Monte Carlo<a href="monte-carlo-chemical.html#the-solution-markov-chain-monte-carlo" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>In Lecture 1, we discussed estimating the average height of people in Britain by measuring a representative sample. Let’s revisit this example to illustrate the challenge of sampling from a complex distribution.</p>
+<p>In Lecture <a href="monte-carlo-introduction.html#monte-carlo-introduction">1</a>, we discussed estimating the average height of people in Britain by measuring a representative sample. Let’s revisit this example to illustrate the challenge of sampling from a complex distribution.</p>
 <p>If we attempted uniform geographical sampling—randomly selecting 100m × 100m squares on a map of Britain and measuring everyone within each selected square—we would encounter severe inefficiency. Most selected squares would contain few or no people (falling on rural areas, forests, mountains, or bodies of water), while densely populated urban areas would be underrepresented. We would waste most of our sampling effort on empty regions while gathering insufficient data from cities and towns, where the majority of people live.</p>
 <p>This mirrors our problem in chemical systems: uniform sampling of configuration space predominantly generates high-energy states with negligible Boltzmann weights, while the physically relevant low-energy states occupy only a tiny fraction of the total space.</p>
 <p>A more efficient approach to our height-measuring problem would be to design a sampling process that naturally visits locations with frequency proportional to their population density. Imagine a “random walker” traversing the UK, who:</p>
@@ -199,12 +189,12 @@ Z = \sum \exp(-U(\mathbf{r})/kT)
 <p>Where configurations <span class="math inline">\(\mathbf{r}_i\)</span> are selected with frequency proportional to <span class="math inline">\(\exp(-U(\mathbf{r}_i)/kT)\)</span>.</p>
 <p>The challenge now becomes designing a sampling process that naturally visits configurations with frequencies matching their Boltzmann probabilities, without requiring prior knowledge of the full energy landscape. This is where the mathematics of Markov chains provides the solution.</p>
 </div>
-<div id="what-is-a-markov-chain" class="section level2 hasAnchor" number="2.4">
-<h2><span class="header-section-number">2.4</span> What is a Markov Chain?<a href="monte-carlo-chemical.html#what-is-a-markov-chain" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="markov-chain" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> What is a Markov Chain?<a href="monte-carlo-chemical.html#markov-chain" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The tool we need for sampling according to the Boltzmann distribution is called a “Markov chain.”
-At its core, a Markov chain is a sequence of states where each new state emerges from the current one through a probabilistic process. For a simple example, consider a weather model where tomorrow’s weather depends only on today’s weather: if it’s sunny today, there might be a 70% chance of sun tomorrow and 30% chance of rain; if it’s raining today, there might be a 60% chance of continued rain and 40% chance of sun tomorrow.
-The defining characteristic of a Markov chain is its “memoryless” property—the next state depends only on the current state, not on the history of previous states. In our weather example, this means that if it’s sunny today, the probability of sun tomorrow is 70% regardless of whether yesterday was sunny or rainy. This property is particularly useful for our sampling problem because it allows us to design a step-by-step process that explores configuration space efficiently without needing to track the entire history of the simulation.
-Mathematically, for systems with discrete states, we describe a Markov chain through transition probabilities—the chances of moving from one state to another in a single step. These probabilities form a transition matrix where each entry <span class="math inline">\(P(i\to j)\)</span> represents the probability of moving from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span>. For our simple weather example, we could represent these as:</p>
+At its core, a Markov chain is a sequence of states where each new state emerges from the current one through a probabilistic process. For a simple example, consider a weather model where tomorrow’s weather depends only on today’s weather: if it’s sunny today, there might be a 70% chance of sun tomorrow and 30% chance of rain; if it’s raining today, there might be a 60% chance of continued rain and 40% chance of sun tomorrow.</p>
+<p>The defining characteristic of a Markov chain is its “memoryless” property—the next state depends only on the current state, not on the history of previous states. In our weather example, this means that if it’s sunny today, the probability of sun tomorrow is 70% regardless of whether yesterday was sunny or rainy. This property is particularly useful for our sampling problem because it allows us to design a step-by-step process that explores configuration space efficiently without needing to track the entire history of the simulation.</p>
+<p>Mathematically, for systems with discrete states, we describe a Markov chain through transition probabilities—the chances of moving from one state to another in a single step. These probabilities form a transition matrix where each entry <span class="math inline">\(P(i\to j)\)</span> represents the probability of moving from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span>. For our simple weather example, we could represent these as:</p>
 <pre><code>                  Today
                   Sunny  Rainy
 Tomorrow  Sunny   0.7    0.4
@@ -214,185 +204,19 @@ Tomorrow  Sunny   0.7    0.4
 <p>Markov chains that are irreducible (can reach any state from any other state) and aperiodic (don’t cycle deterministically) eventually reach an equilibrium distribution. At equilibrium, the probability of finding the system in each state stabilizes to a constant value, even as the system continues to move between states. This stable probability distribution is called the “stationary distribution” of the chain.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <p>For our sampling purpose, we need to design a Markov chain whose stationary distribution matches exactly the Boltzmann distribution. If we achieve this, then after running the chain for sufficient steps, the frequency with which we visit each configuration will naturally match its Boltzmann probability—solving our sampling problem.</p>
 </div>
-<div id="the-principle-of-detailed-balance" class="section level2 hasAnchor" number="2.5">
-<h2><span class="header-section-number">2.5</span> The Principle of Detailed Balance<a href="monte-carlo-chemical.html#the-principle-of-detailed-balance" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>At equilibrium in any Markov chain, the probability of finding the system in each state remains constant over time. This means that for each state, the total probability flow into that state must equal the total flow out—a condition known as “global balance.”</p>
-<p>One way to satisfy global balance is to require a stronger condition called “detailed balance.” Detailed balance requires that for each pair of states i and j, the probability flow from i to j exactly equals the probability flow from j back to i:</p>
-<p><span class="math display">\[
-\pi(i) \times P(i \to j) = \pi(j) \times P(j \to i)
-\]</span></p>
-<p>Where:</p>
-<ul>
-<li><span class="math inline">\(\pi(i)\)</span> is the equilibrium probability of state <span class="math inline">\(i\)</span> in our desired stationary distribution</li>
-<li><span class="math inline">\(P(i \to j)\)</span> is the transition probability from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span></li>
-</ul>
-<p>This equation has a straightforward interpretation: at equilibrium, the rate of transitions from <span class="math inline">\(i\)</span> to <span class="math inline">\(j\)</span> must exactly balance the rate of transitions from <span class="math inline">\(j\)</span> back to <span class="math inline">\(i\)</span>. This microscopic reversibility ensures that the overall population of each state remains constant.</p>
-<p>For our application to chemical systems, we want <span class="math inline">\(\pi(i)\)</span> to be the Boltzmann probability. Substituting the Boltzmann distribution into the detailed balance equation:</p>
-<p><span class="math display">\[
-\exp(-U(i)/kT) \times P(i \to j) = \exp(-U(j)/kT) \times P(j \to i)
-\]</span></p>
-<p>Rearranging to isolate the ratio of transition probabilities:</p>
-<p><span class="math display">\[
-\frac{P(i \to j)}{P(j \to i)} = \frac{\exp(-U(j)/kT)}{\exp(-U(i)/kT)} = \exp(-(U(j)-U(i))/kT)
-\]</span></p>
-<p>This equation provides a crucial constraint: any Markov chain with transition probabilities satisfying this relationship will have the Boltzmann distribution as its stationary distribution. The ratio of forward and backward transition probabilities must equal the exponential of the negative energy difference divided by kT.</p>
-<p>Note that this equation does not fully specify the transition probabilities—it only constrains their ratio. This flexibility allows us to design various algorithms that satisfy detailed balance while being computationally efficient.</p>
-</div>
-<div id="the-metropolis-algorithm" class="section level2 hasAnchor" number="2.6">
-<h2><span class="header-section-number">2.6</span> The Metropolis Algorithm<a href="monte-carlo-chemical.html#the-metropolis-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>In 1953, Nicholas Metropolis and colleagues published an algorithm that provides a simple and powerful way to satisfy detailed balance. Their approach has become a cornerstone of computational chemistry and physics.</p>
-<p>The key insight of the Metropolis method is to separate the transition probability into two parts:</p>
-<p><span class="math display">\[
-P(i \to j) = \alpha(i \to j) \times \text{acc}(i \to j)
-\]</span></p>
-<p>Where <span class="math inline">\(\alpha(i \to j)\)</span> is the proposal probability—the likelihood of suggesting a move from configuration <span class="math inline">\(i\)</span> to configuration <span class="math inline">\(j\)</span>—and <span class="math inline">\(\text{acc}(i \to j)\)</span> is the acceptance probability—the likelihood of accepting that proposed move.</p>
-<p>The simplest approach is to use symmetric proposal probabilities where <span class="math inline">\(\alpha(i \to j) = \alpha(j \to i)\)</span>. This might involve, for example, randomly displacing an atom in any direction with equal probability. With this simplification, our detailed balance condition becomes:</p>
-<p><span class="math display">\[
-\frac{\text{acc}(i \to j)}{\text{acc}(j \to i)} = \exp(-(U(j)-U(i))/kT)
-\]</span></p>
-<p>The Metropolis solution to this equation is:</p>
-<p><span class="math display">\[
-\text{acc}(i \to j) = \min(1, \exp(-(U(j)-U(i))/kT))
-\]</span></p>
-<p>This formula tells us that:</p>
-<ul>
-<li>If the proposed move decreases the energy (<span class="math inline">\(U(j) &lt; U(i)\)</span>), accept it with probability 1 (always)</li>
-<li>If the proposed move increases the energy, accept it with probability <span class="math inline">\(\exp(-(U(j)-U(i))/kT)\)</span></li>
-</ul>
-<p>The key property of this acceptance rule is that it mathematically guarantees sampling states according to their Boltzmann probabilities. When a simulation uses this acceptance criterion, it will generate configurations with frequencies proportional to <span class="math inline">\(\exp(-U/kT)\)</span>, provided the Markov chain can reach all relevant states. This is the efficient sampling method we need to focus computational effort on the physically relevant low-energy regions of configuration space.</p>
-</div>
-<div id="the-metropolis-monte-carlo-algorithm-in-practice" class="section level2 hasAnchor" number="2.7">
-<h2><span class="header-section-number">2.7</span> The Metropolis Monte Carlo Algorithm in Practice<a href="monte-carlo-chemical.html#the-metropolis-monte-carlo-algorithm-in-practice" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Let’s now translate the Metropolis acceptance criterion into a complete computational procedure. This practical algorithm provides a step-by-step framework for implementing Monte Carlo simulations across a range of chemical systems.</p>
-<p>The Metropolis Monte Carlo algorithm consists of the following steps that work together to generate a sequence of configurations sampled according to the Boltzmann distribution:</p>
-<ol style="list-style-type: decimal">
-<li><p><strong>Initialization</strong>: Begin with an initial configuration of your system. This might be a random arrangement, a regular lattice, or a known low-energy structure.</p></li>
-<li><p><strong>Energy calculation</strong>: Calculate the energy of this initial configuration <span class="math inline">\(U(\mathbf{r})\)</span> using an appropriate potential energy function for your system.</p></li>
-<li><p><strong>Move proposal</strong>: Propose a move to a new configuration <span class="math inline">\(\mathbf{r}&#39;\)</span>. The nature of this move depends on your system—it might involve displacing an atom, rotating a dihedral angle, flipping a spin, or other modifications appropriate to the degrees of freedom being studied.</p></li>
-<li><p><strong>Energy evaluation</strong>: Calculate the energy of the proposed configuration <span class="math inline">\(U(\mathbf{r}&#39;)\)</span>.</p></li>
-<li><p><strong>Energy difference</strong>: Compute the energy change that would result from this move: <span class="math inline">\(\Delta U = U(\mathbf{r}&#39;) - U(\mathbf{r})\)</span>.</p></li>
-<li><p><strong>Acceptance decision</strong>: Apply the Metropolis criterion to decide whether to accept the proposed move:</p>
-<ul>
-<li>If <span class="math inline">\(\Delta U \leq 0\)</span> (energy decreases or remains the same), accept the move.</li>
-<li>If <span class="math inline">\(\Delta U &gt; 0\)</span> (energy increases), generate a random number <span class="math inline">\(\xi\)</span> between 0 and 1.
-<ul>
-<li>If <span class="math inline">\(\xi &lt; \exp(-\Delta U/kT)\)</span>, accept the move.</li>
-<li>Otherwise, reject the move.</li>
-</ul></li>
-</ul></li>
-<li><p><strong>Configuration update</strong>: If the move is accepted, update your current configuration to <span class="math inline">\(\mathbf{r}&#39;\)</span>. If rejected, retain the original configuration <span class="math inline">\(\mathbf{r}\)</span>.</p></li>
-<li><p><strong>Property calculation</strong>: Calculate any properties of interest for the current configuration. These might include energies, structural parameters, or other observable quantities.</p></li>
-<li><p><strong>Iteration</strong>: Return to step 3 and repeat the process many times to explore configuration space thoroughly.</p></li>
-<li><p><strong>Analysis</strong>: After generating a sufficient number of configurations, compute averages of your calculated properties to estimate thermodynamic observables.</p></li>
-</ol>
-<p>This procedure embodies two important features of the Metropolis method:</p>
-<ol style="list-style-type: decimal">
-<li>It samples configurations according to their Boltzmann weights. After an initial equilibration period, the generated configurations properly represent the equilibrium distribution, reproducing complex thermodynamic behavior through simple local decisions.</li>
-<li>It applies universally across different types of systems. The same algorithm works for atomic systems, molecular simulations, spin models, or lattice systems, with only the move types and energy functions changing.</li>
-</ol>
-<p>These properties make the Metropolis Monte Carlo method a versatile and powerful tool for computational studies of equilibrium systems.</p>
-</div>
-<div id="why-we-record-rejected-moves-in-metropolis-monte-carlo" class="section level2 hasAnchor" number="2.8">
-<h2><span class="header-section-number">2.8</span> Why We Record Rejected Moves in Metropolis Monte Carlo<a href="monte-carlo-chemical.html#why-we-record-rejected-moves-in-metropolis-monte-carlo" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>When implementing the Metropolis algorithm, we include the current state in our statistics again when a proposed move is rejected. This aspect of the algorithm is sometimes confusing to newcomers, but it’s essential for correct sampling of the Boltzmann distribution.</p>
-<div id="the-fundamental-principle" class="section level3 hasAnchor" number="2.8.1">
-<h3><span class="header-section-number">2.8.1</span> The Fundamental Principle<a href="monte-carlo-chemical.html#the-fundamental-principle" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Our goal is to generate configurations with frequencies proportional to their Boltzmann weights. When we reject a move, we’re effectively saying that the current state should be counted again in our statistics. This repetition ensures that lower-energy states are sampled more frequently than higher-energy states, in accordance with their higher Boltzmann probabilities.</p>
-</div>
-<div id="two-state-system-example" class="section level3 hasAnchor" number="2.8.2">
-<h3><span class="header-section-number">2.8.2</span> Two-State System Example<a href="monte-carlo-chemical.html#two-state-system-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Consider a simple system with just two possible states: state 1 with energy <span class="math inline">\(E_1\)</span> and state 2 with energy <span class="math inline">\(E_2\)</span>, where <span class="math inline">\(E_2 &gt; E_1\)</span>. According to the Boltzmann distribution, the ratio of probabilities should be:</p>
-<p><span class="math display">\[\frac{P(2)}{P(1)} = \exp\left(-\frac{E_2 - E_1}{kT}\right)\]</span></p>
-<p>This ratio varies with temperature—at high temperatures it approaches 1, and at low temperatures it approaches 0.</p>
-<p>If we incorrectly record states only after accepted moves, our simulation would always alternate between states 1 and 2, giving equal sampling regardless of temperature. This contradicts the Boltzmann distribution, which requires state 1 to be increasingly favored as temperature decreases.</p>
-</div>
-<div id="markov-chain-perspective" class="section level3 hasAnchor" number="2.8.3">
-<h3><span class="header-section-number">2.8.3</span> Markov Chain Perspective<a href="monte-carlo-chemical.html#markov-chain-perspective" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>This can be understood from the mathematics of Markov chains. For a 2-state system, the transition matrix is:</p>
-<pre><code>           To state 1  To state 2
-From state 1    $P(1\to1)$    $P(1\to2)$
-From state 2    $P(2\to1)$    $P(2\to2)$</code></pre>
-<p>In a correct Metropolis implementation:</p>
-<ul>
-<li><span class="math inline">\(P(1\to2) = \min(1, \exp(-(E_2-E_1)/kT))\)</span>, which is less than 1 when <span class="math inline">\(E_2 &gt; E_1\)</span></li>
-<li><span class="math inline">\(P(1\to1) = 1 - P(1\to2)\)</span>, which is non-zero (representing rejected moves)</li>
-<li><span class="math inline">\(P(2\to1) = 1\)</span> (always accept moves that lower energy)</li>
-<li><span class="math inline">\(P(2\to2) = 0\)</span></li>
-</ul>
-<p>If we only recorded accepted moves, we’d effectively use a modified transition matrix that produces a uniform distribution, not the Boltzmann distribution.</p>
-<p>The correct implementation is to record a state after every attempted move:
-- If the move is accepted, record the new state
-- If the move is rejected, record the current state again</p>
-<p>At low temperatures, this means we’ll record state 1 many times in a row (multiple rejections), occasionally recording state 2, which quickly transitions back to state 1. This produces statistics with state 1 appearing much more frequently than state 2, correctly reflecting the Boltzmann distribution.</p>
-</div>
-</div>
-<div id="example-4-spin-ising-model" class="section level2 hasAnchor" number="2.9">
-<h2><span class="header-section-number">2.9</span> Example: 4-Spin Ising Model<a href="monte-carlo-chemical.html#example-4-spin-ising-model" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Let’s examine how the Metropolis algorithm works in practice with a simple example: a one-dimensional Ising model with four spins arranged in a ring (with periodic boundary conditions). Each spin can point either up (+1) or down (−1), interacting only with its nearest neighbors, as illustrated in Figure <a href="monte-carlo-chemical.html#fig:fig-ising-ring">2.1</a>.</p>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:fig-ising-ring"></span>
-<img src="lecture_02/figures/ising-ring.png" alt="A 4-spin Ising model with periodic boundary conditions. Each spin can point up (+1) or down (&amp;minus;1) and interacts with its two neighboring spins." width="20%" />
-<p class="caption">
-Figure 2.1: A 4-spin Ising model with periodic boundary conditions. Each spin can point up (+1) or down (−1) and interacts with its two neighboring spins.
-</p>
-</div>
-<p>The energy of this system is given by:</p>
-<p><span class="math display">\[
-H(\sigma) = -\sum_{\langle i,j \rangle} J_{ij} \sigma_i \sigma_j
-\]</span></p>
-<p>Where the sum runs over adjacent pairs of spins, with J representing the interaction strength. For ferromagnetic coupling (J &gt; 0), parallel spins have lower energy than antiparallel ones.</p>
-<p>With just four spins, we have only <span class="math inline">\(2^4 = 16\)</span> possible configurations. These configurations fall into three energy levels, as shown in Figure <a href="monte-carlo-chemical.html#fig:fig-ising-configs">2.2</a>:</p>
-<ul>
-<li>Highest energy (<span class="math inline">\(+4J\)</span>): Alternating up and down spins (antiferromagnetic). Two configurations with <span class="math inline">\(|m| = 0\)</span>.</li>
-<li>Intermediate energy (<span class="math inline">\(0J\)</span>): Twelve configurations with mixed spin alignments.</li>
-<li>Ground state (<span class="math inline">\(-4J\)</span>): All spins aligned (either all up or all down — ferromagnetic). Two configurations with magnitude of magnetization <span class="math inline">\(|m| = 4\)</span>.</li>
-</ul>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:fig-ising-configs"></span>
-<img src="lecture_02/figures/ising-configs.png" alt="All 16 possible spin configurations for a 4-spin Ising model, showing energy values and magnetization values." width="100%%" />
-<p class="caption">
-Figure 2.2: All 16 possible spin configurations for a 4-spin Ising model, showing energy values and magnetization values.
-</p>
-</div>
-<p>A Metropolis Monte Carlo simulation of this system works as follows:</p>
-<ol style="list-style-type: decimal">
-<li>Start with a random arrangement of the four spins.</li>
-<li>At each step, randomly select one spin and propose flipping it.</li>
-<li>Calculate the energy change <span class="math inline">\(\Delta E\)</span> that would result from this flip.</li>
-<li>Apply the Metropolis criterion: accept the flip if <span class="math inline">\(\Delta E \leq 0\)</span>; otherwise accept with probability <span class="math inline">\(\exp(-\Delta E/kT)\)</span>.</li>
-<li>Record the new configuration (or repeat the current one if the move was rejected).</li>
-</ol>
-<p>Figure <a href="monte-carlo-chemical.html#fig:fig-mc-trajectory">2.3</a> illustrates a portion of a Monte Carlo trajectory, showing how the system evolves through a sequence of configurations by accepting or rejecting proposed spin flips. Notice how the system tends to spend more time in lower-energy states, yet occasionally accepts moves to higher-energy states, allowing it to explore the full configuration space.</p>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:fig-mc-trajectory"></span>
-<img src="lecture_02/figures/mc-trajectory.png" alt="A portion of a Monte Carlo trajectory showing how the system evolves through a sequence of configurations. Each row shows the current spin state, the proposed move (highlighting the spin flipped in this move), the energy change for the proposed move, and the probability of the move being accepted. For proposed moves that would increase the total energy, i.e., $P_\mathrm{acc} &lt; 1$, the table also shows the random number generated. Finally the table records whether the proposed move was accepted or rejected." width="100%" />
-<p class="caption">
-Figure 2.3: A portion of a Monte Carlo trajectory showing how the system evolves through a sequence of configurations. Each row shows the current spin state, the proposed move (highlighting the spin flipped in this move), the energy change for the proposed move, and the probability of the move being accepted. For proposed moves that would increase the total energy, i.e., <span class="math inline">\(P_\mathrm{acc} &lt; 1\)</span>, the table also shows the random number generated. Finally the table records whether the proposed move was accepted or rejected.
-</p>
-</div>
-<p>After an initial equilibration period, the Metropolis algorithm ensures that the frequency with which we sample each state matches its Boltzmann probability. This means we can calculate thermodynamic properties by simply averaging over our collected samples. For instance, calculating the average magnetization magnitude <span class="math inline">\(\langle |M| \rangle\)</span> is straightforward—we average the magnetization magnitudes from our sampled configurations:</p>
-<p><span class="math display">\[
-\langle |M| \rangle \approx \frac{1}{N} \sum_{i=1}^N |M|_i
-\]</span></p>
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:fig-temp-dependence"></span>
-<img src="lecture_02/figures/temp-dependence.png" alt="Temperature dependence of average absolute magnetization in the 4-spin Ising model. The graph shows both the exact solution (solid line) and Monte Carlo results (points), with the high-temperature limit of 1.5 indicated." width="55%" />
-<p class="caption">
-Figure 2.4: Temperature dependence of average absolute magnetization in the 4-spin Ising model. The graph shows both the exact solution (solid line) and Monte Carlo results (points), with the high-temperature limit of 1.5 indicated.
-</p>
-</div>
-<p>Figure <a href="monte-carlo-chemical.html#fig:fig-temp-dependence">2.4</a> shows how temperature affects this system by plotting the average magnetization magnitude across a range of temperatures. At very low temperatures, the system remains “frozen” in one of the ground states with all spins aligned, giving <span class="math inline">\(\langle |M| \rangle = 4\)</span>. As temperature increases, thermal fluctuations allow higher-energy configurations to be sampled, and the average magnetization decreases, eventually approaching the high-temperature limit of <span class="math inline">\(\langle |M| \rangle = 1.5\)</span> where all configurations become equally probable.</p>
-<p>A key strength of the Monte Carlo method is that the procedure remains the same regardless of system size. For this 4-spin system, we have <span class="math inline">\(2^4 = 16\)</span> total states, and we can evaluate <span class="math inline">\(\langle |M| \rangle\)</span> by direct enumeration. However, for larger systems, direct enumeration quickly becomes impossible: a 100-spin system has <span class="math inline">\(2^{100} \approx 1.27 \times 10^{30}\)</span> states! Yet the Monte Carlo procedure remains exactly the same—we still select and flip individual spins, evaluate energy changes, and apply the Metropolis criterion. Through this local sampling process, the method efficiently explores the states with significant Boltzmann weights without requiring exhaustive enumeration.</p>
-</div>
-<div id="summary" class="section level2 hasAnchor" number="2.10">
-<h2><span class="header-section-number">2.10</span> Summary<a href="monte-carlo-chemical.html#summary" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>In this lecture, we’ve expanded our Monte Carlo toolkit to address the challenges of chemical systems. We’ve seen why the Boltzmann distribution requires specialized sampling techniques, and how the Metropolis algorithm provides an elegant solution through Markov Chain Monte Carlo.</p>
+<div id="summary-and-preview-1" class="section level2 hasAnchor" number="2.5">
+<h2><span class="header-section-number">2.5</span> Summary and Preview<a href="monte-carlo-chemical.html#summary-and-preview-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this lecture, we’ve introduced the concept of non-uniform sampling for chemical systems and identified why uniform sampling is inefficient for these applications. We’ve explored how the Boltzmann distribution governs the probability of states in chemical systems at equilibrium, and we’ve seen how this creates a challenge for computational sampling.</p>
 <p>The key concepts we’ve covered include:</p>
 <ul>
 <li>The fundamental inefficiency of uniform sampling for chemical systems</li>
 <li>The Boltzmann distribution and the exponential relationship between energy and probability</li>
-<li>How Markov chains generate samples from complex probability distributions</li>
-<li>The principle of detailed balance as a mathematical foundation for correct sampling</li>
-<li>The Metropolis acceptance criterion and its practical implementation</li>
-<li>A worked example using the 4-spin Ising model to demonstrate these principles</li>
+<li>The importance of focusing our sampling on low-energy regions of configuration space</li>
+<li>The concept of Markov Chain Monte Carlo as a solution to our sampling problem</li>
+<li>The basic properties and mathematics of Markov chains</li>
 </ul>
-<p>The Metropolis Monte Carlo algorithm efficiently focuses computational efforts on the low-energy regions that dominate Boltzmann-weighted averages without requiring exhaustive enumeration of the vast configuration space. This makes the method valuable for systems where direct calculation is prohibitive.</p>
+<p>We’ve developed an intuitive understanding of Markov chain sampling using the analogy of a random walker traveling through the UK to measure heights, showing how properly constructed random walks can efficiently sample from complex distributions.</p>
+<p>In the next lecture, we’ll build on this foundation to explore the specific mathematical conditions required for a Markov chain to sample from the Boltzmann distribution. We’ll introduce the principle of detailed balance and show how the Metropolis algorithm provides a practical implementation that allows efficient sampling of chemical systems. This will lead us to a complete algorithm for Metropolis Monte Carlo that can be applied to a wide range of systems in computational chemistry.</p>
 
 </div>
 </div>

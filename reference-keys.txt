@@ -1,7 +1,3 @@
-fig:fig-ising-ring
-fig:fig-ising-configs
-fig:fig-mc-trajectory
-fig:fig-temp-dependence
 monte-carlo-introduction
 introduction-to-averaging-sampling
 the-statistical-nature-of-chemical-systems
@@ -23,13 +19,5 @@ monte-carlo-chemical
 introduction-to-non-uniform-sampling
 boltzmann-sampling-and-the-inefficiency-of-uniform-sampling
 the-solution-markov-chain-monte-carlo
-what-is-a-markov-chain
-the-principle-of-detailed-balance
-the-metropolis-algorithm
-the-metropolis-monte-carlo-algorithm-in-practice
-why-we-record-rejected-moves-in-metropolis-monte-carlo
-the-fundamental-principle
-two-state-system-example
-markov-chain-perspective
-example-4-spin-ising-model
-summary
+markov-chain
+summary-and-preview-1
