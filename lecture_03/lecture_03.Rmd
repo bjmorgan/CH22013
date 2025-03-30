@@ -2,48 +2,47 @@
 
 ## Introduction
 
-In the previous lecture, we introduced the concept of Markov Chain Monte Carlo (MCMC) as a solution to the sampling problem in chemical systems. We explored why uniform sampling is highly inefficient for these systems, as it spends most computational effort on physically irrelevant high-energy configurations.
+In the [previous lecture](monte-carlo-chemical), we considered the problem of effective sampling of chemical systems. Uniform sampling—where we select configurations from the entire configuration space with equal probabilities—is typically highly inefficient and often computationally intractable. Uniform sampling predominantly generates physically irrelevant high-energy configurations, while the low-energy states that contribute the most to thermodynamic averages occupy only a tiny fraction of configuration space. For even modestly sized molecules, the vast majority of possible configurations have such high energies that their Boltzmann weights are effectively zero.
 
-The Boltzmann distribution, which we covered in Lecture \@ref(monte-carlo-introduction), dictates that states with lower energy are exponentially more probable than higher-energy states. We introduced Markov chains as the mathematical foundation for our sampling approach in Lecture \@ref(monte-carlo-chemical). A Markov chain is a sequence of states where each new state depends only on the current state, not on the history of previous states. The key insight was that properly constructed Markov chains eventually reach a stationary distribution—the frequency with which they visit different states stabilizes to a constant pattern.
+As a first step to addressing this problem, we introduced the concept of generating a sequence of samples, where each new configuration comes from applying a small, local change to the previous one. The key insight was that once we reach a high-probability region of configuration space, local moves tend to sample other high-probability configurations rather than producing highly unphysical structures.
+The mathematical foundation for this approach is the Markov chain, which provides a framework for generating this stochastic path through the set of all possible configurations. A crucial property of Markov chains is that, when properly constructed, they eventually reach a stationary distribution—the frequency with which they visit different states stabilises to a consistent pattern.
 
-For our purposes in computational chemistry, we need to design a Markov chain whose stationary distribution matches the Boltzmann distribution. When we achieve this, our simulation will naturally spend time in different molecular configurations proportional to their physical probabilities, allowing us to compute thermodynamic averages through simple averaging.
+In the context of computational chemistry, we want to be able to design Markov chains whose stationary distribution matches the Boltzmann distribution. When we achieve this, our simulation will naturally spend time in different molecular configurations proportional to their physical probabilities, allowing us to compute thermodynamic averages through simple averaging.^[Direct sampling from the Boltzmann distribution also provides maximum statistical efficiency—we get the lowest possible variance in our estimates for a fixed number of samples.]
 
-In this lecture, we'll explore how to construct such a Markov chain through the principle of detailed balance, and we'll implement this approach in the Metropolis Monte Carlo algorithm. We'll then examine the algorithm in practice, including important considerations for correct implementation, and demonstrate its application with a simple example system.
-
-## The Principle of Detailed Balance {#detailed-balance}
+## Detailed Balance
 
 At equilibrium in any Markov chain, the probability of finding the system in each state remains constant over time. This means that for each state, the total probability flow into that state must equal the total flow out—a condition known as "global balance."
 
 One way to satisfy global balance is to require a stronger condition called "detailed balance." Detailed balance requires that for each pair of states $i$ and $j$, the probability flow from $i$ to $j$ exactly equals the probability flow from $j$ back to $i$:
 
 $$
-\pi(i) \times P(i \to j) = \pi(j) \times P(j \to i)
+\pi_i \times P(i \to j) = \pi_j \times P(j \to i)
 $$
 
 Where:
 
-- $\pi(i)$ is the equilibrium probability of state $i$ in our desired stationary distribution
+- $\pi_i$ is the equilibrium probability of state $i$ in our desired stationary distribution
 - $P(i \to j)$ is the transition probability from state $i$ to state $j$
 
 This equation has a straightforward interpretation: at equilibrium, the rate of transitions from $i$ to $j$ must exactly balance the rate of transitions from $j$ back to $i$. This microscopic reversibility ensures that the overall population of each state remains constant.
 
-For our application to chemical systems, we want $\pi(i)$ to be the Boltzmann probability. Substituting the Boltzmann distribution into the detailed balance equation:
+For our application to chemical systems, we want $\pi_i$ to be the Boltzmann probability. Substituting the Boltzmann distribution into the detailed balance equation:
 
 $$
-\exp(-U(i)/kT) \times P(i \to j) = \exp(-U(j)/kT) \times P(j \to i)
+\exp(-U_i/kT) \times P(i \to j) = \exp(-U_j/kT) \times P(j \to i)
 $$
 
 Rearranging to isolate the ratio of transition probabilities:
 
 $$
-\frac{P(i \to j)}{P(j \to i)} = \frac{\exp(-U(j)/kT)}{\exp(-U(i)/kT)} = \exp(-(U(j)-U(i))/kT)
+\frac{P(i \to j)}{P(j \to i)} = \frac{\exp(-U_j/kT)}{\exp(-U_i/kT)} = \exp(-(U_j-U_i)/kT)
 $$
 
-This equation provides a crucial constraint: any Markov chain with transition probabilities satisfying this relationship will have the Boltzmann distribution as its stationary distribution. The ratio of forward and backward transition probabilities must equal the exponential of the negative energy difference divided by kT.
+This equation provides a crucial constraint: any Markov chain with transition probabilities satisfying this relationship will have the Boltzmann distribution as its stationary distribution. 
 
 Note that this equation does not fully specify the transition probabilities&mdash;it only constrains their ratio. This flexibility allows us to design various algorithms that satisfy detailed balance while being computationally efficient.
 
-## The Metropolis Algorithm {#metropolis-algorithm}
+## The Metropolis Algorithm
 
 In 1953, Nicholas Metropolis and colleagues published an algorithm that provides a simple and powerful way to satisfy detailed balance. Their approach has become a cornerstone of computational chemistry and physics.
 
@@ -58,29 +57,29 @@ Where $\alpha(i \to j)$ is the proposal probability—the likelihood of suggesti
 The simplest approach is to use symmetric proposal probabilities where $\alpha(i \to j) = \alpha(j \to i)$. This might involve, for example, randomly displacing an atom in any direction with equal probability. With this simplification, our detailed balance condition becomes:
 
 $$
-\frac{\text{acc}(i \to j)}{\text{acc}(j \to i)} = \exp(-(U(j)-U(i))/kT)
+\frac{\text{acc}(i \to j)}{\text{acc}(j \to i)} = \exp(-(U_j-U_i)/kT)
 $$
 
 The Metropolis solution to this equation is:
 
 $$
-\text{acc}(i \to j) = \min(1, \exp(-(U(j)-U(i))/kT))
+\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/kT))
 $$
 
 This formula tells us that:
 
-- If the proposed move decreases the energy ($U(j) < U(i)$), accept it with probability 1 (always)
-- If the proposed move increases the energy, accept it with probability $\exp(-(U(j)-U(i))/kT)$
+- If the proposed move decreases the energy ($U_j < U_i$), accept it with probability 1 (always)
+- If the proposed move increases the energy, accept it with probability $\exp(-(U_j-U_i)/kT)$
 
-The key property of this acceptance rule is that it mathematically guarantees sampling states according to their Boltzmann probabilities. When a simulation uses this acceptance criterion, it will generate configurations with frequencies proportional to $\exp(-U/kT)$, provided the Markov chain can reach all relevant states. This is the efficient sampling method we need to focus computational effort on the physically relevant low-energy regions of configuration space.
+The key property of this acceptance rule is that it guarantees sampling states according to their Boltzmann probabilities. When a simulation uses this acceptance criterion, it will generate configurations with frequencies proportional to $\exp(-U/kT)$, provided the Markov chain can reach all relevant states. This is the efficient sampling method we need to focus computational effort on the physically relevant low-energy regions of configuration space.
 
-## The Metropolis Monte Carlo Algorithm in Practice {#metropolis-practice}
+## The Metropolis Monte Carlo Algorithm in Practice
 
-Let's now translate the Metropolis acceptance criterion into a complete computational procedure. This practical algorithm provides a step-by-step framework for implementing Monte Carlo simulations across a range of chemical systems.
+Let's now translate the Metropolis acceptance criterion into a complete practical algorithm that can be used to implement Monte Carlo simulations of chemical systems.
 
-The Metropolis Monte Carlo algorithm consists of the following steps that work together to generate a sequence of configurations sampled according to the Boltzmann distribution:
+The Metropolis Monte Carlo algorithm consists of the following steps:
 
-1. **Initialization**: Begin with an initial configuration of your system. This might be a random arrangement, a regular lattice, or a known low-energy structure.
+1. **Initialisation**: Begin with an initial configuration of your system. This might be a random arrangement, a regular lattice, or a known low-energy structure.
 
 2. **Energy calculation**: Calculate the energy of this initial configuration $U(\mathbf{r})$ using an appropriate potential energy function for your system.
 
@@ -98,26 +97,19 @@ The Metropolis Monte Carlo algorithm consists of the following steps that work t
 
 7. **Configuration update**: If the move is accepted, update your current configuration to $\mathbf{r}'$. If rejected, retain the original configuration $\mathbf{r}$.
 
-8. **Property calculation**: Calculate any properties of interest for the current configuration. These might include energies, structural parameters, or other observable quantities.
+8. **Property calculation**: Calculate any properties of interest for the current configuration (even if the proposed move was not accepted).
 
 9. **Iteration**: Return to step 3 and repeat the process many times to explore configuration space thoroughly.
 
 10. **Analysis**: After generating a sufficient number of configurations, compute averages of your calculated properties to estimate thermodynamic observables.
 
-This procedure embodies two important features of the Metropolis method:
+## Why We Record Rejected Moves in Metropolis Monte Carlo
 
-1. It samples configurations according to their Boltzmann weights. After an initial equilibration period, the generated configurations properly represent the equilibrium distribution, reproducing complex thermodynamic behavior through simple local decisions.
-2. It applies universally across different types of systems. The same algorithm works for atomic systems, molecular simulations, spin models, or lattice systems, with only the move types and energy functions changing.
+A key aspect of the Metropolis algorithm is that we include the current state in our statistics again when a proposed move is rejected. This feature is sometimes confusing, but it's essential for correct sampling of the Boltzmann distribution.
 
-These properties make the Metropolis Monte Carlo method a versatile and powerful tool for computational studies of equilibrium systems.
+### The Core Principle
 
-## Why We Record Rejected Moves in Metropolis Monte Carlo {#rejected-moves}
-
-When implementing the Metropolis algorithm, we include the current state in our statistics again when a proposed move is rejected. This aspect of the algorithm is sometimes confusing to newcomers, but it's essential for correct sampling of the Boltzmann distribution.
-
-### The Fundamental Principle
-
-Our goal is to generate configurations with frequencies proportional to their Boltzmann weights. When we reject a move, we're effectively saying that the current state should be counted again in our statistics. This repetition ensures that lower-energy states are sampled more frequently than higher-energy states, in accordance with their higher Boltzmann probabilities.
+Our goal is to generate configurations with frequencies proportional to their Boltzmann weights. When we reject a move, we must count the current state again in our statistics. By counting a low-energy state multiple times (when moves away from it are rejected), we ensure that lower-energy states appear more frequently in our sample, correctly reflecting their higher Boltzmann probabilities.
 
 ### Two-State System Example
 
@@ -127,38 +119,13 @@ $$\frac{P(2)}{P(1)} = \exp\left(-\frac{E_2 - E_1}{kT}\right)$$
 
 This ratio varies with temperature—at high temperatures it approaches $1$, and at low temperatures it approaches $0$.
 
-If we incorrectly record states only after accepted moves, our simulation would always alternate between states $1$ and $2$, giving equal sampling regardless of temperature. This contradicts the Boltzmann distribution, which requires state $1$ to be increasingly favored as temperature decreases.
+If we incorrectly record states only after accepted moves, our simulation would always alternate between states $1$ and $2$, giving equal sampling of both states regardless of temperature. This contradicts the Boltzmann distribution, which requires state $1$ to be increasingly favored as temperature decreases.
 
-### Markov Chain Perspective
+## Example: 4-Spin Ising Model
 
-This can be understood from the mathematics of Markov chains. For a $2$-state system, the transition matrix is:
+Let us examine how the Metropolis algorithm works in practice with a simple example: a one-dimensional Ising model with four spins arranged in a ring (with periodic boundary conditions). Each spin can point either up (+1) or down (−1), interacting only with its nearest neighbors, as illustrated in Figure \@ref(fig:ising-ring).
 
-```
-           To state 1  To state 2
-From state 1    P(1→1)    P(1→2)
-From state 2    P(2→1)    P(2→2)
-```
-
-In a correct Metropolis implementation:
-
-- $P(1\to2) = \min(1, \exp(-(E_2-E_1)/kT))$, which is less than 1 when $E_2 > E_1$
-- $P(1\to1) = 1 - P(1\to2)$, which is non-zero (representing rejected moves)
-- $P(2\to1) = 1$ (always accept moves that lower energy) 
-- $P(2\to2) = 0$
-
-If we only recorded accepted moves, we'd effectively use a modified transition matrix that produces a uniform distribution, not the Boltzmann distribution.
-
-The correct implementation is to record a state after every attempted move:
-- If the move is accepted, record the new state
-- If the move is rejected, record the current state again
-
-At low temperatures, this means we'll record state $1$ many times in a row (multiple rejections), occasionally recording state $2$, which quickly transitions back to state $1$. This produces statistics with state $1$ appearing much more frequently than state $2$, correctly reflecting the Boltzmann distribution.
-
-## Example: 4-Spin Ising Model {#ising-example}
-
-Let's examine how the Metropolis algorithm works in practice with a simple example: a one-dimensional Ising model with four spins arranged in a ring (with periodic boundary conditions). Each spin can point either up (+1) or down (−1), interacting only with its nearest neighbors, as illustrated in Figure \@ref(fig:fig-ising-ring).
-
-```{r fig-ising-ring, fig.cap="A 4-spin Ising model with periodic boundary conditions. Each spin can point up (+1) or down (−1) and interacts with its two neighboring spins.", out.width='20%', fig.align='center'}
+```{r ising-ring, fig.cap="A 4-spin Ising model with periodic boundary conditions. Each spin can point up (+1) or down (−1) and interacts with its two neighboring spins.", out.width='20%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/ising-ring.png")
 ```
 
@@ -168,15 +135,15 @@ $$
 H(\sigma) = -\sum_{\langle i,j \rangle} J_{ij} \sigma_i \sigma_j
 $$
 
-Where the sum runs over adjacent pairs of spins, with J representing the interaction strength. For ferromagnetic coupling (J > 0), parallel spins have lower energy than antiparallel ones.
+Where the sum runs over adjacent pairs of spins, with $J$ representing the interaction strength. For ferromagnetic coupling ($J > 0$), parallel spins have lower energy than antiparallel ones.
 
-With just four spins, we have only $2^4 = 16$ possible configurations. These configurations fall into three energy levels, as shown in Figure \@ref(fig:fig-ising-configs):
+With just four spins, we have only $2^4 = 16$ possible configurations. These configurations fall into three energy levels, as shown in Figure \@ref(fig:ising-configs):
 
-- Highest energy (+4J): Alternating up and down spins (antiferromagnetic). Two configurations with $|m| = 0$.
-- Intermediate energy (0J): Twelve configurations with mixed spin alignments.
-- Ground state (−4J): All spins aligned (either all up or all down — ferromagnetic). Two configurations with magnitude of magnetization $|m| = 4$.
+- Highest energy ($+4J$): Alternating up and down spins (antiferromagnetic). Two configurations with $|m| = 0$.
+- Intermediate energy ($0J$): Twelve configurations with mixed spin alignments.
+- Ground state ($−4J$): All spins aligned (either all up or all down — ferromagnetic). Two configurations with magnitude of magnetisation $|m| = 4$.
 
-```{r fig-ising-configs, fig.cap="All 16 possible spin configurations for a 4-spin Ising model, showing energy values and magnetization values.", out.width='100%', fig.align='center'}
+```{r ising-configs, fig.cap="All 16 possible spin configurations for a 4-spin Ising model, showing energy values and magnetisation values.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/ising-configs.png")
 ```
 
@@ -188,37 +155,150 @@ A Metropolis Monte Carlo simulation of this system works as follows:
 4. Apply the Metropolis criterion: accept the flip if $\Delta E \leq 0$; otherwise accept with probability $\exp(-\Delta E/kT)$.
 5. Record the new configuration (or repeat the current one if the move was rejected).
 
-Figure \@ref(fig:fig-mc-trajectory) illustrates a portion of a Monte Carlo trajectory, showing how the system evolves through a sequence of configurations by accepting or rejecting proposed spin flips. Notice how the system tends to spend more time in lower-energy states, yet occasionally accepts moves to higher-energy states, allowing it to explore the full configuration space.
+Figure \@ref(fig:mc-trajectory) illustrates a portion of a Monte Carlo trajectory, showing how the system evolves through a sequence of configurations by accepting or rejecting proposed spin flips. Notice how the simulation only occasionally accepts moves that would increase the energy.
 
-```{r fig-mc-trajectory, fig.cap="A portion of a Monte Carlo trajectory showing how the system evolves through a sequence of configurations. Each row shows the current spin state, the proposed move (highlighting the spin flipped in this move), the energy change for the proposed move, and the probability of the move being accepted. For proposed moves that would increase the total energy, i.e., $P_\\mathrm{acc} < 1$, the table also shows the random number generated. Finally the table records whether the proposed move was accepted or rejected.",  out.width='100%', fig.align='center'}
+```{r mc-trajectory, fig.cap="A portion of a Monte Carlo trajectory showing how the system evolves through a sequence of configurations. Each row shows the current spin state, the proposed move (highlighting the spin flipped in this move), the energy change for the proposed move, and the probability of the move being accepted. For proposed moves that would increase the total energy, i.e., $P_\\mathrm{acc} < 1$, the table also shows the random number generated. Finally the table records whether the proposed move was accepted or rejected.",  out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/mc-trajectory.png")
 ```
 
-After an initial equilibration period, the Metropolis algorithm ensures that the frequency with which we sample each state matches its Boltzmann probability. This means we can calculate thermodynamic properties by simply averaging over our collected samples. For instance, calculating the average magnetization magnitude $\langle |M| \rangle$ is straightforward—we average the magnetization magnitudes from our sampled configurations:
+After an initial equilibration period, the Metropolis algorithm ensures that the frequency with which we sample each state matches its Boltzmann probability. This means we can calculate thermodynamic properties by simply averaging over our collected samples. For instance, calculating the average magnetisation magnitude $\langle |M| \rangle$ is straightforward—we average the magnetisation magnitudes from our sampled configurations:
 
 $$
 \langle |M| \rangle \approx \frac{1}{N} \sum_{i=1}^N |M|_i
 $$
 
-```{r fig-temp-dependence, fig.cap="Temperature dependence of average absolute magnetization in the 4-spin Ising model. The graph shows both the exact solution (solid line) and Monte Carlo results (points), with the high-temperature limit of 1.5 indicated.", out.width='55%', fig.align='center'}
-knitr::include_graphics("lecture_03/figures/temp-dependence.png") 
-```
+At very low temperatures, the system remains "frozen" in one of the ground states with all spins aligned, giving $\langle |M| \rangle = 4$. As temperature increases, thermal fluctuations allow higher-energy configurations to be sampled, and the average magnetisation decreases, eventually approaching the high-temperature limit of $\langle |M| \rangle = 1.5$ where all configurations become equally probable.
 
-Figure \@ref(fig:fig-temp-dependence) shows how temperature affects this system by plotting the average magnetization magnitude across a range of temperatures. At very low temperatures, the system remains "frozen" in one of the ground states with all spins aligned, giving $\langle |M| \rangle = 4$. As temperature increases, thermal fluctuations allow higher-energy configurations to be sampled, and the average magnetization decreases, eventually approaching the high-temperature limit of $\langle |M| \rangle = 1.5$ where all configurations become equally probable.
+```{r ising-results, fig.cap="Average magnetisation magnitude, $\\langle |M| \\rangle$, as a function of temperature, for a 4-spin Ising system with $J=0.012$ eV, calculated using Metropolis Monte Carlo (circles) and by direct summation of the exact result (solid line). The horizontal dashed line shows the high-temperature limit result, $\\langle |M| \\rangle=1.5$.", out.width='50%', fig.align='center'}
+knitr::include_graphics("lecture_03/figures/ising-results.png")
+```
 
 A key strength of the Monte Carlo method is that the procedure remains the same regardless of system size. For this $4$-spin system, we have only $16$ total states, and we can evaluate $\langle |M| \rangle$ by direct enumeration. However, for larger systems, direct enumeration quickly becomes impossible: a $100$-spin system has $2^{100} \approx 1.27 \times 10^{30}$ states! Yet the Monte Carlo procedure remains exactly the same—we still select and flip individual spins, evaluate energy changes, and apply the Metropolis criterion. Through this local sampling process, the method efficiently explores the states with significant Boltzmann weights without requiring exhaustive enumeration.
 
+## Example: Butane Conformations
+
+Moving from discrete to continuous configuration space, let's examine a more chemical example: sampling the conformational preferences of butane (C₄H₁₀). This simple hydrocarbon serves as an excellent model system for studying torsional preferences in molecules.
+
+The energy of butane varies with rotation around its central carbon-carbon bond, characterized by the dihedral angle $\phi$. This torsional energy landscape features three main conformations:
+
+1. The **anti** conformation ($\phi = 180°$): This extended structure minimizes steric interactions between terminal methyl groups, making it the global energy minimum.
+
+2. Two equivalent **gauche** conformations ($\phi \approx 60°$ and $\phi \approx 300°$): These conformations introduce some steric strain but remain thermally accessible at room temperature.
+
+3. The **eclipsed** or **cis** conformation ($\phi = 0°$): This high-energy conformation places the methyl groups in close proximity, creating steric repulsion.
+
+The potential energy as a function of this dihedral angle can be approximated by:
+
+\begin{equation}
+U(\phi) = A_0 + A_1(1+\cos\phi) + A_2(1-\cos2\phi) + A_3(1+\cos3\phi)
+(\#eq:butane-PES)
+\end{equation}
+
+Where the coefficients $A_i$ determine the relative energies of the different conformations. This functional form captures the threefold periodicity and energy barriers of butane's rotational potential.
+
+This potential energy function creates distinct wells corresponding to the anti and gauche conformations, separated by energy barriers. These barriers represent configurations where methyl groups come into close proximity, creating unfavorable steric interactions.
+
+```{r butane-PES, fig.cap="Potential energy surface for butane's dihedral angle rotation, modelled using Equation \\@ref(eq:butane-PES). Note the global minimum at 180° (anti conformation) and the two local minima at approximately 60° and 300° (gauche conformations), separated by energy barriers representing steric clash configurations.", out.width='50%', fig.align='center'}
+knitr::include_graphics("lecture_03/figures/butane-PES.png")
+```
+
+A Metropolis Monte Carlo simulation of butane's conformational space proceeds as follows:
+
+1. Begin with an initial dihedral angle, perhaps $\phi = 180°$ (the anti conformation).
+
+2. Propose a new dihedral angle by adding a small random perturbation: $\phi' = \phi + \Delta\phi$, where $\Delta\phi$ is chosen from a symmetric distribution. The size of $\Delta\phi$ affects sampling efficiency—too small and the simulation explores conformational space slowly; too large and most moves are rejected due to the resulting high-energy configurations.
+
+3. Calculate the energy change: $\Delta U = U(\phi') - U(\phi)$.
+
+4. Apply the Metropolis criterion to decide whether to accept the new angle:
+   - If $\Delta U \leq 0$, accept the move.
+   - If $\Delta U > 0$, accept with probability $\exp(-\Delta U/kT)$.
+
+5. Record the current dihedral angle (either the new one if accepted, or the previous one if rejected).
+
+6. Repeat steps 2-5 many times to generate a distribution of dihedral angles.
+
+After sufficient sampling, the histogram of dihedral angles visited during the simulation reveals the conformational preferences of butane at the simulation temperature. Figure \@ref(fig:butane-results-500K) shows results from a simulation at 500 K.
+
+```{r butane-results-500K, fig.cap="Probability distribution of butane's dihedral angles at 500 K from Metropolis Monte Carlo sampling (histogram). The solid red line shows the exact Boltzmann distribution calculated analytically. Note the excellent agreement between simulation and theory, with the anti conformation (180°) being most populated, followed by the two gauche conformations at approximately 60° and 300°.", out.width='50%', fig.align='center'}
+knitr::include_graphics("lecture_03/figures/butane-results-500K.png")
+```
+
+The agreement between the Monte Carlo histogram and the exact distribution (red line) confirms that our sampling correctly reproduces the Boltzmann distribution. The anti conformation (180°) is most populated, with the gauche conformations (around 60° and 300°) also showing significant occupancy.
+
+## Equilibration and Sampling
+
+When beginning a Monte Carlo simulation, the initial configuration is often far from representative of typical equilibrium structures. To avoid biasing results, data from an initial "equilibration" or "burn-in" phase must be discarded before collecting statistics for analysis.
+
+From a theoretical perspective, equilibration is precisely defined as the time required for the Markov chain to converge to its stationary distribution—in our case, the Boltzmann distribution. At this point, the simulation has effectively "forgotten" its initial configuration and is sampling all relevant regions of configuration space with their correct Boltzmann probabilities.
+
+In practice, determining when equilibration has occurred requires systematic assessment through several quantitative approaches:
+
+- Energy monitoring: Tracking the system's energy throughout the simulation. Initially, energy often exhibits a systematic drift that transitions to stochastic fluctuations around a stable mean once local equilibration is achieved.
+- Property stabilization: Monitoring key observable properties until their running averages and distributions stabilize within statistical uncertainty.
+- Multiple starting points: Initiating several simulations from different configurations. Convergence to statistically equivalent results suggests proper equilibration in each case.
+- Autocorrelation analysis: Calculating time correlation functions for relevant properties to quantify the decorrelation time of the simulation.
+
+It is important to recognize that these practical indicators of equilibration may indicate only local rather than global equilibration. A simulation can exhibit all the hallmarks of proper equilibration—stable energy fluctuations, consistent property averages, and decaying correlations—while remaining confined to a restricted region of configuration space. In such cases, the system reaches a metastable equilibrium within a subset of the full configurational ensemble, rather than the true global equilibrium defined by the complete Boltzmann distribution.
+
+This limitation represents one of the fundamental challenges in Monte Carlo simulations of complex systems. When multiple regions of configuration space are separated by high energy barriers, transitions between these regions become exceedingly rare at relevant temperatures. Consequently, a simulation may appear fully equilibrated within a single region while never sampling other important configurations. Depending on the system complexity and the height of energy barriers, adequate sampling may necessitate significantly extended equilibration periods—sometimes requiring thousands or even millions of Monte Carlo steps. 
+
+## Temperature Effects and Sampling Challenges
+
+Temperature determines the equilibrium distribution we sample in Monte Carlo simulations through its direct presence in the Metropolis acceptance criterion:
+
+$\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/kT))$
+
+This temperature dependence affects our simulations in two distinct ways. First, it defines the theoretical Boltzmann distribution we aim to sample—at different temperatures, the same configurations have different equilibrium probabilities. Second, it influences the practical efficiency with which our simulation explores configuration space.
+
+```{r butane-results-highT, fig.cap="Probability distributions of butane's dihedral angles at increasing temperatures (500 K, 1000 K, and 2000 K). Elevated temperatures progressively flatten the distribution, with barriers becoming less significant as temperature increases. At 2000 K, the distribution approaches uniformity, indicating that thermal energy has largely overcome the rotational barriers.", out.width='100%', fig.align='center'}
+knitr::include_graphics("lecture_03/figures/butane-results-highT.png")
+```
+
+Figure \@ref(fig:butane-results-highT) demonstrates how increasing temperature transforms the distribution of butane dihedral angles. As temperature rises from 500 K to 1000 K and further to 2000 K, we observe a progressive flattening of the probability landscape. This flattening occurs because temperature effectively rescales the potential energy surface—dividing all energy differences by $kT$ in the Boltzmann factor.
+
+At 1000 K, the distribution shows notable changes compared to 500 K. The central anti conformation at 180° remains distinguishable but with reduced dominance, while the gauche conformations at approximately 60° and 300° gain population.
+
+At 2000 K, the distribution approaches uniformity. The three major conformations have similar probabilities, with only subtle differences remaining between energy minima and barriers. At this high temperature, the exponential term in the Metropolis criterion approaches unity even for substantial energy increases, causing the system to accept most proposed moves regardless of their energetic consequences.
+
+### Sampling Problems at Low Temperature
+
+```{r butane-results-50K, fig.cap="Probability distribution of butane's dihedral angles from a simulation at 50 K (histogram) compared with the theoretical Boltzmann distribution (red line). The simulation, initialized at φ = 60°, fails to sample the global minimum at 180° adequately and completely misses the third minimum near 270°, illustrating how low temperatures can trap simulations in local regions of configuration space.", out.width='50%', fig.align='center'}
+knitr::include_graphics("lecture_03/figures/butane-results-50K.png")
+```
+
+While the simulations at 500 K and above successfully sample the full range of dihedral angles and accurately reproduce the theoretical Boltzmann distribution, Figure \@ref(fig:butane-results-50K) reveals a fundamental sampling problem at low temperature. This simulation at 50 K was initialized with $\phi$ = 60°, and it remains trapped in the local minimum near this angle for much of the simulation time. Eventually, it transitions to the global minimum at 180°, but the relative populations between these two minima remain incorrect. The third minimum at approximately 270° is never visited during the simulation, though at this temperature even the exact distribution shows this conformation has very low probability.
+
+This butane example at 50 K illustrates a general issue that affects Monte Carlo simulations of many chemical systems. When the available thermal energy ($kT$) is small relative to the energy barriers separating different configurations, the Metropolis acceptance probability for barrier-crossing moves becomes vanishingly small. Consequently, the simulation may remain trapped in a subset of the full configuration space for the entire simulation duration.
+
+## The Ergodic Hypothesis
+
+The butane example at 50 K points to a fundamental assumption underlying Monte Carlo simulations: the ergodic hypothesis. This hypothesis states that the time average of a property (calculated from a single system observed for a sufficiently long time) equals the ensemble average (calculated across many systems at one moment, each sampled according to the appropriate equilibrium distribution).
+
+When we run a single Metropolis Monte Carlo trajectory and calculate averages from it, we are implicitly assuming that our simulation has adequately sampled the entire relevant configuration space according to the Boltzmann distribution. Only if this assumption holds can we expect our calculated properties to match the true equilibrium thermodynamic values.
+
+For a Markov chain Monte Carlo simulation to be ergodic, it must satisfy two mathematical conditions:
+
+- Irreducibility: The Markov chain must be able to reach any state from any other state through a sequence of allowed moves.
+- Aperiodicity: The chain must not cycle deterministically through a fixed sequence of states.
+
+As the 50 K butane simulation demonstrates, this assumption can fail in practical applications. Despite the Metropolis algorithm's mathematical guarantee of eventually sampling the correct Boltzmann distribution, the timescale required to adequately sample all relevant configurations might exceed any feasible simulation length. The 50 K simulation remains trapped in a subset of the configuration space, producing results that reflect only part of the full Boltzmann-weighted ensemble. In this case, the time average from our simulation does not equal the true ensemble average—the ergodic hypothesis breaks down.
+
+While the Metropolis algorithm theoretically allows transitions between all possible states, in practice high energy barriers can create situations where certain regions of configuration space become effectively isolated from others. This is analogous to our UK height sampling example from Lecture \@ref(monte-carlo-chemical)&mdash;if our random walker begins in Edinburgh without efficient transportation, they might thoroughly explore the Scottish cities but never reach London or Cardiff during the course of our survey. The heights measured would accurately represent Scotland's population, but fail to capture the demographics of the entire UK. Similarly, when energy barriers partition configuration space, the simulation results depend heavily on the initial configuration and fail to represent the complete equilibrium distribution. This practical limitation represents one of the most significant challenges in applying Monte Carlo methods to complex chemical systems.
+
 ## Summary
 
-In this lecture, we've developed the mathematical foundation for Metropolis Monte Carlo and explored its practical implementation. We've seen how the principle of detailed balance provides the conditions necessary for a Markov chain to sample from the Boltzmann distribution, and how the Metropolis acceptance criterion offers a simple yet powerful solution to satisfy these conditions.
+In this lecture, we've developed the mathematical foundation for Metropolis Monte Carlo and explored its practical implementation through examples and key considerations. The principle of detailed balance provides the necessary conditions for a Markov chain to sample from the Boltzmann distribution, while the Metropolis acceptance criterion offers an elegant solution to satisfy these conditions.
 
-The key concepts we've covered include:
+The key concepts we've explored include:
 
-- The principle of detailed balance as a mathematical foundation for correct sampling
-- How transition probabilities can be designed to satisfy detailed balance
-- The Metropolis acceptance criterion and its practical implementation
-- The importance of recording rejected moves for correct sampling
-- A worked example using the 4-spin Ising model to demonstrate these principles
+- The mathematical foundation of detailed balance and its application to chemical systems
+- How the Metropolis criterion solves the sampling problem for the Boltzmann distribution
+- Why counting rejected states is crucial for correct statistical weighting
+- The application of Metropolis Monte Carlo to both discrete (Ising) and continuous (butane) systems
+- Equilibration protocols and their limitations in complex systems
+- The ergodic hypothesis as both the theoretical foundation and practical challenge
+- How temperature fundamentally alters sampling behavior
 
-The Metropolis Monte Carlo algorithm efficiently focuses computational efforts on the low-energy regions that dominate Boltzmann-weighted averages without requiring exhaustive enumeration of the vast configuration space. This makes the method valuable for systems where direct calculation is prohibitive.
+The power of the Metropolis Monte Carlo method lies in its practicality. It requires only local energy calculations rather than global partition functions, works with any energy function, and can be implemented in remarkably few lines of code. With a simple acceptance rule, we can sample from the Boltzmann distribution for systems ranging from simple spin models to complex molecules, focusing our computational resources on the physically relevant regions of configuration space.
 
