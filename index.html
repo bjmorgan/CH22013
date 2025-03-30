@@ -23,7 +23,7 @@
 <meta name="author" content="Benjamin J. Morgan" />
 
 
-<meta name="date" content="2025-03-27" />
+<meta name="date" content="2025-03-30" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -112,6 +112,27 @@
 <li class="chapter" data-level="2.4" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#markov-chain"><i class="fa fa-check"></i><b>2.4</b> What is a Markov Chain?</a></li>
 <li class="chapter" data-level="2.5" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#summary-and-preview-1"><i class="fa fa-check"></i><b>2.5</b> Summary and Preview</a></li>
 </ul></li>
+<li class="chapter" data-level="3" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html"><i class="fa fa-check"></i><b>3</b> Metropolis Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#detailed-balance"><i class="fa fa-check"></i><b>3.2</b> Detailed Balance</a></li>
+<li class="chapter" data-level="3.3" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-metropolis-algorithm"><i class="fa fa-check"></i><b>3.3</b> The Metropolis Algorithm</a></li>
+<li class="chapter" data-level="3.4" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-metropolis-monte-carlo-algorithm-in-practice"><i class="fa fa-check"></i><b>3.4</b> The Metropolis Monte Carlo Algorithm in Practice</a></li>
+<li class="chapter" data-level="3.5" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#why-we-record-rejected-moves-in-metropolis-monte-carlo"><i class="fa fa-check"></i><b>3.5</b> Why We Record Rejected Moves in Metropolis Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-core-principle"><i class="fa fa-check"></i><b>3.5.1</b> The Core Principle</a></li>
+<li class="chapter" data-level="3.5.2" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#two-state-system-example"><i class="fa fa-check"></i><b>3.5.2</b> Two-State System Example</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#example-4-spin-ising-model"><i class="fa fa-check"></i><b>3.6</b> Example: 4-Spin Ising Model</a></li>
+<li class="chapter" data-level="3.7" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#example-butane-conformations"><i class="fa fa-check"></i><b>3.7</b> Example: Butane Conformations</a></li>
+<li class="chapter" data-level="3.8" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#equilibration-and-sampling"><i class="fa fa-check"></i><b>3.8</b> Equilibration and Sampling</a></li>
+<li class="chapter" data-level="3.9" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#temperature-effects-and-sampling-challenges"><i class="fa fa-check"></i><b>3.9</b> Temperature Effects and Sampling Challenges</a>
+<ul>
+<li class="chapter" data-level="3.9.1" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#sampling-problems-at-low-temperature"><i class="fa fa-check"></i><b>3.9.1</b> Sampling Problems at Low Temperature</a></li>
+</ul></li>
+<li class="chapter" data-level="3.10" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-ergodic-hypothesis"><i class="fa fa-check"></i><b>3.10</b> The Ergodic Hypothesis</a></li>
+<li class="chapter" data-level="3.11" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#summary"><i class="fa fa-check"></i><b>3.11</b> Summary</a></li>
+</ul></li>
 </ul>
 
       </nav>
@@ -132,7 +153,7 @@
 <div id="header">
 <h1 class="title">CH22013 Lecture Notes</h1>
 <p class="author"><em>Benjamin J. Morgan</em></p>
-<p class="date"><em>2025-03-27</em></p>
+<p class="date"><em>2025-03-30</em></p>
 </div>
 <div id="about" class="section level1 unnumbered hasAnchor">
 <h1>About<a href="index.html#about" class="anchor-section" aria-label="Anchor link to header"></a></h1>
@@ -193,7 +214,8 @@ gitbook.start({
     "options": null
   },
   "toc": {
-    "collapse": "section"
+    "collapse": "section",
+    "depth": 3
   },
   "mathjax": {
     "extensions": "mhchem.js"
