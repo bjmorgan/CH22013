@@ -246,7 +246,9 @@ This limitation represents one of the fundamental challenges in Monte Carlo simu
 
 Temperature determines the equilibrium distribution we sample in Monte Carlo simulations through its direct presence in the Metropolis acceptance criterion:
 
-$\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/kT))$
+$$
+\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/kT))
+$$
 
 This temperature dependence affects our simulations in two distinct ways. First, it defines the theoretical Boltzmann distribution we aim to sample—at different temperatures, the same configurations have different equilibrium probabilities. Second, it influences the practical efficiency with which our simulation explores configuration space.
 
