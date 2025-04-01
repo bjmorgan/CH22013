@@ -23,7 +23,7 @@
 <meta name="author" content="Benjamin J. Morgan" />
 
 
-<meta name="date" content="2025-03-30" />
+<meta name="date" content="2025-04-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -360,7 +360,9 @@ Figure 3.6: Probability distribution of butane’s dihedral angles at 500 K from
 <div id="temperature-effects-and-sampling-challenges" class="section level2 hasAnchor" number="3.9">
 <h2><span class="header-section-number">3.9</span> Temperature Effects and Sampling Challenges<a href="metropolis-monte-carlo.html#temperature-effects-and-sampling-challenges" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Temperature determines the equilibrium distribution we sample in Monte Carlo simulations through its direct presence in the Metropolis acceptance criterion:</p>
-<p><span class="math inline">\(\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/kT))\)</span></p>
+<p><span class="math display">\[
+\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/kT))
+\]</span></p>
 <p>This temperature dependence affects our simulations in two distinct ways. First, it defines the theoretical Boltzmann distribution we aim to sample—at different temperatures, the same configurations have different equilibrium probabilities. Second, it influences the practical efficiency with which our simulation explores configuration space.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:butane-results-highT"></span>
 <img src="lecture_03/figures/butane-results-highT.png" alt="Probability distributions of butane's dihedral angles at increasing temperatures (500 K, 1000 K, and 2000 K). Elevated temperatures progressively flatten the distribution, with barriers becoming less significant as temperature increases. At 2000 K, the distribution approaches uniformity, indicating that thermal energy has largely overcome the rotational barriers." width="100%" />
