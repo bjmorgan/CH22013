@@ -259,12 +259,7 @@ As the simulation continues beyond these first few steps, we can observe the com
 knitr::include_graphics("lecture_04/figures/kmc-example-10.png")
 ```
 
-This single KMC trajectory reveals the characteristic behavior of a sequential radioactive decay process. Species A diminishes with the approximately exponential decay pattern expected for a first-order process, gradually converting into the intermediate species B. The intermediate exhibits the classic rise-and-fall pattern typical of sequential reactions—initially accumulating as it forms from A, then declining as it transforms into the final product C. Meanwhile, species C steadily accumulates throughout the simulation, eventually becoming the sole remaining species once all transformations are complete.
-
-What makes KMC particularly valuable is evident in the non-smooth progression of the population curves. Unlike deterministic rate equations which produce perfectly smooth trajectories, the KMC simulation captures the inherent stochasticity of the decay process. Each decay event occurs at a randomly determined moment, creating subtle fluctuations in the overall trajectory. If we were to run the simulation multiple times with different random number sequences, each trajectory would show unique variations while maintaining the same overall pattern—an accurate representation of how real radioactive decay processes behave at the microscopic level.
-
-This stochastic approach makes KMC especially suitable for systems with small populations where fluctuations significantly impact the overall behavior, or for processes where rare events play an important role. The method bridges the gap between microscopic randomness and macroscopic behavior, providing insights not available through purely deterministic methods.
-
+This trajectory demonstrates how KMC reproduces both the expected overall behavior—A decaying exponentially, B rising then falling, and C accumulating—while naturally incorporating the stochastic fluctuations inherent in the process. The non-smooth progression reflects the random timing of individual decay events. Each simulation run would produce slightly different trajectories due to this randomness, yet all would follow the same general pattern. This ability to capture both average behavior and stochastic fluctuations makes KMC particularly valuable for systems with small populations or where rare events play an important role.
 
 ## Summary
 
