@@ -2,7 +2,7 @@
 
 ## Introduction to Non-Uniform Sampling
 
-The [previous lecture](\@ref(monte-carlo-introduction)) introduced the general idea behind Monte Carlo methods: using repeated random sampling to obtain numerical results.
+The [previous lecture](#monte-carlo-introduction) introduced the general idea behind Monte Carlo methods: using repeated random sampling to obtain numerical results.
 In the first lecture, we focussed on the problem of calculating some property $A$ as an average over a large set of states.
 
 Recall from the first lecture that for any property A, its true average value is calculated as a sum over all possible states:
