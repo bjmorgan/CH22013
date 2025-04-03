@@ -1,0 +1,450 @@
+# Kinetic Monte Carlo
+
+## Introduction
+
+In our first three lectures, we have explored how Monte Carlo methods can generate representative samples from the Boltzmann distribution, allowing us to calculate equilibrium properties of chemical systems. We have seen how Metropolis Monte Carlo solves the sampling problem by focusing computational effort on the physically relevant regions of configuration space. While Monte Carlo methods excel at estimating time-independent properties&mdash;average energies, structural distributions, and thermodynamic quantities&mdash;they tell us nothing about how systems evolve over time.
+
+Yet many of the most interesting questions in chemistry are inherently time-dependent. How quickly does a protein fold into its native structure? How do atoms diffuse across a catalyst surface? What is the rate-limiting step in a complex reaction mechanism? For these questions, we need not just the equilibrium distribution, but the dynamics of how systems move between states.
+
+To address these time-dependent questions, we turn to Kinetic Monte Carlo (KMC). Unlike Metropolis Monte Carlo, which accepts or rejects moves based on energy differences, KMC selects moves based on the relative rates of possible transitions and associates a physical time with each step. This allows us to follow the dynamical evolution of systems through time, capturing the sequence and timing of events rather than just the average behavior.
+
+## The Memoryless Property: Lightbulbs and Radioactive Nuclei
+
+Let us begin with a thought experiment to illustrate a crucial property of many physical processes:
+
+Imagine we are quality assurance inspectors for a manufacturer of high-quality lightbulbs rated to last 10 years. Part of our job involves annual home inspections to assess the likelihood of bulbs failing in the coming year, replacing any that exceed our risk threshold.
+
+On a typical inspection day, we visit two houses:
+
+- In the first house, the lightbulbs were installed just 2 years ago.
+- In the second house, the lightbulbs were installed 12 years ago, already exceeding their 10-year rating.
+
+Which lightbulb would we think is more likely to fail before our next inspection? Most people would say the 12-year-old bulb, and they would be correct&mdash;lightbulbs "age" and become more likely to fail as they get older. For lightbulbs, the failure rate increases with time, a property known as "aging."
+
+Now consider a similar situation with radioactive nuclei:
+
+We are observing two carbon-14 nuclei. Based on its rate constant, we calculate there is a 0.01% chance that a carbon-14 nucleus will decay in the next minute.
+
+A colleague then tells us: "I've been watching one of these nuclei for the past two weeks, and it hasn't decayed yet. The other nucleus was only added to our experiment this morning."
+
+Should we update our probability estimate for either nucleus decaying in the next minute?
+
+The answer is no. Both nuclei still have exactly a 0.01% chance of decaying in the next minute, regardless of how long they have already been observed. Unlike lightbulbs, radioactive nuclei don't "age" or get closer to decaying with time. 
+
+This property&mdash;that future behavior depends only on the current state, not on past history&mdash;defines what mathematicians call a "memoryless" process. For radioactive decay, this means the nucleus has a constant probability of decaying in any small time interval, regardless of how long it has already existed.
+
+One way to express this constant probability of decay mathematically is to specify the probability of decay in an infinitesimally small time interval, $\mathrm{d}t$. For a memoryless process, the probability of decay in this time interval is:
+
+$$P(\mathrm{d}t) = k \times \mathrm{d}t,$$
+
+where $k$ is the decay constant (for radioactive decay) or more generally a rate constant (for other chemical processes), with units time<sup>&minus;1</sup>. In either case, $k$ represents the probability per unit time that the event will occur.
+
+## From Memoryless Processes to Exponential Distributions
+
+For memoryless processes like radioactive decay, a fundamental question is: how long will we have to wait until the event (like decay) occurs? This duration is called the "waiting time"&mdash;the time interval between the start of our observation and the occurrence of the event.
+
+For a memoryless process with decay constant (or rate constant) $k$, the waiting time follows an exponential distribution with probability density function (a full derivation is provided in Appendix \@ref(math-deriv)):
+
+$$p_\mathrm{wait}(t) = k\exp(-kt)$$
+
+This distribution has several important implications:
+
+1. **Short waiting times are most likely**: The maximum probability density occurs at $t = 0$. Counterintuitively, the most probable time for the event to occur is right at the start of our observation.
+
+2. **The average waiting time is $1/k$**: For a rate constant of 0.1 s<sup>&minus;1</sup>, the average time until decay is 10 seconds. However, this average emerges from a wide range of possible waiting times.
+
+3. **There's a long tail**: Although short waiting times are most probable, there's always a chance of waiting much longer than the average. Some nuclei decay almost immediately, while others might survive for several multiples of the average lifetime.
+
+4. **The memoryless property appears in the distribution**: At any point in time, the remaining waiting time still follows the same exponential distribution&mdash;the future distribution of waiting times is always the same, regardless of how long we've waited already.
+
+From the waiting time distribution, we can calculate the probability that an event occurs within a specific time interval. The cumulative distribution function (CDF) gives the probability that the event has occurred by time $t$:
+
+$$
+\begin{align}
+P(t) &= \int_0^t p_\mathrm{wait}(\tau)\,\mathrm{d}\tau \\
+     &= \int_0^t k\exp(-k\tau)\,\mathrm{d}\tau \\
+     &= 1 - \exp(-kt)
+\end{align}
+$$
+
+The complementary quantity, called the "survival probability" $S(t)$, gives the probability that the event has not yet occurred by time $t$:
+
+$$
+\begin{align}
+S(t) &= 1 - P(t) \\
+     &= \exp(-kt)
+\end{align}
+$$
+
+## Two Competing Radioactive Decays
+
+Now let us consider the more complex case of two different radioactive nuclei sitting side by side: a carbon-14 atom with decay constant $k_1$ and a tritium (hydrogen-3) atom with decay constant $k_2$. Both nuclei will eventually decay, but two questions arise: how long will we wait until the first nucleus decays, and which nucleus is likely to decay first?
+
+Let us tackle the first question. For neither nucleus to have decayed by time $t$, both must have survived until that time. Using the survival probability we just derived, and since the nuclei decay independently, the total survival probability is the product of their individual survival probabilities:
+
+$$S_\mathrm{total}(t) = S_1(t) \times S_2(t) = \exp(-k_1t) \times \exp(-k_2t) = \exp(-(k_1 + k_2)t)$$
+
+This is another exponential function, but with rate constant $k_\mathrm{total} = k_1 + k_2$. This means the waiting time until the first decay follows an exponential distribution with average waiting time $1/k_\mathrm{total}$, which is shorter than either nucleus's individual average lifetime.
+
+For example, if carbon-14 has a decay constant of $k_1 = 3.8 \times 10^{-12}$ s<sup>&minus;1</sup> and tritium has $k_2 = 1.8 \times 10^{-9}$ s<sup>&minus;1</sup>, then the average waiting time until one of them decays is:
+
+$$\langle \tau \rangle = \frac{1}{k_1 + k_2} = \frac{1}{3.8 \times 10^{-12} + 1.8 \times 10^{-9}} \approx \frac{1}{1.8 \times 10^{-9}} \approx 5.6 \times 10^8 \text{ seconds}$$
+
+Which is much closer to tritium's half-life than carbon-14's, as we would intuitively expect since tritium decays much faster.
+
+Now for the second question: which nucleus is likely to decay first? The probability that carbon-14 decays first is:
+
+$$P(\text{C-14 decays first}) = \frac{k_1}{k_1 + k_2} = \frac{3.8 \times 10^{-12}}{3.8 \times 10^{-12} + 1.8 \times 10^{-9}} \approx 0.0021$$
+
+While the probability that tritium decays first is:
+
+$$P(\text{tritium decays first}) = \frac{k_2}{k_1 + k_2} \approx 0.9979$$
+
+In other words, the tritium atom is about 474 times more likely to decay first than the carbon-14 atom, which matches our intuition since tritium's rate constant is about 474 times larger (the mathematical proof of this result follows the same integration approach we used for the survival probability).
+
+## Generalizing to Multiple Radioactive Nuclei
+
+The approach we have developed extends to any number of competing decay processes. If we have $N$ different radioactive nuclei with decay constants $k_1, k_2, ..., k_N$, the total decay rate is:
+
+$$k_\mathrm{total} = k_1 + k_2 + ... + k_N = \sum_{i=1}^N k_i$$
+
+The waiting time until the first decay follows an exponential distribution:
+
+$$p(\tau) = k_\mathrm{total} \times \exp(-k_\mathrm{total} \times \tau)$$
+
+And the probability that nucleus $j$ is the one that decays first is:
+
+$$P(\text{nucleus $j$ decays first}) = \frac{k_j}{k_\mathrm{total}}$$
+
+These two principles&mdash;exponentially distributed waiting times with rate $k_\mathrm{total}$ and process selection with probabilities proportional to individual rates&mdash;form the mathematical core of the KMC algorithm.
+
+## Building the KMC Algorithm
+
+### Generating Exponentially Distributed Random Times
+
+With our mathematical foundation in place, we can now build the KMC algorithm. The key insight is that we can use random numbers to generate events that follow exactly the statistical patterns we've derived.
+
+First, how do we generate waiting times that follow an exponential distribution? The trick involves a technique called "inverse transform sampling." Here's how it works:
+
+1. Generate a uniform random number $r$ between 0 and 1
+2. Transform it using the inverse of the exponential cumulative distribution function (CDF)
+
+For any exponential distribution with rate parameter $k$ (whether a decay constant or more generally a rate constant), the CDF is:
+
+$$F(\tau) = 1 - \exp(-k \times \tau)$$
+
+To generate a waiting time, we set $F(\tau) = r$ and solve for $\tau$:
+
+$$
+\begin{align}
+r &= 1 - \exp(-k \times \tau) \\
+\exp(-k \times \tau) &= 1 - r \\
+\tau &= -\frac{\ln(1 - r)}{k}
+\end{align}
+$$
+
+Here we can make an important simplification. When we generate a uniform random number $r$ between 0 and 1, the value $(1-r)$ is also a uniform random number between 0 and 1. This is because the uniform distribution between 0 and 1 is symmetric around 0.5. 
+
+To understand this intuitively, imagine generating values between 0 and 1 on a number line:
+
+- If $r = 0.2$, then $(1-r) = 0.8$
+- If $r = 0.7$, then $(1-r) = 0.3$
+- If $r = 0.01$, then $(1-r) = 0.99$
+
+In each case, the value $(1-r)$ is also uniformly distributed between 0 and 1. The transformation simply "flips" the distribution around 0.5, but since a uniform distribution has equal probability everywhere, the flipped distribution is identical to the original.
+
+Therefore, instead of computing $(1-r)$, we can just use our original random number $r$ directly:
+
+$$\tau = -\frac{\ln(r)}{k}$$
+
+This simplification is common in many Monte Carlo algorithms and makes the implementation more straightforward without changing the statistical properties of the generated waiting times.
+
+### Selecting Which Nucleus Decays
+
+To select which nucleus decays, we use another random number and compare it against the cumulative probabilities of the processes:
+
+1. Generate a uniform random number $s$ between 0 and 1
+2. If $s < \frac{k_1}{k_\mathrm{total}}$, select nucleus 1
+3. If $\frac{k_1}{k_\mathrm{total}} \leq s < \frac{k_1 + k_2}{k_\mathrm{total}}$, select nucleus 2
+4. And so on for additional nuclei
+
+This is equivalent to dividing a line from 0 to 1 into segments proportional to each nucleus's decay probability, then seeing which segment contains our random number.
+
+### The Complete KMC Algorithm
+
+Here's the complete KMC algorithm in a nutshell:
+
+1. **Start with the system in a well-defined state and set time to zero.**
+
+2. **Create a catalog of all possible events and their rates.**
+   - For each site or component, determine what events could happen there
+   - Calculate the rate constant for each possible event
+   - Sum up the rates to get the total rate $k_\mathrm{total}$
+
+3. **Advance time by generating a random waiting time.**
+   - Generate a random number $r_1$ uniformly between 0 and 1
+   - Calculate $\tau = -\ln(r_1)/k_\mathrm{total}$
+   - Advance the simulation clock: $t = t + \tau$
+
+4. **Select which event occurs.**
+   - Generate another random number $r_2$ between 0 and 1
+   - Use $r_2$ to select an event with probability proportional to its rate
+   - A simple approach: if $r_2 < k_1/k_\mathrm{total}$, select event 1; otherwise, if $r_2 < (k_1+k_2)/k_\mathrm{total}$, select event 2; and so on
+
+5. **Execute the selected event and update the system.**
+   - Change the system state according to the selected event
+   - Update the catalog of possible events and their rates (only those affected by the change)
+
+6. **Repeat steps 2-5** until reaching the desired simulation time or end condition.
+
+The KMC algorithm focuses computational effort on times when events actually occur. Unlike time-step methods that process periods when nothing happens, KMC jumps directly from event to event, making it effective for systems with widely varying timescales.
+
+## A Worked Example: Radioactive Decay Chain
+
+Let us illustrate these concepts by considering a simple example: a radioactive decay chain where A atoms decay to B atoms, which then decay to C atoms:
+
+$$\mathrm{A} \overset{k_1}\longrightarrow \mathrm{B} \overset{k_2}{\longrightarrow} C$$
+
+We'll start with 1000 A atoms and follow the system's evolution using KMC. The possible events at any moment are:
+
+1. An A atom decays to B, with total rate $k_1 \times N_A$
+2. A B atom decays to C, with total rate $k_2 \times N_B$
+
+Let's say $k_1 = 0.01$ s⁻¹ and $k_2 = 0.02$ s⁻¹, meaning B atoms decay twice as fast as A atoms.
+
+Here's how a portion of our KMC simulation might play out:
+
+1. **Initial setup**: $N_A = 1000$, $N_B = 0$, $N_C = 0$, $t = 0$
+
+2. **First iteration**:
+   - Total rate: $k_\mathrm{total} = 0.01 \times 1000 + 0.02 \times 0 = 10$ s⁻¹
+   - Generate $r_1 = 0.368$ → waiting time: $\tau = -\ln(0.368)/10 = 0.1$ s
+   - Advance time: $t = 0 + 0.1 = 0.1$ s
+   - Generate $r_2 = 0.275$
+   - Since there's only one possible event type (A→B), select that
+   - Update: $N_A = 999$, $N_B = 1$, $N_C = 0$
+
+3. **Second iteration**:
+   - Total rate: $k_\mathrm{total} = 0.01 \times 999 + 0.02 \times 1 = 10.01$ s⁻¹
+   - Generate $r_1 = 0.841$ → waiting time: $\tau = -\ln(0.841)/10.01 = 0.017$ s
+   - Advance time: $t = 0.1 + 0.017 = 0.117$ s
+   - Generate $r_2 = 0.513$
+   - Compare: $0.513 < (9.99/10.01) = 0.998$, so select A→B
+   - Update: $N_A = 998$, $N_B = 2$, $N_C = 0$
+
+4. **Third iteration**:
+   - Total rate: $k_\mathrm{total} = 0.01 \times 998 + 0.02 \times 2 = 10.02$ s⁻¹
+   - Generate $r_1 = 0.042$ → waiting time: $\tau = -\ln(0.042)/10.02 = 0.314$ s
+   - Advance time: $t = 0.117 + 0.314 = 0.431$ s
+   - Generate $r_2 = 0.962$
+   - Compare: $0.962 < (9.98/10.02) = 0.996$, so select A→B
+   - Update: $N_A = 997$, $N_B = 3$, $N_C = 0$
+
+5. **Fourth iteration**:
+   - Total rate: $k_\mathrm{total} = 0.01 \times 997 + 0.02 \times 3 = 10.03$ s⁻¹
+   - Generate $r_1 = 0.194$ → waiting time: $\tau = -\ln(0.194)/10.03 = 0.164$ s
+   - Advance time: $t = 0.431 + 0.164 = 0.595$ s
+   - Generate $r_2 = 0.999$
+   - Compare: $0.999 > (9.97/10.03) = 0.994$, so select B→C
+   - Update: $N_A = 997$, $N_B = 2$, $N_C = 1$
+
+As the simulation continues, we would see the population of A decreasing exponentially, B initially increasing then decreasing, and C steadily accumulating. KMC reproduces both the average behavior predicted by deterministic rate equations and the stochastic fluctuations inherent in the process.
+
+## Surface Catalysis Example: A 1D 10-Site Periodic System
+
+Let us now consider a more complex example: a one-dimensional array of 10 sites representing a catalytic surface with periodic boundary conditions. This example will model a simplified Langmuir-Hinshelwood mechanism, where identical molecules react on a surface to form a product.
+
+### The Simplified Langmuir-Hinshelwood Mechanism
+
+The Langmuir-Hinshelwood mechanism describes surface-catalyzed reactions where:
+
+1. Reactants must first adsorb onto the catalyst surface
+2. The adsorbed reactants then react with each other while bound to the surface
+3. The product eventually desorbs from the surface
+
+In our simplified model, we'll focus on a reaction where two adsorbed A molecules combine to form a product B:
+
+$$2A_\mathrm{(ads)} \rightarrow B_\mathrm{(ads)} \rightarrow B_\mathrm{(gas)}$$
+
+### System Description
+
+We model a linear array with 10 sites and periodic boundary conditions, so site 1 is adjacent to site 10. Each site can be in one of three states:
+
+- Empty
+- Occupied by molecule A (reactant)
+- Occupied by molecule B (product)
+
+### Possible Events Based on Site States
+
+For a clear understanding of the system dynamics, let's categorize all possible events based on the current state of each site:
+
+1. **For each empty site**:
+   - **Adsorption**: An A molecule from the gas phase can land on this site with rate constant $k_\mathrm{ads}$
+
+2. **For each site occupied by molecule A**:
+   - **Desorption**: The A molecule can desorb from the surface with rate constant $k_\mathrm{des-A}$
+   - **Diffusion** (if an adjacent site is empty): The A molecule can hop to the neighboring empty site with rate constant $k_\mathrm{diff}$
+   - **Reaction** (if an adjacent site also has an A molecule): The two A molecules can react to form a B molecule, with one site becoming occupied by B and the other becoming empty, with rate constant $k_\mathrm{react}$
+
+3. **For each site occupied by molecule B**:
+   - **Desorption**: The B molecule can desorb from the surface with rate constant $k_\mathrm{des-B}$
+
+### Rate Constants
+
+For our simulation, we'll use these values:
+
+- $k_\mathrm{ads} = 10$ s<sup>&minus;1</sup> (per empty site)
+- $k_\mathrm{des-A} = 1$ s<sup>&minus;1</sup>
+- $k_\mathrm{diff} = 100$ s<sup>&minus;1</sup> (diffusion is relatively fast)
+- $k_\mathrm{react} = 50$ s<sup>&minus;1</sup> (reactions occur readily when A molecules meet)
+- $k_\mathrm{des-B} = 5$ s<sup>&minus;1</sup> (product desorbs faster than A)
+
+### Implementing the KMC Algorithm for Surface Catalysis
+
+Here's how we implement the KMC algorithm for this system:
+
+1. **Initialize the system**:
+   - Create a 10-site array with all sites initially empty
+   - Set time $t = 0$
+
+2. **Create the event catalog**:
+   - For each empty site: add an adsorption event with rate $k_\mathrm{ads}$
+   - For each site occupied by A: add a desorption event with rate $k_\mathrm{des-A}$
+   - For each site occupied by B: add a desorption event with rate $k_\mathrm{des-B}$
+   - For each A molecule next to an empty site: add a diffusion event with rate $k_\mathrm{diff}$
+   - For each pair of adjacent A molecules: add a reaction event with rate $k_\mathrm{react}$
+   - Sum all rates to get $k_\mathrm{total}$
+
+3. **Generate the waiting time**:
+   - Generate random number $r_1$
+   - Calculate $\tau = -\ln(r_1)/k_\mathrm{total}$
+   - Advance time: $t = t + \tau$
+
+4. **Select an event**:
+   - Generate random number $r_2$
+   - Use $r_2$ to select one event with probability proportional to its rate
+
+5. **Execute the selected event**:
+   - Update the array according to the event type
+   - Update the event catalog (add/remove events affected by the change)
+
+6. **Repeat steps 3-5** until reaching the desired simulation time
+
+### Example Iteration
+
+Let's walk through a single iteration of the algorithm with a specific state of our 10-site system. Suppose our sites are in the following states (where "E" = empty, "A" = occupied by A, "B" = occupied by B):
+
+```
+Site:   1  2  3  4  5  6  7  8  9  10
+State:  E  A  A  E  B  E  A  E  A  E
+```
+
+Let's count the different types of events:
+
+- **Adsorption events**: Sites 1, 4, 6, 8, and 10 are empty, so we have 5 possible adsorption events, each with rate $k_\mathrm{ads} = 10$ s⁻¹. Total adsorption rate: $5 \times 10 = 50$ s⁻¹.
+
+- **Desorption events**:
+  - A desorption: Sites 2, 3, 7, and 9 have A molecules, so we have 4 possible A desorption events, each with rate $k_\mathrm{des-A} = 1$ s⁻¹. Total A desorption rate: $4 \times 1 = 4$ s⁻¹.
+  - B desorption: Site 5 has a B molecule, so we have 1 possible B desorption event with rate $k_\mathrm{des-B} = 5$ s⁻¹.
+
+- **Diffusion events**: We need to find A molecules next to empty sites:
+  - A at site 2 can diffuse to site 1: rate $k_\mathrm{diff} = 100$ s⁻¹
+  - A at site 3 can diffuse to site 4: rate $k_\mathrm{diff} = 100$ s⁻¹
+  - A at site 7 can diffuse to sites 6 or 8: 2 events, each with rate $k_\mathrm{diff} = 100$ s⁻¹
+  - A at site 9 can diffuse to sites 8 or 10: 2 events, each with rate $k_\mathrm{diff} = 100$ s⁻¹
+  Total diffusion rate: $5 \times 100 = 500$ s⁻¹.
+
+- **Reaction events**: We need to find adjacent pairs of A molecules:
+  - A at site 2 is adjacent to A at site 3: rate $k_\mathrm{react} = 50$ s⁻¹
+  Total reaction rate: $1 \times 50 = 50$ s⁻¹.
+
+Now we calculate the total event rate:
+$k_\mathrm{total} = 50 + 4 + 5 + 500 + 50 = 609$ s⁻¹
+
+1. **Generate waiting time**:
+   - Generate $r_1 = 0.782$
+   - Calculate $\tau = -\ln(0.782)/609 = 4.0 \times 10^{-4}$ s
+   - Advance time: $t = t + 4.0 \times 10^{-4}$ s
+
+2. **Select an event**:
+   - Generate $r_2 = 0.852$
+   - This corresponds to a diffusion event since:
+     - $0.852 > (50 + 4 + 5)/609 = 0.097$ (not adsorption or desorption)
+     - $0.852 < (50 + 4 + 5 + 500)/609 = 0.918$ (diffusion)
+   
+   Let's determine which specific diffusion event. With 5 equally likely diffusion events (each with rate 100 s⁻¹), we divide the diffusion probability range (0.097 to 0.918) into 5 equal segments:
+   - First diffusion event (A from site 2 to 1): 0.097 to 0.262
+   - Second diffusion event (A from site 3 to 4): 0.262 to 0.426
+   - Third diffusion event (A from site 7 to 6): 0.426 to 0.591
+   - Fourth diffusion event (A from site 7 to 8): 0.591 to 0.755
+   - Fifth diffusion event (A from site 9 to 10): 0.755 to 0.918
+   
+   Since 0.852 falls in the last segment, we select the diffusion of A from site 9 to site 10.
+
+3. **Update the system**:
+   - Move the A molecule from site 9 to site 10
+   - The new system state is:
+   ```
+   Site:   1  2  3  4  5  6  7  8  9  10
+   State:  E  A  A  E  B  E  A  E  E  A
+   ```
+
+4. **Update the event catalog**:
+   - Remove the diffusion events involving A at site 9
+   - Add a new desorption event for A at site 10
+   - Add a new diffusion event for A at site 10 potentially moving to site 1
+   - Add a new adsorption event at site 9 (which is now empty)
+   - Recalculate $k_\mathrm{total}$
+
+### Connection to Langmuir-Hinshelwood Kinetics
+
+This simulation directly implements the microscopic processes underlying a simplified Langmuir-Hinshelwood mechanism. In macroscopic kinetic models, the reaction rate for this type of mechanism is typically expressed as:
+
+$$r = \frac{k K_A^2 P_A^2}{(1 + K_A P_A + K_B P_B)^2}$$
+
+Where:
+
+- $r$ is the reaction rate
+- $k$ is the intrinsic reaction rate constant
+- $K_A$ and $K_B$ are adsorption equilibrium constants for species A and B
+- $P_A$ and $P_B$ are partial pressures
+
+Our KMC simulation should recover this macroscopic behavior when averaged over sufficient time, but it also captures spatial correlations, fluctuations, and transient behavior that the mean-field equation cannot describe.
+
+### Expected Behavior and Analysis
+
+Running this simulation over time would reveal several important features of Langmuir-Hinshelwood kinetics:
+
+1. **Volcano curve behavior**: At very low pressures (low adsorption rates), the reaction rate is limited by low surface coverage of A. At very high pressures, the surface becomes saturated with A molecules, limiting the availability of empty sites needed for diffusion and new adsorption. This creates a characteristic "volcano curve" when plotting reaction rate versus pressure, with maximum activity at an intermediate pressure.
+
+2. **Coverage effects**: The optimal surface coverage for maximum reaction rate is typically around 50% for this type of reaction, where there are enough reactants to frequently encounter each other, but still enough empty sites to allow mobility.
+
+3. **Effect of diffusion**: Higher diffusion rates generally lead to higher reaction rates, as A molecules can find reaction partners more efficiently. This shows how mobility on the surface can be a crucial factor in catalytic activity.
+
+4. **Spatial patterns**: Due to the one-dimensional nature of our system, we might observe interesting sequences of occupied and empty sites emerging from the interplay of adsorption, desorption, diffusion, and reaction.
+
+5. **Pressure dependence**: By varying the adsorption rate (equivalent to changing the gas-phase pressure), we can observe how the steady-state surface coverage and reaction rate change, recovering the famous Langmuir-Hinshelwood kinetics where:
+   - At low pressure: rate $\propto p^2$
+   - At high pressure: rate decreases with increasing pressure
+
+The KMC approach naturally captures the essential feature of Langmuir-Hinshelwood kinetics&mdash;that reactions occur between adsorbed species on the surface&mdash;without making the mean-field approximations inherent in the macroscopic rate equation. This allows us to observe how molecular-level processes give rise to the macroscopic kinetic behavior that students have learned about in earlier parts of the course.
+
+## Summary
+
+In this lecture, we have developed the mathematical foundation of Kinetic Monte Carlo and applied it to increasingly complex systems:
+
+1. We started with a thought experiment contrasting aging processes (like lightbulbs) with memoryless processes (like radioactive decay) to introduce the concept of memorylessness
+
+2. We showed that memoryless processes lead to exponentially distributed waiting times for events
+
+3. We analyzed competing processes (multiple radioactive nuclei) and derived both the waiting time distribution and the probabilities for which event occurs first
+
+4. We constructed the KMC algorithm, showing how to generate event times and select events with the correct statistical properties
+
+5. We demonstrated the algorithm with two examples:
+   - A radioactive decay chain, illustrating the basic principles
+   - A catalytic surface reaction system, showcasing KMC's ability to handle complex spatial dynamics with multiple event types
+
+KMC provides a powerful framework for simulating time-dependent processes in chemical systems, especially those involving rare events or widely separated time scales. Unlike Metropolis Monte Carlo, which focuses only on equilibrium sampling, KMC gives detailed information about the dynamical evolution of systems.
+
+The method is particularly valuable for surface reactions, diffusion in solids, crystal growth, and other processes where the relevant events are well-defined and separated in time. By focusing computational effort only on the moments when events occur, KMC efficiently bridges the gap between atomistic simulation and macroscopic kinetics.
