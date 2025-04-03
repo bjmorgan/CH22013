@@ -23,7 +23,7 @@
 <meta name="author" content="Benjamin J. Morgan" />
 
 
-<meta name="date" content="2025-04-01" />
+<meta name="date" content="2025-04-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="monte-carlo-chemical.html"/>
-
+<link rel="next" href="kinetic-monte-carlo.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -132,6 +132,28 @@
 </ul></li>
 <li class="chapter" data-level="3.10" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-ergodic-hypothesis"><i class="fa fa-check"></i><b>3.10</b> The Ergodic Hypothesis</a></li>
 <li class="chapter" data-level="3.11" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#summary"><i class="fa fa-check"></i><b>3.11</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html"><i class="fa fa-check"></i><b>4</b> Kinetic Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#the-memoryless-property-lightbulbs-and-radioactive-nuclei"><i class="fa fa-check"></i><b>4.2</b> The Memoryless Property: Lightbulbs and Radioactive Nuclei</a></li>
+<li class="chapter" data-level="4.3" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#from-memoryless-processes-to-exponential-distributions"><i class="fa fa-check"></i><b>4.3</b> From Memoryless Processes to Exponential Distributions</a></li>
+<li class="chapter" data-level="4.4" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#two-competing-radioactive-decays"><i class="fa fa-check"></i><b>4.4</b> Two Competing Radioactive Decays</a></li>
+<li class="chapter" data-level="4.5" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#generalizing-to-multiple-radioactive-nuclei"><i class="fa fa-check"></i><b>4.5</b> Generalizing to Multiple Radioactive Nuclei</a></li>
+<li class="chapter" data-level="4.6" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#building-the-kmc-algorithm"><i class="fa fa-check"></i><b>4.6</b> Building the KMC Algorithm</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#generating-exponentially-distributed-random-times"><i class="fa fa-check"></i><b>4.6.1</b> Generating Exponentially Distributed Random Times</a></li>
+<li class="chapter" data-level="4.6.2" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#selecting-which-nucleus-decays"><i class="fa fa-check"></i><b>4.6.2</b> Selecting Which Nucleus Decays</a></li>
+<li class="chapter" data-level="4.6.3" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#the-complete-kmc-algorithm"><i class="fa fa-check"></i><b>4.6.3</b> The Complete KMC Algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#a-worked-example-radioactive-decay-chain"><i class="fa fa-check"></i><b>4.7</b> A Worked Example: Radioactive Decay Chain</a></li>
+<li class="chapter" data-level="4.8" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#summary-1"><i class="fa fa-check"></i><b>4.8</b> Summary</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendices</b></span></li>
+<li class="chapter" data-level="A" data-path="math-deriv.html"><a href="math-deriv.html"><i class="fa fa-check"></i><b>A</b> Mathematical Derivations</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="math-deriv.html"><a href="math-deriv.html#derivation-of-exponential-waiting-times"><i class="fa fa-check"></i><b>A.1</b> Derivation of Exponential Waiting Times</a></li>
+<li class="chapter" data-level="A.2" data-path="math-deriv.html"><a href="math-deriv.html#derivation-of-event-selection-probabilities"><i class="fa fa-check"></i><b>A.2</b> Derivation of Event Selection Probabilities</a></li>
 </ul></li>
 </ul>
 
@@ -414,14 +436,6 @@ Figure 3.8: Probability distribution of butane’s dihedral angles from a simula
 
 </div>
 </div>
-
-
-
-
-
-
-
-
 <div class="footnotes">
 <hr />
 <ol start="3">
@@ -433,8 +447,8 @@ Figure 3.8: Probability distribution of butane’s dihedral angles from a simula
           </div>
         </div>
       </div>
-<a href="monte-carlo-chemical.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="monte-carlo-chemical.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="kinetic-monte-carlo.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

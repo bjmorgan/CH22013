@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Lecture 2 Monte Carlo Methods Applied to Chemical Systems | CH22013 Lecture Notes</title>
+  <title>A Mathematical Derivations | CH22013 Lecture Notes</title>
   <meta name="description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Lecture 2 Monte Carlo Methods Applied to Chemical Systems | CH22013 Lecture Notes" />
+  <meta property="og:title" content="A Mathematical Derivations | CH22013 Lecture Notes" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Lecture 2 Monte Carlo Methods Applied to Chemical Systems | CH22013 Lecture Notes" />
+  <meta name="twitter:title" content="A Mathematical Derivations | CH22013 Lecture Notes" />
   
   <meta name="twitter:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="monte-carlo-introduction.html"/>
-<link rel="next" href="metropolis-monte-carlo.html"/>
+<link rel="prev" href="kinetic-monte-carlo.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -172,111 +172,90 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="monte-carlo-chemical" class="section level1 hasAnchor" number="2">
-<h1><span class="header-section-number">Lecture 2</span> Monte Carlo Methods Applied to Chemical Systems<a href="monte-carlo-chemical.html#monte-carlo-chemical" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="introduction-to-non-uniform-sampling" class="section level2 hasAnchor" number="2.1">
-<h2><span class="header-section-number">2.1</span> Introduction to Non-Uniform Sampling<a href="monte-carlo-chemical.html#introduction-to-non-uniform-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The <a href="<a href="monte-carlo-introduction.html#monte-carlo-introduction">1</a>">previous lecture</a> introduced the general idea behind Monte Carlo methods: using repeated random sampling to obtain numerical results.
-In the first lecture, we focussed on the problem of calculating some property <span class="math inline">\(A\)</span> as an average over a large set of states.</p>
-<p>Recall from the first lecture that for any property A, its true average value is calculated as a sum over all possible states:</p>
+<div id="math-deriv" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">A</span> Mathematical Derivations<a href="math-deriv.html#math-deriv" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="derivation-of-exponential-waiting-times" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">A.1</span> Derivation of Exponential Waiting Times<a href="math-deriv.html#derivation-of-exponential-waiting-times" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let us consider a memoryless process with rate constant <span class="math inline">\(k\)</span>. The probability of the event occurring in an infinitesimally small time interval <span class="math inline">\(\mathrm{d}t\)</span> is given by:</p>
+<p><span class="math display">\[P(\mathrm{d}t) = k \times \mathrm{d}t\]</span></p>
+<p>To derive the distribution of waiting times, we first consider the probability of survival <span class="math inline">\(S(t)\)</span>—the probability that the event has not occurred by time <span class="math inline">\(t\)</span>. Because at any point in time our process has either occurred or survived, <span class="math inline">\(P(t) + S(t) = 1\)</span>, where <span class="math inline">\(P(t)\)</span> is the probability that the event has occurred by time <span class="math inline">\(t\)</span>.</p>
+<p>Let us imagine we already know the probability of survival at time <span class="math inline">\(t\)</span>, and we want to calculate the probability of continued survival at some later time <span class="math inline">\(t+\mathrm{d}t\)</span>. This is given by the probability of survival at time <span class="math inline">\(t\)</span>, multiplied by the probability of survival for the following time interval <span class="math inline">\(\mathrm{d}t\)</span>:</p>
 <p><span class="math display">\[
-\langle A \rangle = \sum_i A_i \times P_i
+S(t+\mathrm{d}t) = S(t) \times S(\mathrm{d}t)
 \]</span></p>
-<p>Where <span class="math inline">\(A_i\)</span> is the value of property A in state <span class="math inline">\(i\)</span>, and <span class="math inline">\(P_i\)</span> is the probability of state <span class="math inline">\(i\)</span> occurring. In many problems of this type, evaluating this sum exactly is impossible due to the existence of an enormous number of states.
-Monte Carlo methods allow us to estimate <span class="math inline">\(\langle A \rangle\)</span> by sampling a subset of randomly chosen states.</p>
-<p>In the examples in Lecture <a href="monte-carlo-introduction.html#monte-carlo-introduction">1</a>, we used uniform sampling—where each possible location in our sample space has an equal probability of being selected. In these examples, uniform sampling was effective because it allowed us to efficiently explore the regions of sample space relevant to the property we were estimating.</p>
-<p>For chemical systems at equilibrium, however, uniform sampling is highly inefficient, frequently to the extent of being computationally intractable, and we instead use non-uniform sampling to more efficiently estimate <span class="math inline">\(\langle A \rangle\)</span>.</p>
+<p>Because <span class="math inline">\(P(t) + S(t) = 1\)</span> for any time <span class="math inline">\(t\)</span>,</p>
+<p><span class="math display">\[S(\mathrm{d}t) = 1 - P(\mathrm{d}t) = 1 -k\,\mathrm{d}t,\]</span></p>
+<p>and</p>
+<p><span class="math display">\[\begin{eqnarray}
+S(t+\mathrm{d}t) &amp; = S(t) (1 - k\,\mathrm{d}t) \\
+                 &amp; = S(t) - k S(t) \mathrm{d}t
+\end{eqnarray}\]</span></p>
+<p>Rearranging:</p>
+<p><span class="math display">\[
+S(t+\mathrm{d} t) - S(t) = -k S(t)\,\mathrm{d}t
+\]</span></p>
+<p>or</p>
+<p><span class="math display">\[
+\frac{S(t+\mathrm{d}t) - S(t)}{\mathrm{d}t} = -k S(t)
+\]</span></p>
+<p>In the limit that <span class="math inline">\(\mathrm{d}t\)</span> becomes infinitesimally small, this becomes a differential equation that describes the instantaneous rate of change of the survival probability with time:</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}S(t)}{\mathrm{d}t} = -k S(t)
+\]</span></p>
+<p>Integrating from <span class="math inline">\(t=0\)</span> to <span class="math inline">\(t=t\)</span>, with the initial condition <span class="math inline">\(S(0) = 1\)</span> (we are certain the event has not occurred when <span class="math inline">\(t=0\)</span>), gives the probability that the event has not occurred by time <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[S(t) = \exp(-kt)\]</span></p>
+<p>As <span class="math inline">\(t\)</span> increases, the probability that the event has not occurred by this time decreases according to a negative exponential.</p>
+<p>From this, the probability that the event has occurred in time <span class="math inline">\(t\)</span> is:
+<span class="math display">\[
+P(t) = 1 - \exp(-kt)
+\]</span></p>
+<p>This is the cumulative probability function (CDF). It describes the probability that the event occurs at some time less than or equal to <span class="math inline">\(t\)</span>.
+If we want the probability density function (PDF) for the event occurring at exactly time <span class="math inline">\(t\)</span>, then we differentiate this function:</p>
+<p><span class="math display">\[
+p_\mathrm{wait}(t) = \frac{\mathrm{d}}{\mathrm{d}t}(1-\exp(-kt)) = k\exp(-kt)
+\]</span></p>
+<p>This result tells us that the probability density function of waiting times is the exponential distribution with parameter <span class="math inline">\(k\)</span>, confirming our earlier statement.</p>
 </div>
-<div id="boltzmann-sampling-and-the-inefficiency-of-uniform-sampling" class="section level2 hasAnchor" number="2.2">
-<h2><span class="header-section-number">2.2</span> Boltzmann Sampling and the Inefficiency of Uniform Sampling<a href="monte-carlo-chemical.html#boltzmann-sampling-and-the-inefficiency-of-uniform-sampling" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>For chemical systems at equilibrium, states are distributed according to the Boltzmann distribution:</p>
-<p><span class="math display">\[
-P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
-\]</span></p>
-<p>Where the partition function <span class="math inline">\(Z\)</span> is:</p>
-<p><span class="math display">\[
-Z = \sum \exp(-U(\mathbf{r})/kT)
-\]</span></p>
-<p>If we were to sample uniformly, we might initially propose estimating <span class="math inline">\(\langle A \rangle\)</span> via:</p>
-<p><span class="math display">\[
-\langle A \rangle \approx \frac{1}{Z} \sum_{i=1}^N A(r_i) \exp(-U(r_i)/kT)
-\]</span></p>
-<p>However, this approach requires knowing <span class="math inline">\(Z\)</span>, which we typically cannot compute directly as it involves summing over all possible states—the very challenge we’re using Monte Carlo to overcome.</p>
-<p>Fortunately, we can construct an alternative estimator that doesn’t require prior knowledge of <span class="math inline">\(Z\)</span>:</p>
-<p><span class="math display">\[
-\langle A \rangle \approx \frac{\sum_{i=1}^N A(r_i) \exp(-U(r_i)/kT)}{\sum_{i=1}^N \exp(-U(r_i)/kT)}
-\]</span></p>
-<p>The denominator effectively estimates <span class="math inline">\(Z\)</span> from our samples, allowing us to compute averages without knowing <span class="math inline">\(Z\)</span> in advance.</p>
-<p>Even with this improved estimator, uniform sampling remains highly inefficient for chemical systems. The Boltzmann factor decreases exponentially as energy increases, meaning any property <span class="math inline">\(\langle A \rangle\)</span> is dominated by contributions from a relatively small number of low-energy states. The vast majority of possible states have high energies with negligible Boltzmann weights, yet these states occupy most of the configuration space.</p>
-<p>Consider a molecular system with <span class="math inline">\(N\)</span> atoms (<span class="math inline">\(3N\)</span> spatial degrees of freedom). In a system with just 10 atoms, uniform sampling would predominantly generate configurations with atoms positioned unphysically close to each other. These high-energy configurations have effectively zero Boltzmann weights, contributing nothing to our estimate of <span class="math inline">\(\langle A \rangle\)</span>. However, uniform sampling spends nearly all of its time generating these irrelevant states, resulting in extremely slow convergence.</p>
-<p>This inefficiency worsens exponentially with system size. Each additional degree of freedom further reduces the already tiny fraction of configuration space containing physically relevant states. For most chemical systems of interest, uniform sampling becomes computationally unfeasible.</p>
-<p>We need an alternative approach—a method that preferentially samples the low-energy regions that dominate the Boltzmann distribution. This is the central focus of this lecture.</p>
-</div>
-<div id="the-solution-markov-chain-monte-carlo" class="section level2 hasAnchor" number="2.3">
-<h2><span class="header-section-number">2.3</span> The Solution: Markov Chain Monte Carlo<a href="monte-carlo-chemical.html#the-solution-markov-chain-monte-carlo" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>In Lecture <a href="monte-carlo-introduction.html#monte-carlo-introduction">1</a>, we discussed estimating the average height of people in Britain by measuring a representative sample. Let’s revisit this example to illustrate the challenge of sampling from a complex distribution.</p>
-<p>If we attempted uniform geographical sampling—randomly selecting 100m × 100m squares on a map of Britain and measuring everyone within each selected square—we would encounter severe inefficiency. Most selected squares would contain few or no people (falling on rural areas, forests, mountains, or bodies of water), while densely populated urban areas would be underrepresented. We would waste most of our sampling effort on empty regions while gathering insufficient data from cities and towns, where the majority of people live.</p>
-<p>This mirrors our problem in chemical systems: uniform sampling of configuration space predominantly generates high-energy states with negligible Boltzmann weights, while the physically relevant low-energy states occupy only a tiny fraction of the total space.</p>
-<p>A more efficient approach to our height-measuring problem would be to design a sampling process that naturally visits locations with frequency proportional to their population density. Imagine a “random walker” traversing the UK, who:</p>
-<ol style="list-style-type: decimal">
-<li>Spends most time in cities and towns</li>
-<li>Occasionally visits villages and small settlements</li>
-<li>Rarely ventures into uninhabited areas</li>
-</ol>
-<p>This walker would measure the height of individuals encountered during the journey. The crucial insight is that if our walker visits each location with probability <em>exactly proportional</em> to the number of people there, then each person in the UK has an equal chance of being included in our sample. This means we can calculate a simple, unweighted average of the measured heights without any correction factors.</p>
-<p>This is precisely the approach of Markov Chain Monte Carlo (MCMC) methods. Instead of generating independent random samples with uniform probability, we create a “chain” of samples where each new sample is generated based on the current one. The chain is designed to visit states with frequency proportional to their probability in the target distribution—in our case, the Boltzmann distribution.</p>
-<p>When our sampling frequency matches the Boltzmann distribution, we can calculate thermodynamic properties using simple averaging:</p>
-<p><span class="math display">\[
-\langle A \rangle \approx \frac{1}{N} \sum_{i=1}^N A(\mathbf{r}_i)
-\]</span></p>
-<p>Where configurations <span class="math inline">\(\mathbf{r}_i\)</span> are selected with frequency proportional to <span class="math inline">\(\exp(-U(\mathbf{r}_i)/kT)\)</span>.</p>
-<p>The challenge now becomes designing a sampling process that naturally visits configurations with frequencies matching their Boltzmann probabilities, without requiring prior knowledge of the full energy landscape. This is where the mathematics of Markov chains provides the solution.</p>
-</div>
-<div id="markov-chain" class="section level2 hasAnchor" number="2.4">
-<h2><span class="header-section-number">2.4</span> What is a Markov Chain?<a href="monte-carlo-chemical.html#markov-chain" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The tool we need for sampling according to the Boltzmann distribution is called a “Markov chain.”
-At its core, a Markov chain is a sequence of states where each new state emerges from the current one through a probabilistic process. For a simple example, consider a weather model where tomorrow’s weather depends only on today’s weather: if it’s sunny today, there might be a 70% chance of sun tomorrow and 30% chance of rain; if it’s raining today, there might be a 60% chance of continued rain and 40% chance of sun tomorrow.</p>
-<p>The defining characteristic of a Markov chain is its “memoryless” property—the next state depends only on the current state, not on the history of previous states. In our weather example, this means that if it’s sunny today, the probability of sun tomorrow is 70% regardless of whether yesterday was sunny or rainy. This property is particularly useful for our sampling problem because it allows us to design a step-by-step process that explores configuration space efficiently without needing to track the entire history of the simulation.</p>
-<p>Mathematically, for systems with discrete states, we describe a Markov chain through transition probabilities—the chances of moving from one state to another in a single step. These probabilities form a transition matrix where each entry <span class="math inline">\(P(i\to j)\)</span> represents the probability of moving from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span>. For our simple weather example, we could represent these as:</p>
-<pre><code>                  Today
-                  Sunny  Rainy
-Tomorrow  Sunny   0.7    0.4
-          Rainy   0.3    0.6</code></pre>
-<p>This transition matrix follows what mathematicians call the “column-stochastic” convention. Each column corresponds to a particular starting state, and the entries within that column tell us the probabilities of transitioning to each possible next state. Since these transitions represent all possibilities, the probabilities in each column must sum to 1.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
-<p>For systems with many possible states, such as molecular configurations, these transition probabilities dictate how the simulation moves through configuration space.</p>
-<p>Markov chains that are irreducible (can reach any state from any other state) and aperiodic (don’t cycle deterministically) eventually reach an equilibrium distribution. At equilibrium, the probability of finding the system in each state stabilizes to a constant value, even as the system continues to move between states. This stable probability distribution is called the “stationary distribution” of the chain.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<p>For our sampling purpose, we need to design a Markov chain whose stationary distribution matches exactly the Boltzmann distribution. If we achieve this, then after running the chain for sufficient steps, the frequency with which we visit each configuration will naturally match its Boltzmann probability—solving our sampling problem.</p>
-</div>
-<div id="summary-and-preview-1" class="section level2 hasAnchor" number="2.5">
-<h2><span class="header-section-number">2.5</span> Summary and Preview<a href="monte-carlo-chemical.html#summary-and-preview-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>In this lecture, we’ve introduced the concept of non-uniform sampling for chemical systems and identified why uniform sampling is inefficient for these applications. We’ve explored how the Boltzmann distribution governs the probability of states in chemical systems at equilibrium, and we’ve seen how this creates a challenge for computational sampling.</p>
-<p>The key concepts we’ve covered include:</p>
-<ul>
-<li>The fundamental inefficiency of uniform sampling for chemical systems</li>
-<li>The Boltzmann distribution and the exponential relationship between energy and probability</li>
-<li>The importance of focusing our sampling on low-energy regions of configuration space</li>
-<li>The concept of Markov Chain Monte Carlo as a solution to our sampling problem</li>
-<li>The basic properties and mathematics of Markov chains</li>
-</ul>
-<p>We’ve developed an intuitive understanding of Markov chain sampling using the analogy of a random walker traveling through the UK to measure heights, showing how properly constructed random walks can efficiently sample from complex distributions.</p>
-<p>In the next lecture, we’ll build on this foundation to explore the specific mathematical conditions required for a Markov chain to sample from the Boltzmann distribution. We’ll introduce the principle of detailed balance and show how the Metropolis algorithm provides a practical implementation that allows efficient sampling of chemical systems. This will lead us to a complete algorithm for Metropolis Monte Carlo that can be applied to a wide range of systems in computational chemistry.</p>
+<div id="derivation-of-event-selection-probabilities" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">A.2</span> Derivation of Event Selection Probabilities<a href="math-deriv.html#derivation-of-event-selection-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Consider two competing events with rate constants <span class="math inline">\(k_1\)</span> and <span class="math inline">\(k_2\)</span>. We want to find the probability that event 1 happens first. This equals the probability that event 1 occurs at some time <span class="math inline">\(t\)</span> AND event 2 hasn’t occurred by that time, integrated over all possible times <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[\begin{eqnarray}
+P(\text{Event 1 occurs first}) &amp;=&amp; \int_0^{\infty} P(\text{Event 1 occurs at time }t) \times P(\text{Event 2 hasn&#39;t occurred by time }t) \, \mathrm{d}t \\
+&amp;=&amp; \int_0^{\infty} k_1 \exp(-k_1 t) \times \exp(-k_2 t) \, \mathrm{d}t \\
+&amp;=&amp; k_1 \int_0^{\infty} \exp(-(k_1 + k_2)t) \, \mathrm{d}t \\
+&amp;=&amp; k_1 \times \frac{1}{k_1 + k_2} \\
+&amp;=&amp; \frac{k_1}{k_1 + k_2}
+\end{eqnarray}\]</span></p>
+<p>Similarly, for event 2:</p>
+<p><span class="math display">\[\begin{eqnarray}
+P(\text{Event 2 occurs first}) &amp;=&amp; \int_0^{\infty} P(\text{Event 2 occurs at time }t) \times P(\text{Event 1 hasn&#39;t occurred by time }t) \, \mathrm{d}t \\
+&amp;=&amp; \int_0^{\infty} k_2 \exp(-k_2 t) \times \exp(-k_1 t) \, \mathrm{d}t \\
+&amp;=&amp; k_2 \int_0^{\infty} \exp(-(k_1 + k_2)t) \, \mathrm{d}t \\
+&amp;=&amp; k_2 \times \frac{1}{k_1 + k_2} \\
+&amp;=&amp; \frac{k_2}{k_1 + k_2}
+\end{eqnarray}\]</span></p>
+<p>This confirms our earlier result that the probability of a particular event being the first to occur is proportional to its rate constant divided by the sum of all rate constants.</p>
+<p>The same approach generalizes to any number of competing events. For <span class="math inline">\(N\)</span> events with rate constants <span class="math inline">\(k_1, k_2, ..., k_N\)</span>, the probability that event <span class="math inline">\(j\)</span> occurs first is:</p>
+<p><span class="math display">\[P(\text{Event j occurs first}) = \frac{k_j}{\sum_{i=1}^{N} k_i}\]</span></p>
+<p>This result forms the basis for event selection in the KMC algorithm, where we use a random number to select events with probabilities proportional to their rates.</p>
 
 </div>
 </div>
-<div class="footnotes">
-<hr />
-<ol start="1">
-<li id="fn1"><p>For students interested in the mathematical perspective: in the column-stochastic convention, we can represent the state of the system as a probability vector <span class="math inline">\(p\)</span> where each entry gives the probability of being in a particular state. If <span class="math inline">\(p_\mathrm{current}\)</span> is the current state distribution, then <span class="math inline">\(p_\mathrm{new} = P\cdot p_\mathrm{current}\)</span> gives the probability distribution after one step of the Markov chain, using standard matrix-vector multiplication. Transition matrices can alternatively be represented in row-stochastic form, where each row (rather than column) sums to 1 and represents the probability distribution of transitions from a particular state. In that case, state vectors are row vectors and matrix operations are performed as <span class="math inline">\(p_\mathrm{new} = p_\mathrm{current}\cdot P\)</span>.<a href="monte-carlo-chemical.html#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>From a mathematical perspective, the stationary distribution <span class="math inline">\(\pi\)</span> of a Markov chain is a probability distribution that remains unchanged after application of the transition matrix. In the column-stochastic convention, this means <span class="math inline">\(\pi = P\cdot\pi\)</span>, which is an eigenvalue equation of the form <span class="math inline">\(Ax = \lambda x\)</span> where <span class="math inline">\(\lambda = 1\)</span>. In other words, the stationary distribution is the eigenvector of the transition matrix <span class="math inline">\(P\)</span> corresponding to the eigenvalue 1.<a href="monte-carlo-chemical.html#fnref2" class="footnote-back">↩︎</a></p></li>
-</ol>
-</div>
+
+
+
+
+
+
+
+
             </section>
 
           </div>
         </div>
       </div>
-<a href="monte-carlo-introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="metropolis-monte-carlo.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="kinetic-monte-carlo.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -307,7 +286,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/bjmorgan/CH22013/main/lecture_02/lecture_02.Rmd",
+    "link": "https://github.com/bjmorgan/CH22013/main/appendices/appendices.Rmd",
     "text": "Edit"
   },
   "history": {

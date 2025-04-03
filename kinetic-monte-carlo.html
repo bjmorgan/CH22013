@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Lecture 4 Kinetic Monte Carlo | CH22013 Lecture Notes</title>
+  <meta name="description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Lecture 4 Kinetic Monte Carlo | CH22013 Lecture Notes" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Lecture 4 Kinetic Monte Carlo | CH22013 Lecture Notes" />
+  
+  <meta name="twitter:description" content="These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods." />
+  
+
+<meta name="author" content="Benjamin J. Morgan" />
+
+
+<meta name="date" content="2025-04-03" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="metropolis-monte-carlo.html"/>
+<link rel="next" href="math-deriv.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">CH22013 Monte Carlo Methods</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a></li>
+<li class="chapter" data-level="1" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction to Monte Carlo Methods</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#introduction-to-averaging-sampling"><i class="fa fa-check"></i><b>1.1</b> Introduction to Averaging &amp; Sampling</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#the-statistical-nature-of-chemical-systems"><i class="fa fa-check"></i><b>1.1.1</b> The Statistical Nature of Chemical Systems</a></li>
+<li class="chapter" data-level="1.1.2" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#probability-distributions"><i class="fa fa-check"></i><b>1.1.2</b> Probability Distributions</a></li>
+<li class="chapter" data-level="1.1.3" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#the-boltzmann-distribution"><i class="fa fa-check"></i><b>1.1.3</b> The Boltzmann Distribution</a></li>
+<li class="chapter" data-level="1.1.4" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#the-computational-challenge"><i class="fa fa-check"></i><b>1.1.4</b> The Computational Challenge</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#the-solution-statistical-sampling"><i class="fa fa-check"></i><b>1.2</b> The Solution: Statistical Sampling</a></li>
+<li class="chapter" data-level="1.3" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#two-approaches-to-sampling"><i class="fa fa-check"></i><b>1.3</b> Two Approaches to Sampling</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#molecular-dynamics-approach"><i class="fa fa-check"></i><b>1.3.1</b> Molecular Dynamics Approach</a></li>
+<li class="chapter" data-level="1.3.2" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#monte-carlo-approach"><i class="fa fa-check"></i><b>1.3.2</b> Monte Carlo Approach</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#fundamental-monte-carlo-examples"><i class="fa fa-check"></i><b>1.4</b> Fundamental Monte Carlo Examples</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#estimating-π-by-monte-carlo-integration"><i class="fa fa-check"></i><b>1.4.1</b> Estimating π by Monte Carlo Integration</a></li>
+<li class="chapter" data-level="1.4.2" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#function-averaging-and-numerical-integration"><i class="fa fa-check"></i><b>1.4.2</b> Function Averaging and Numerical Integration</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#statistical-uncertainty-in-monte-carlo-methods"><i class="fa fa-check"></i><b>1.5</b> Statistical Uncertainty in Monte Carlo Methods</a></li>
+<li class="chapter" data-level="1.6" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#summary-and-preview"><i class="fa fa-check"></i><b>1.6</b> Summary and Preview</a>
+<ul>
+<li class="chapter" data-level="1.6.1" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#key-takeaways-from-lecture-1"><i class="fa fa-check"></i><b>1.6.1</b> Key Takeaways from Lecture 1</a></li>
+<li class="chapter" data-level="1.6.2" data-path="monte-carlo-introduction.html"><a href="monte-carlo-introduction.html#looking-ahead-to-lecture-2"><i class="fa fa-check"></i><b>1.6.2</b> Looking Ahead to Lecture 2</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html"><i class="fa fa-check"></i><b>2</b> Monte Carlo Methods Applied to Chemical Systems</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#introduction-to-non-uniform-sampling"><i class="fa fa-check"></i><b>2.1</b> Introduction to Non-Uniform Sampling</a></li>
+<li class="chapter" data-level="2.2" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#boltzmann-sampling-and-the-inefficiency-of-uniform-sampling"><i class="fa fa-check"></i><b>2.2</b> Boltzmann Sampling and the Inefficiency of Uniform Sampling</a></li>
+<li class="chapter" data-level="2.3" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#the-solution-markov-chain-monte-carlo"><i class="fa fa-check"></i><b>2.3</b> The Solution: Markov Chain Monte Carlo</a></li>
+<li class="chapter" data-level="2.4" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#markov-chain"><i class="fa fa-check"></i><b>2.4</b> What is a Markov Chain?</a></li>
+<li class="chapter" data-level="2.5" data-path="monte-carlo-chemical.html"><a href="monte-carlo-chemical.html#summary-and-preview-1"><i class="fa fa-check"></i><b>2.5</b> Summary and Preview</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html"><i class="fa fa-check"></i><b>3</b> Metropolis Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#detailed-balance"><i class="fa fa-check"></i><b>3.2</b> Detailed Balance</a></li>
+<li class="chapter" data-level="3.3" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-metropolis-algorithm"><i class="fa fa-check"></i><b>3.3</b> The Metropolis Algorithm</a></li>
+<li class="chapter" data-level="3.4" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-metropolis-monte-carlo-algorithm-in-practice"><i class="fa fa-check"></i><b>3.4</b> The Metropolis Monte Carlo Algorithm in Practice</a></li>
+<li class="chapter" data-level="3.5" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#why-we-record-rejected-moves-in-metropolis-monte-carlo"><i class="fa fa-check"></i><b>3.5</b> Why We Record Rejected Moves in Metropolis Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-core-principle"><i class="fa fa-check"></i><b>3.5.1</b> The Core Principle</a></li>
+<li class="chapter" data-level="3.5.2" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#two-state-system-example"><i class="fa fa-check"></i><b>3.5.2</b> Two-State System Example</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#example-4-spin-ising-model"><i class="fa fa-check"></i><b>3.6</b> Example: 4-Spin Ising Model</a></li>
+<li class="chapter" data-level="3.7" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#example-butane-conformations"><i class="fa fa-check"></i><b>3.7</b> Example: Butane Conformations</a></li>
+<li class="chapter" data-level="3.8" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#equilibration-and-sampling"><i class="fa fa-check"></i><b>3.8</b> Equilibration and Sampling</a></li>
+<li class="chapter" data-level="3.9" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#temperature-effects-and-sampling-challenges"><i class="fa fa-check"></i><b>3.9</b> Temperature Effects and Sampling Challenges</a>
+<ul>
+<li class="chapter" data-level="3.9.1" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#sampling-problems-at-low-temperature"><i class="fa fa-check"></i><b>3.9.1</b> Sampling Problems at Low Temperature</a></li>
+</ul></li>
+<li class="chapter" data-level="3.10" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#the-ergodic-hypothesis"><i class="fa fa-check"></i><b>3.10</b> The Ergodic Hypothesis</a></li>
+<li class="chapter" data-level="3.11" data-path="metropolis-monte-carlo.html"><a href="metropolis-monte-carlo.html#summary"><i class="fa fa-check"></i><b>3.11</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html"><i class="fa fa-check"></i><b>4</b> Kinetic Monte Carlo</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#the-memoryless-property-lightbulbs-and-radioactive-nuclei"><i class="fa fa-check"></i><b>4.2</b> The Memoryless Property: Lightbulbs and Radioactive Nuclei</a></li>
+<li class="chapter" data-level="4.3" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#from-memoryless-processes-to-exponential-distributions"><i class="fa fa-check"></i><b>4.3</b> From Memoryless Processes to Exponential Distributions</a></li>
+<li class="chapter" data-level="4.4" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#two-competing-radioactive-decays"><i class="fa fa-check"></i><b>4.4</b> Two Competing Radioactive Decays</a></li>
+<li class="chapter" data-level="4.5" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#generalizing-to-multiple-radioactive-nuclei"><i class="fa fa-check"></i><b>4.5</b> Generalizing to Multiple Radioactive Nuclei</a></li>
+<li class="chapter" data-level="4.6" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#building-the-kmc-algorithm"><i class="fa fa-check"></i><b>4.6</b> Building the KMC Algorithm</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#generating-exponentially-distributed-random-times"><i class="fa fa-check"></i><b>4.6.1</b> Generating Exponentially Distributed Random Times</a></li>
+<li class="chapter" data-level="4.6.2" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#selecting-which-nucleus-decays"><i class="fa fa-check"></i><b>4.6.2</b> Selecting Which Nucleus Decays</a></li>
+<li class="chapter" data-level="4.6.3" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#the-complete-kmc-algorithm"><i class="fa fa-check"></i><b>4.6.3</b> The Complete KMC Algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#a-worked-example-radioactive-decay-chain"><i class="fa fa-check"></i><b>4.7</b> A Worked Example: Radioactive Decay Chain</a></li>
+<li class="chapter" data-level="4.8" data-path="kinetic-monte-carlo.html"><a href="kinetic-monte-carlo.html#summary-1"><i class="fa fa-check"></i><b>4.8</b> Summary</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendices</b></span></li>
+<li class="chapter" data-level="A" data-path="math-deriv.html"><a href="math-deriv.html"><i class="fa fa-check"></i><b>A</b> Mathematical Derivations</a>
+<ul>
+<li class="chapter" data-level="A.1" data-path="math-deriv.html"><a href="math-deriv.html#derivation-of-exponential-waiting-times"><i class="fa fa-check"></i><b>A.1</b> Derivation of Exponential Waiting Times</a></li>
+<li class="chapter" data-level="A.2" data-path="math-deriv.html"><a href="math-deriv.html#derivation-of-event-selection-probabilities"><i class="fa fa-check"></i><b>A.2</b> Derivation of Event Selection Probabilities</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">CH22013 Lecture Notes</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="kinetic-monte-carlo" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Lecture 4</span> Kinetic Monte Carlo<a href="kinetic-monte-carlo.html#kinetic-monte-carlo" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="introduction-1" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Introduction<a href="kinetic-monte-carlo.html#introduction-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In our first three lectures, we have explored how Monte Carlo methods can generate representative samples from the Boltzmann distribution, allowing us to calculate equilibrium properties of chemical systems. We have seen how Metropolis Monte Carlo solves the sampling problem by focusing computational effort on the physically relevant regions of configuration space. While Monte Carlo methods excel at estimating time-independent properties—average energies, structural distributions, and thermodynamic quantities—they tell us nothing about how systems evolve over time.</p>
+<p>Yet many of the most interesting questions in chemistry are inherently time-dependent. How quickly does a protein fold into its native structure? How do atoms diffuse across a catalyst surface? What is the rate-limiting step in a complex reaction mechanism? For these questions, we need not just the equilibrium distribution, but the dynamics of how systems move between states.</p>
+<p>To address these time-dependent questions, we turn to Kinetic Monte Carlo (KMC). Unlike Metropolis Monte Carlo, which accepts or rejects moves based on energy differences, KMC selects moves based on the relative rates of possible transitions and associates a physical time with each step. This allows us to follow the dynamical evolution of systems through time, capturing the sequence and timing of events rather than just the average behavior.</p>
+</div>
+<div id="the-memoryless-property-lightbulbs-and-radioactive-nuclei" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> The Memoryless Property: Lightbulbs and Radioactive Nuclei<a href="kinetic-monte-carlo.html#the-memoryless-property-lightbulbs-and-radioactive-nuclei" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let us begin with a thought experiment to illustrate a crucial property of many physical processes:</p>
+<p>Imagine we are quality assurance inspectors for a manufacturer of high-quality lightbulbs rated to last 10 years. Part of our job involves annual home inspections to assess the likelihood of bulbs failing in the coming year, replacing any that exceed our risk threshold.</p>
+<p>On a typical inspection day, we visit two houses:</p>
+<ul>
+<li>In the first house, the lightbulbs were installed just 2 years ago.</li>
+<li>In the second house, the lightbulbs were installed 12 years ago, already exceeding their 10-year rating.</li>
+</ul>
+<p>Which lightbulb would we think is more likely to fail before our next inspection? Most people would say the 12-year-old bulb, and they would be correct—lightbulbs “age” and become more likely to fail as they get older. For lightbulbs, the failure rate increases with time, a property known as “aging.”</p>
+<p>Now consider a similar situation with radioactive nuclei:</p>
+<p>We are observing two carbon-14 nuclei. Based on its rate constant, we calculate there is a 0.01% chance that a carbon-14 nucleus will decay in the next minute.</p>
+<p>A colleague then tells us: “I’ve been watching one of these nuclei for the past two weeks, and it hasn’t decayed yet. The other nucleus was only added to our experiment this morning.”</p>
+<p>Should we update our probability estimate for either nucleus decaying in the next minute?</p>
+<p>The answer is no. Both nuclei still have exactly a 0.01% chance of decaying in the next minute, regardless of how long they have already been observed. Unlike lightbulbs, radioactive nuclei do not “age” or get closer to decaying with time.</p>
+<p>This property—that future behavior depends only on the current state, not on past history—defines what mathematicians call a “memoryless” process. For radioactive decay, this means the nucleus has a constant probability of decaying in any small time interval, regardless of how long it has already existed.</p>
+</div>
+<div id="from-memoryless-processes-to-exponential-distributions" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> From Memoryless Processes to Exponential Distributions<a href="kinetic-monte-carlo.html#from-memoryless-processes-to-exponential-distributions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>For memoryless processes like radioactive decay, a fundamental question is: how long will we have to wait until the event (like decay) occurs? This duration is called the “waiting time”—the time interval between the start of our observation and the occurrence of the event.</p>
+<p>For a memoryless process with decay constant (or rate constant) <span class="math inline">\(k\)</span>, the waiting time follows an exponential distribution with probability density function (a full derivation is provided in Appendix <a href="math-deriv.html#math-deriv">A</a>):</p>
+<p><span class="math display">\[p_\mathrm{wait}(t) = k\exp(-kt)\]</span></p>
+<p>This distribution has several important implications:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Short waiting times are most likely</strong>: The maximum probability density occurs at <span class="math inline">\(t = 0\)</span>. Counterintuitively, the most probable time for the event to occur is right at the start of our observation.</p></li>
+<li><p><strong>The average waiting time is <span class="math inline">\(1/k\)</span></strong>: For a rate constant of 0.1 s<sup>−1</sup>, the average time until decay is 10 seconds. However, this average emerges from a wide range of possible waiting times.</p></li>
+<li><p><strong>There is a long tail</strong>: Although short waiting times are most probable, there is always a chance of waiting much longer than the average. Some nuclei decay almost immediately, while others might survive for several multiples of the average lifetime.</p></li>
+<li><p><strong>The memoryless property appears in the distribution</strong>: At any point in time, the remaining waiting time still follows the same exponential distribution—the future distribution of waiting times is always the same, regardless of how long we have waited already.</p></li>
+</ol>
+<p>From the waiting time distribution, we can calculate the probability that an event occurs within a specific time interval. The cumulative distribution function (CDF) gives the probability that the event has occurred by time <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+P(t) &amp;= \int_0^t p_\mathrm{wait}(\tau)\,\mathrm{d}\tau \\
+     &amp;= \int_0^t k\exp(-k\tau)\,\mathrm{d}\tau \\
+     &amp;= 1 - \exp(-kt)
+\end{align}
+\]</span></p>
+<p>The complementary quantity, called the “survival probability” <span class="math inline">\(S(t)\)</span>, gives the probability that the event has not yet occurred by time <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+S(t) &amp;= 1 - P(t) \\
+     &amp;= \exp(-kt)
+\end{align}
+\]</span></p>
+</div>
+<div id="two-competing-radioactive-decays" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> Two Competing Radioactive Decays<a href="kinetic-monte-carlo.html#two-competing-radioactive-decays" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Now let us consider the more complex case of two different radioactive nuclei sitting side by side: a carbon-14 atom with decay constant <span class="math inline">\(k_1\)</span> and a tritium (hydrogen-3) atom with decay constant <span class="math inline">\(k_2\)</span>. Both nuclei will eventually decay, but two questions arise: how long will we wait until the first nucleus decays, and which nucleus is likely to decay first?</p>
+<p>Let us tackle the first question. For neither nucleus to have decayed by time <span class="math inline">\(t\)</span>, both must have survived until that time. Using the survival probability we just derived, and since the nuclei decay independently, the total survival probability is the product of their individual survival probabilities:</p>
+<p><span class="math display">\[S_\mathrm{total}(t) = S_1(t) \times S_2(t) = \exp(-k_1t) \times \exp(-k_2t) = \exp(-(k_1 + k_2)t)\]</span></p>
+<p>This is another exponential function, but with rate constant <span class="math inline">\(k_\mathrm{total} = k_1 + k_2\)</span>. This means the waiting time until the first decay follows an exponential distribution with average waiting time <span class="math inline">\(1/k_\mathrm{total}\)</span>, which is shorter than either nucleus’s individual average lifetime.</p>
+<p>For example, if carbon-14 has a decay constant of <span class="math inline">\(k_1 = 3.8 \times 10^{-12}\)</span> s<sup>−1</sup> and tritium has <span class="math inline">\(k_2 = 1.8 \times 10^{-9}\)</span> s<sup>−1</sup>, then the average waiting time until one of them decays is:</p>
+<p><span class="math display">\[\langle \tau \rangle = \frac{1}{k_1 + k_2} = \frac{1}{3.8 \times 10^{-12} + 1.8 \times 10^{-9}} \approx \frac{1}{1.8 \times 10^{-9}} \approx 5.6 \times 10^8 \text{ seconds}\]</span></p>
+<p>Which is much closer to tritium’s half-life than carbon-14’s, as we would intuitively expect since tritium decays much faster.</p>
+<p>Now for the second question: which nucleus is likely to decay first? The probability that carbon-14 decays first is:</p>
+<p><span class="math display">\[P(\text{C-14 decays first}) = \frac{k_1}{k_1 + k_2} = \frac{3.8 \times 10^{-12}}{3.8 \times 10^{-12} + 1.8 \times 10^{-9}} \approx 0.0021\]</span></p>
+<p>While the probability that tritium decays first is:</p>
+<p><span class="math display">\[P(\text{tritium decays first}) = \frac{k_2}{k_1 + k_2} \approx 0.9979\]</span></p>
+<p>In other words, the tritium atom is about 474 times more likely to decay first than the carbon-14 atom, which matches our intuition since tritium’s rate constant is about 474 times larger (the mathematical proof of this result follows the same integration approach we used for the survival probability).</p>
+</div>
+<div id="generalizing-to-multiple-radioactive-nuclei" class="section level2 hasAnchor" number="4.5">
+<h2><span class="header-section-number">4.5</span> Generalizing to Multiple Radioactive Nuclei<a href="kinetic-monte-carlo.html#generalizing-to-multiple-radioactive-nuclei" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The approach we have developed extends to any number of competing decay processes. If we have <span class="math inline">\(N\)</span> different radioactive nuclei with decay constants <span class="math inline">\(k_1, k_2, ..., k_N\)</span>, the total decay rate is:</p>
+<p><span class="math display">\[k_\mathrm{total} = k_1 + k_2 + ... + k_N = \sum_{i=1}^N k_i\]</span></p>
+<p>The waiting time until the first decay follows an exponential distribution:</p>
+<p><span class="math display">\[p(\tau) = k_\mathrm{total} \times \exp(-k_\mathrm{total} \times \tau)\]</span></p>
+<p>And the probability that nucleus <span class="math inline">\(j\)</span> is the one that decays first is:</p>
+<p><span class="math display">\[P(\text{nucleus $j$ decays first}) = \frac{k_j}{k_\mathrm{total}}\]</span></p>
+<p>These two principles—exponentially distributed waiting times with rate <span class="math inline">\(k_\mathrm{total}\)</span> and process selection with probabilities proportional to individual rates—form the mathematical core of the KMC algorithm.</p>
+</div>
+<div id="building-the-kmc-algorithm" class="section level2 hasAnchor" number="4.6">
+<h2><span class="header-section-number">4.6</span> Building the KMC Algorithm<a href="kinetic-monte-carlo.html#building-the-kmc-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="generating-exponentially-distributed-random-times" class="section level3 hasAnchor" number="4.6.1">
+<h3><span class="header-section-number">4.6.1</span> Generating Exponentially Distributed Random Times<a href="kinetic-monte-carlo.html#generating-exponentially-distributed-random-times" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>With our mathematical foundation in place, we can now build the KMC algorithm. The key insight is that we can use random numbers to generate events that follow exactly the statistical patterns we have derived.</p>
+<p>First, how do we generate waiting times that follow an exponential distribution? The trick involves a technique called “inverse transform sampling.” Here is how it works:</p>
+<ol style="list-style-type: decimal">
+<li>Generate a uniform random number <span class="math inline">\(r\)</span> between 0 and 1</li>
+<li>Transform it using the inverse of the exponential cumulative distribution function (CDF)</li>
+</ol>
+<p>For any exponential distribution with rate parameter <span class="math inline">\(k\)</span> (whether a decay constant or more generally a rate constant), the CDF is:</p>
+<p><span class="math display">\[F(\tau) = 1 - \exp(-k \times \tau)\]</span></p>
+<p>To generate a waiting time, we set <span class="math inline">\(F(\tau) = r\)</span> and solve for <span class="math inline">\(\tau\)</span>:</p>
+<p><span class="math display">\[
+\begin{align}
+r &amp;= 1 - \exp(-k \times \tau) \\
+\exp(-k \times \tau) &amp;= 1 - r \\
+\tau &amp;= -\frac{\ln(1 - r)}{k}
+\end{align}
+\]</span></p>
+<p>Here we can make an important simplification. When we generate a uniform random number <span class="math inline">\(r\)</span> between 0 and 1, the value <span class="math inline">\((1-r)\)</span> is also a uniform random number between 0 and 1. This is because the uniform distribution between 0 and 1 is symmetric around 0.5.</p>
+<p>To understand this intuitively, imagine generating values between 0 and 1 on a number line:</p>
+<ul>
+<li>If <span class="math inline">\(r = 0.2\)</span>, then <span class="math inline">\((1-r) = 0.8\)</span></li>
+<li>If <span class="math inline">\(r = 0.7\)</span>, then <span class="math inline">\((1-r) = 0.3\)</span></li>
+<li>If <span class="math inline">\(r = 0.01\)</span>, then <span class="math inline">\((1-r) = 0.99\)</span></li>
+</ul>
+<p>In each case, the value <span class="math inline">\((1-r)\)</span> is also uniformly distributed between 0 and 1. The transformation simply “flips” the distribution around 0.5, but since a uniform distribution has equal probability everywhere, the flipped distribution is identical to the original.</p>
+<p>Therefore, instead of computing <span class="math inline">\((1-r)\)</span>, we can just use our original random number <span class="math inline">\(r\)</span> directly:</p>
+<p><span class="math display">\[\tau = -\frac{\ln(r)}{k}\]</span></p>
+<p>This simplification is common in many Monte Carlo algorithms and makes the implementation more straightforward without changing the statistical properties of the generated waiting times.</p>
+</div>
+<div id="selecting-which-nucleus-decays" class="section level3 hasAnchor" number="4.6.2">
+<h3><span class="header-section-number">4.6.2</span> Selecting Which Nucleus Decays<a href="kinetic-monte-carlo.html#selecting-which-nucleus-decays" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To select which nucleus decays, we use another random number and compare it against the cumulative probabilities of the processes:</p>
+<ol style="list-style-type: decimal">
+<li>Generate a uniform random number <span class="math inline">\(s\)</span> between 0 and 1</li>
+<li>If <span class="math inline">\(s &lt; \frac{k_1}{k_\mathrm{total}}\)</span>, select nucleus 1</li>
+<li>If <span class="math inline">\(\frac{k_1}{k_\mathrm{total}} \leq s &lt; \frac{k_1 + k_2}{k_\mathrm{total}}\)</span>, select nucleus 2</li>
+<li>And so on for additional nuclei</li>
+</ol>
+<p>This is equivalent to dividing a line from 0 to 1 into segments proportional to each nucleus’s decay probability, then seeing which segment contains our random number.</p>
+</div>
+<div id="the-complete-kmc-algorithm" class="section level3 hasAnchor" number="4.6.3">
+<h3><span class="header-section-number">4.6.3</span> The Complete KMC Algorithm<a href="kinetic-monte-carlo.html#the-complete-kmc-algorithm" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Start with the system in a well-defined state and set time to zero.</strong></p></li>
+<li><p><strong>Create a catalog of all possible events and their rates.</strong></p>
+<ul>
+<li>For each site or component, determine what events could happen there</li>
+<li>Calculate the rate constant for each possible event</li>
+<li>Sum up the rates to get the total rate <span class="math inline">\(k_\mathrm{total}\)</span></li>
+</ul></li>
+<li><p><strong>Advance time by generating a random waiting time.</strong></p>
+<ul>
+<li>Generate a random number <span class="math inline">\(r_1\)</span> uniformly between 0 and 1</li>
+<li>Calculate <span class="math inline">\(\tau = -\ln(r_1)/k_\mathrm{total}\)</span></li>
+<li>Advance the simulation clock: <span class="math inline">\(t = t + \tau\)</span></li>
+</ul></li>
+<li><p><strong>Select which event occurs.</strong></p>
+<ul>
+<li>Generate another random number <span class="math inline">\(r_2\)</span> between 0 and 1</li>
+<li>Use <span class="math inline">\(r_2\)</span> to select an event with probability proportional to its rate</li>
+<li>A simple approach: if <span class="math inline">\(r_2 &lt; k_1/k_\mathrm{total}\)</span>, select event 1; otherwise, if <span class="math inline">\(r_2 &lt; (k_1+k_2)/k_\mathrm{total}\)</span>, select event 2; and so on</li>
+</ul></li>
+<li><p><strong>Execute the selected event and update the system.</strong></p>
+<ul>
+<li>Change the system state according to the selected event</li>
+<li>Update the catalog of possible events and their rates (only those affected by the change)</li>
+</ul></li>
+<li><p><strong>Repeat steps 2-5</strong> until reaching the desired simulation time or end condition.</p></li>
+</ol>
+<p>The KMC algorithm focuses computational effort on times when events actually occur. Unlike time-step methods that process periods when nothing happens, KMC jumps directly from event to event, making it effective for systems with widely varying timescales.</p>
+</div>
+</div>
+<div id="a-worked-example-radioactive-decay-chain" class="section level2 hasAnchor" number="4.7">
+<h2><span class="header-section-number">4.7</span> A Worked Example: Radioactive Decay Chain<a href="kinetic-monte-carlo.html#a-worked-example-radioactive-decay-chain" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Let us illustrate these concepts by considering a simple example: a radioactive decay chain where A atoms decay to B atoms, which then decay to C atoms:</p>
+<p><span class="math display">\[\mathrm{A} \overset{k_1}\longrightarrow \mathrm{B} \overset{k_2}\longrightarrow \mathrm{C}\]</span></p>
+<p>We will start with 10 A atoms and follow the system’s evolution using KMC, tracking each atom individually:</p>
+<ol style="list-style-type: decimal">
+<li>Each individual <span class="math inline">\(\mathrm{A}\)</span> atom has a chance to decay to <span class="math inline">\(\mathrm{B}\)</span> with rate <span class="math inline">\(k_1\)</span></li>
+<li>Each individual <span class="math inline">\(\mathrm{B}\)</span> atom has a chance to decay to <span class="math inline">\(\mathrm{C}\)</span> with rate <span class="math inline">\(k_2\)</span></li>
+</ol>
+<p>Let us use <span class="math inline">\(k_1 = 1\)</span> s<sup>−1</sup> and <span class="math inline">\(k_2 = 2\)</span> s<sup>−1</sup>, meaning B atoms decay twice as fast as A atoms.</p>
+<p>Figure <a href="kinetic-monte-carlo.html#fig:kmc-decay-chain">4.1</a> illustrates the first five steps of our KMC simulation, showing how the system evolves and how random numbers determine both the timing of events and which events occur.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:kmc-decay-chain"></span>
+<img src="lecture_04/figures/kmc-decay-chain.png" alt="Visual representation of the first five steps in a KMC simulation of the radioactive decay chain A $\to$ B $\to$ C. Each row shows: the current state of the system (red circles = A atoms, green circles = B atoms, yellow circles = C atoms); the total event rate divided by event type; the random number $r_1$ used to generate the waiting time $\Delta t$; the random number $r_2$ used for event selection (with colored bars showing the probability ranges for each possible event); and the selected event." width="100%" />
+<p class="caption">
+Figure 4.1: Visual representation of the first five steps in a KMC simulation of the radioactive decay chain A <span class="math inline">\(\to\)</span> B <span class="math inline">\(\to\)</span> C. Each row shows: the current state of the system (red circles = A atoms, green circles = B atoms, yellow circles = C atoms); the total event rate divided by event type; the random number <span class="math inline">\(r_1\)</span> used to generate the waiting time <span class="math inline">\(\Delta t\)</span>; the random number <span class="math inline">\(r_2\)</span> used for event selection (with colored bars showing the probability ranges for each possible event); and the selected event.
+</p>
+</div>
+<p>Here are the first five steps in detail:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Initial setup</strong>
+<ul>
+<li>Starting state: <span class="math inline">\(N_\mathrm{A} = 10\)</span>, <span class="math inline">\(N_\mathrm{B} = 0\)</span>, <span class="math inline">\(N_\mathrm{C} = 0\)</span>, <span class="math inline">\(t = 0\)</span></li>
+<li>Total rate: <span class="math inline">\(k_\mathrm{total} = 1 \times 10 + 2 \times 0 = 10\)</span> s<sup>−1</sup></li>
+<li>Generate <span class="math inline">\(r_1 = 0.368\)</span> <span class="math inline">\(\to\)</span> waiting time: <span class="math inline">\(\tau = -\ln(0.368)/10 = 0.1\)</span> s</li>
+<li>Advance time: <span class="math inline">\(t = 0 + 0.1 = 0.1\)</span> s</li>
+<li>Generate <span class="math inline">\(r_2 = 0.275\)</span></li>
+<li>Since there is only one possible event type (<span class="math inline">\(\mathrm{A} \to \mathrm{B}\)</span>), select that</li>
+<li>Update: <span class="math inline">\(N_\mathrm{A} = 9\)</span>, <span class="math inline">\(N_\mathrm{B} = 1\)</span>, <span class="math inline">\(N_\mathrm{C} = 0\)</span></li>
+</ul></li>
+<li><strong>Second iteration</strong>
+<ul>
+<li>Total rate: <span class="math inline">\(k_\mathrm{total} = 1 \times 9 + 2 \times 1 = 11\)</span> s<sup>−1</sup></li>
+<li>Generate <span class="math inline">\(r_1 = 0.841\)</span> <span class="math inline">\(\to\)</span> waiting time: <span class="math inline">\(\tau = -\ln(0.841)/11 = 0.016\)</span> s</li>
+<li>Advance time: <span class="math inline">\(t = 0.1 + 0.016 = 0.116\)</span> s</li>
+<li>Generate <span class="math inline">\(r_2 = 0.682\)</span></li>
+<li>Compare: <span class="math inline">\(0.682 &lt; (9/11) = 0.818\)</span>, so select <span class="math inline">\(\mathrm{A} \to \mathrm{B}\)</span></li>
+<li>Update: <span class="math inline">\(N_\mathrm{A} = 8\)</span>, <span class="math inline">\(N_\mathrm{B} = 2\)</span>, <span class="math inline">\(N_\mathrm{C} = 0\)</span></li>
+</ul></li>
+<li><strong>Third iteration</strong>
+<ul>
+<li>Total rate: <span class="math inline">\(k_\mathrm{total} = 1 \times 8 + 2 \times 2 = 12\)</span> s<sup>−1</sup></li>
+<li>Generate <span class="math inline">\(r_1 = 0.042\)</span> <span class="math inline">\(\to\)</span> waiting time: <span class="math inline">\(\tau = -\ln(0.042)/12 = 0.264\)</span> s</li>
+<li>Advance time: <span class="math inline">\(t = 0.116 + 0.264 = 0.38\)</span> s</li>
+<li>Generate <span class="math inline">\(r_2 = 0.058\)</span></li>
+<li>Compare: <span class="math inline">\(0.058 &lt; (8/12) = 0.667\)</span>, so select <span class="math inline">\(\mathrm{A} \to \mathrm{B}\)</span></li>
+<li>Update: <span class="math inline">\(N_\mathrm{A} = 7\)</span>, <span class="math inline">\(N_\mathrm{B} = 3\)</span>, <span class="math inline">\(N_\mathrm{C} = 0\)</span></li>
+</ul></li>
+<li><strong>Fourth iteration</strong>
+<ul>
+<li>Total rate: <span class="math inline">\(k_\mathrm{total} = 1 \times 7 + 2 \times 3 = 13\)</span> s<sup>−1</sup></li>
+<li>Generate <span class="math inline">\(r_1 = 0.194\)</span> <span class="math inline">\(\to\)</span> waiting time: <span class="math inline">\(\tau = -\ln(0.194)/13 = 0.126\)</span> s</li>
+<li>Advance time: <span class="math inline">\(t = 0.38 + 0.126 = 0.506\)</span> s</li>
+<li>Generate <span class="math inline">\(r_2 = 0.960\)</span></li>
+<li>Compare: <span class="math inline">\(0.960 &gt; (7/13) = 0.538\)</span>, so select <span class="math inline">\(\mathrm{B} \to \mathrm{C}\)</span></li>
+<li>Update: <span class="math inline">\(N_\mathrm{A} = 7\)</span>, <span class="math inline">\(N_\mathrm{B} = 2\)</span>, <span class="math inline">\(N_\mathrm{C} = 1\)</span></li>
+</ul></li>
+<li><strong>Fifth iteration</strong>
+<ul>
+<li>Total rate: <span class="math inline">\(k_\mathrm{total} = 1 \times 7 + 2 \times 2 = 11\)</span> s<sup>−1</sup></li>
+<li>Generate <span class="math inline">\(r_1 = 0.782\)</span> <span class="math inline">\(\to\)</span> waiting time: <span class="math inline">\(\tau = -\ln(0.782)/11 = 0.022\)</span> s</li>
+<li>Advance time: <span class="math inline">\(t = 0.506 + 0.022 = 0.528\)</span> s</li>
+<li>Generate <span class="math inline">\(r_2 = 0.411\)</span></li>
+<li>Compare: <span class="math inline">\(0.411 &lt; (7/11) = 0.636\)</span>, so select <span class="math inline">\(\mathrm{A} \to \mathrm{B}\)</span></li>
+<li>Update: <span class="math inline">\(N_\mathrm{A} = 6\)</span>, <span class="math inline">\(N_\mathrm{B} = 3\)</span>, <span class="math inline">\(N_\mathrm{C} = 1\)</span></li>
+</ul></li>
+</ol>
+<p>As the simulation continues beyond these first few steps, we can observe the complete time evolution of all three species. Figure <a href="kinetic-monte-carlo.html#fig:kmc-example-10">4.2</a> shows the population dynamics throughout the entire simulation run.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:kmc-example-10"></span>
+<img src="lecture_04/figures/kmc-example-10.png" alt="Population dynamics in a KMC simulation of the radioactive decay chain A → B → C starting with 10 A atoms. Species A (red) decreases exponentially, species B (green) rises and then falls as an intermediate, and species C (yellow) steadily accumulates as the final product." width="50%" />
+<p class="caption">
+Figure 4.2: Population dynamics in a KMC simulation of the radioactive decay chain A → B → C starting with 10 A atoms. Species A (red) decreases exponentially, species B (green) rises and then falls as an intermediate, and species C (yellow) steadily accumulates as the final product.
+</p>
+</div>
+<p>This single KMC trajectory reveals the characteristic behavior of a sequential radioactive decay process. Species A diminishes with the approximately exponential decay pattern expected for a first-order process, gradually converting into the intermediate species B. The intermediate exhibits the classic rise-and-fall pattern typical of sequential reactions—initially accumulating as it forms from A, then declining as it transforms into the final product C. Meanwhile, species C steadily accumulates throughout the simulation, eventually becoming the sole remaining species once all transformations are complete.</p>
+<p>What makes KMC particularly valuable is evident in the non-smooth progression of the population curves. Unlike deterministic rate equations which produce perfectly smooth trajectories, the KMC simulation captures the inherent stochasticity of the decay process. Each decay event occurs at a randomly determined moment, creating subtle fluctuations in the overall trajectory. If we were to run the simulation multiple times with different random number sequences, each trajectory would show unique variations while maintaining the same overall pattern—an accurate representation of how real radioactive decay processes behave at the microscopic level.</p>
+<p>This stochastic approach makes KMC especially suitable for systems with small populations where fluctuations significantly impact the overall behavior, or for processes where rare events play an important role. The method bridges the gap between microscopic randomness and macroscopic behavior, providing insights not available through purely deterministic methods.</p>
+</div>
+<div id="summary-1" class="section level2 hasAnchor" number="4.8">
+<h2><span class="header-section-number">4.8</span> Summary<a href="kinetic-monte-carlo.html#summary-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this lecture, we have developed the mathematical foundation of Kinetic Monte Carlo and applied it to chemical systems:</p>
+<ol style="list-style-type: decimal">
+<li>We started with a thought experiment contrasting aging processes (like lightbulbs) with memoryless processes (like radioactive decay) to introduce the concept of memorylessness</li>
+<li>We explained how memoryless processes are characterized by exponentially distributed waiting times</li>
+<li>We analyzed competing processes (multiple radioactive nuclei) and derived both the waiting time distribution and the probabilities for which event occurs first</li>
+<li>We constructed the KMC algorithm, showing how to generate event times and select events with the correct statistical properties</li>
+<li>We demonstrated the algorithm with a detailed example of a radioactive decay chain, illustrating the fundamental principles of KMC</li>
+</ol>
+<p>KMC provides a powerful framework for simulating time-dependent processes in chemical systems, especially those involving rare events or widely separated time scales. Unlike Metropolis Monte Carlo, which focuses only on equilibrium sampling, KMC gives detailed information about the dynamical evolution of systems.</p>
+<p>The method is particularly valuable for surface reactions, diffusion in solids, crystal growth, and other processes where the relevant events are well-defined and separated in time. By focusing computational effort only on the moments when events occur, KMC efficiently bridges the gap between atomistic simulation and macroscopic kinetics.</p>
+
+</div>
+</div>
+
+
+
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="metropolis-monte-carlo.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="math-deriv.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/bjmorgan/CH22013/main/lecture_04/lecture_04.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "depth": 3
+  },
+  "mathjax": {
+    "extensions": "mhchem.js"
+  },
+  "mathjax_config": {
+    "TeX": {
+      "Macros": {
+        "conc": [
+          "[\mathrm{#1}]",
+          1
+        ],
+        "diffc": [
+          "\frac{\mathrm{d}\conc{#1}}{\mathrm{d}t}",
+          1
+        ]
+      }
+    }
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

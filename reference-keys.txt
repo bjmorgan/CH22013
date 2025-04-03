@@ -7,6 +7,8 @@ fig:butane-PES
 fig:butane-results-500K
 fig:butane-results-highT
 fig:butane-results-50K
+fig:kmc-decay-chain
+fig:kmc-example-10
 monte-carlo-introduction
 introduction-to-averaging-sampling
 the-statistical-nature-of-chemical-systems
@@ -45,3 +47,18 @@ temperature-effects-and-sampling-challenges
 sampling-problems-at-low-temperature
 the-ergodic-hypothesis
 summary
+kinetic-monte-carlo
+introduction-1
+the-memoryless-property-lightbulbs-and-radioactive-nuclei
+from-memoryless-processes-to-exponential-distributions
+two-competing-radioactive-decays
+generalizing-to-multiple-radioactive-nuclei
+building-the-kmc-algorithm
+generating-exponentially-distributed-random-times
+selecting-which-nucleus-decays
+the-complete-kmc-algorithm
+a-worked-example-radioactive-decay-chain
+summary-1
+math-deriv
+derivation-of-exponential-waiting-times
+derivation-of-event-selection-probabilities
