@@ -1,0 +1,96 @@
+# (APPENDIX) Appendices {-}
+
+# Mathematical Derivations {#math-deriv}
+
+## Derivation of Exponential Waiting Times
+
+Let us consider a memoryless process with rate constant $k$. The probability of the event occurring in an infinitesimally small time interval $\mathrm{d}t$ is given by:
+
+$$P(\mathrm{d}t) = k \times \mathrm{d}t$$
+
+To derive the distribution of waiting times, we first consider the probability of survival $S(t)$&mdash;the probability that the event has not occurred by time $t$. Because at any point in time our process has either occurred or survived, $P(t) + S(t) = 1$, where $P(t)$ is the probability that the event has occurred by time $t$.
+
+Let us imagine we already know the probability of survival at time $t$, and we want to calculate the probability of continued survival at some later time $t+\mathrm{d}t$. This is given by the probability of survival at time $t$, multiplied by the probability of survival for the following time interval $\mathrm{d}t$:
+
+$$
+S(t+\mathrm{d}t) = S(t) \times S(\mathrm{d}t)
+$$
+
+Because $P(t) + S(t) = 1$ for any time $t$, 
+
+$$S(\mathrm{d}t) = 1 - P(\mathrm{d}t) = 1 -k\,\mathrm{d}t,$$
+
+and 
+
+\begin{eqnarray}
+S(t+\mathrm{d}t) & = S(t) (1 - k\,\mathrm{d}t) \\
+                 & = S(t) - k S(t) \mathrm{d}t
+\end{eqnarray}
+
+Rearranging:
+
+$$
+S(t+\mathrm{d} t) - S(t) = -k S(t)\,\mathrm{d}t
+$$
+
+or
+
+$$
+\frac{S(t+\mathrm{d}t) - S(t)}{\mathrm{d}t} = -k S(t)
+$$
+
+In the limit that $\mathrm{d}t$ becomes infinitesimally small, this becomes a differential equation that describes the instantaneous rate of change of the survival probability with time:
+
+$$
+\frac{\mathrm{d}S(t)}{\mathrm{d}t} = -k S(t)
+$$
+
+Integrating from $t=0$ to $t=t$, with the initial condition $S(0) = 1$ (we are certain the event has not occurred when $t=0$), gives the probability that the event has not occurred by time $t$:
+
+$$S(t) = \exp(-kt)$$
+
+As $t$ increases, the probability that the event has not occurred by this time decreases according to a negative exponential.
+
+From this, the probability that the event has occurred in time $t$ is:
+$$
+P(t) = 1 - \exp(-kt)
+$$
+
+This is the cumulative probability function (CDF). It describes the probability that the event occurs at some time less than or equal to $t$.
+If we want the probability density function (PDF) for the event occurring at exactly time $t$, then we differentiate this function:
+
+$$
+p_\mathrm{wait}(t) = \frac{\mathrm{d}}{\mathrm{d}t}(1-\exp(-kt)) = k\exp(-kt)
+$$
+
+This result tells us that the probability density function of waiting times is the exponential distribution with parameter $k$, confirming our earlier statement.
+
+## Derivation of Event Selection Probabilities
+
+Consider two competing events with rate constants $k_1$ and $k_2$. We want to find the probability that event 1 happens first. This equals the probability that event 1 occurs at some time $t$ AND event 2 hasn't occurred by that time, integrated over all possible times $t$:
+
+\begin{eqnarray}
+P(\text{Event 1 occurs first}) &=& \int_0^{\infty} P(\text{Event 1 occurs at time }t) \times P(\text{Event 2 hasn't occurred by time }t) \, \mathrm{d}t \\
+&=& \int_0^{\infty} k_1 \exp(-k_1 t) \times \exp(-k_2 t) \, \mathrm{d}t \\
+&=& k_1 \int_0^{\infty} \exp(-(k_1 + k_2)t) \, \mathrm{d}t \\
+&=& k_1 \times \frac{1}{k_1 + k_2} \\
+&=& \frac{k_1}{k_1 + k_2}
+\end{eqnarray}
+
+Similarly, for event 2:
+
+\begin{eqnarray}
+P(\text{Event 2 occurs first}) &=& \int_0^{\infty} P(\text{Event 2 occurs at time }t) \times P(\text{Event 1 hasn't occurred by time }t) \, \mathrm{d}t \\
+&=& \int_0^{\infty} k_2 \exp(-k_2 t) \times \exp(-k_1 t) \, \mathrm{d}t \\
+&=& k_2 \int_0^{\infty} \exp(-(k_1 + k_2)t) \, \mathrm{d}t \\
+&=& k_2 \times \frac{1}{k_1 + k_2} \\
+&=& \frac{k_2}{k_1 + k_2}
+\end{eqnarray}
+
+This confirms our earlier result that the probability of a particular event being the first to occur is proportional to its rate constant divided by the sum of all rate constants.
+
+The same approach generalizes to any number of competing events. For $N$ events with rate constants $k_1, k_2, ..., k_N$, the probability that event $j$ occurs first is:
+
+$$P(\text{Event j occurs first}) = \frac{k_j}{\sum_{i=1}^{N} k_i}$$
+
+This result forms the basis for event selection in the KMC algorithm, where we use a random number to select events with probabilities proportional to their rates.
