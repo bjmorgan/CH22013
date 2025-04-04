@@ -34,11 +34,27 @@ $P(\mathbf{r})$ represents a probability distribution, which describes the likel
 
 Probability distributions come in two forms:
 
-**Discrete distributions** apply when a variable can only take specific, countable values. For these, we use a probability mass function (PMF) that gives the probability of each possible outcome. For example, when rolling a fair six-sided die, each number (1&mdash;6) has a probability of 1/6. Another example is counting heads in four coin flips, which follows a binomial distribution where the probability of $k$ heads is $\binom{4}{k} \times (1/2)^4$.
+**Discrete distributions** apply when a variable can only take specific, countable values. For these, we use a probability mass function (PMF) that gives the probability of each possible outcome. For example, when rolling a fair six-sided die, each number (1&mdash;6) has a probability of 1/6. Another example is counting heads in four coin flips, which follows a binomial distribution where the probability of $k$ heads is $\binom{4}{k} \times (1/2)^4$. For any discrete distribution, the sum of probabilities across all possible outcomes must equal 1:
 
-**Continuous distributions** apply when a variable can take any value within a continuous range. These use a probability density function (PDF) where the probability of finding the variable in a specific range equals the area under the PDF curve over that range. A simple example is a random point selected along a line segment from 0 to 1, which follows a uniform continuous distribution with constant probability density.
+$$\sum_i P(i) = 1$$
 
-In all probability distributions, the total probability must equal 1, meaning the system must exist in some state. The average (expected value) of any property A is calculated by weighting each possible value by its probability and summing over all possibilities—exactly the formula we saw earlier for chemical systems.
+**Continuous distributions** apply when a variable can take any value within a continuous range. These use a probability density function (PDF) where the probability of finding the variable in a specific range equals the area under the PDF curve over that range. A simple example is a random point selected along a line segment from 0 to 1, which follows a uniform continuous distribution with constant probability density. For continuous distributions, the integral over the entire domain must equal 1:
+
+$$\int_{-\infty}^{\infty} P(x) \, \mathrm{d}x = 1$$
+
+This normalization requirement—that probabilities sum or integrate to 1&mdash;reflects the certainty that the system must exist in some state. Within a probability distribution, individual event probabilities range from 0 (impossible) to 1 (certain).
+
+When considering multiple events, we can define relationships between their probabilities. The joint probability, written as $P(A \cap B)$, gives the likelihood that both events A and B occur together. If two events are independent of each other&mdash;meaning the outcome of one does not influence the other—then this joint probability simplifies to $P(A \cap B) = P(A) \times P(B)$. This multiplication rule for independent events helps us build more complex probability models from simpler components.
+
+The average (expected value) of any property A is calculated by weighting each possible value by its probability. For discrete distributions, this average is:
+
+$$\langle A \rangle = \sum_i A_i P(i)$$
+
+This is exactly the formula we saw earlier for chemical systems, where we weight each configuration's contribution by its probability of occurring.
+
+For continuous distributions, the average is an integral:
+
+$$\langle A \rangle = \int_{-\infty}^{\infty} A(x) P(x) \, \mathrm{d}x$$
 
 ### The Boltzmann Distribution
 
