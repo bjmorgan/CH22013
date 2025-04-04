@@ -118,7 +118,7 @@ Two principal methods have been developed to address the sampling challenge in c
 
 ### Molecular Dynamics Approach
 
-Molecular Dynamics (MD) simulates atomic motion according to Newton's laws. By following these physical trajectories, MD can sample configurations according to their Boltzmann probabilities. When a simulation trajectory visits a suitably representative set of configurations in the relevant regions of configuration space, the time average provides a good approximation of the desired ensemble average:
+Molecular Dynamics (MD) simulates atomic motion according to Newton's laws. When performed in the canonical (NVT) ensemble, MD generates trajectories that naturally sample configurations according to their Boltzmann probabilities. When a simulation trajectory visits a suitably representative set of configurations in the relevant regions of configuration space, the time average provides a good approximation of the desired ensemble average:
 
 \begin{equation}
 \langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)
