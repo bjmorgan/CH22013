@@ -251,7 +251,7 @@ P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
 <p>Two principal methods have been developed to address the sampling challenge in computational chemistry:</p>
 <div id="molecular-dynamics-approach" class="section level3 hasAnchor" number="1.3.1">
 <h3><span class="header-section-number">1.3.1</span> Molecular Dynamics Approach<a href="monte-carlo-introduction.html#molecular-dynamics-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Molecular Dynamics (MD) simulates atomic motion according to Newton’s laws. By following these physical trajectories, MD can sample configurations according to their Boltzmann probabilities. When a simulation trajectory visits a suitably representative set of configurations in the relevant regions of configuration space, the time average provides a good approximation of the desired ensemble average:</p>
+<p>Molecular Dynamics (MD) simulates atomic motion according to Newton’s laws. When performed in the canonical (NVT) ensemble, MD generates trajectories that naturally sample configurations according to their Boltzmann probabilities. When a simulation trajectory visits a suitably representative set of configurations in the relevant regions of configuration space, the time average provides a good approximation of the desired ensemble average:</p>
 <p><span class="math display">\[\begin{equation}
 \langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)
 \end{equation}\]</span></p>
