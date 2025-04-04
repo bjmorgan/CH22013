@@ -64,7 +64,7 @@ We achieve this by including a normalization constant, $Z$:
 P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
 \end{equation}
 
-This constant $Z$ is called the "partition function," defined as:
+This constant $Z$ is called the "partition function", defined as:
 
 \begin{equation}
 Z = \sum \exp(-U(\mathbf{r})/kT)
@@ -74,7 +74,7 @@ The partition function plays a central role in statistical mechanics and thermod
 
 ### The Computational Challenge
 
-Let's revisit our fundamental problem. To calculate the thermodynamic average of a property A, we need to evaluate:
+Let us revisit our fundamental problem. To calculate the thermodynamic average of a property A, we need to evaluate:
 
 \begin{equation}
 \langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})
