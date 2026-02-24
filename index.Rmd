@@ -8,11 +8,11 @@ bibliography: [book.bib, packages.bib]
 # url: your book url like https://bookdown.org/yihui/bookdown
 # cover-image: path to the social sharing image like images/cover.jpg
 description: |
-  These are notes to accompany the 2025 CH22013 lecture course on Monte Carlo methods.
+  These are notes to accompany the CH22013 lecture course on Monte Carlo methods.
 link-citations: yes
 github-repo: rstudio/bookdown-demo
 ---
 
 # About {-}
 
-These notes accompany the 2025 CH22013 lecture course on Monte Carlo methods.
+These notes accompany the CH22013 lecture course on Monte Carlo methods.
