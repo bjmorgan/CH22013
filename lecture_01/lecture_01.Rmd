@@ -66,7 +66,11 @@ P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)
 
 Here, $U(\mathbf{r})$ is the potential energy of configuration $\mathbf{r}$, $k$ is Boltzmann's constant, and $T$ is the temperature.
 
-This relationship reveals a fundamental principle in physical chemistry: lower-energy configurations are exponentially more probable than higher-energy ones. At room temperature (298 K), a configuration that is just 6 kJ/mol higher in energy is approximately 10 times less probable than the minimum energy state. Temperature determines how strongly the system favors low-energy states—at high temperatures, the distribution becomes more uniform, while at low temperatures, the system is increasingly restricted to the lowest energy states.
+This relationship reveals a fundamental principle in physical chemistry: lower-energy configurations are exponentially more probable than higher-energy ones. At room temperature (298 K), a configuration that is just 6 kJ/mol higher in energy is approximately 10 times less probable than the minimum energy state, since $\exp(-6000/(8.314 \times 298)) \approx 1/10$. Temperature determines how strongly the system favors low-energy states—at high temperatures, the distribution becomes more uniform, while at low temperatures, the system is increasingly restricted to the lowest energy states.
+
+```{r boltzmann-distribution, fig.cap="The Boltzmann distribution at room temperature (298 K). Lower-energy configurations have exponentially higher probability than higher-energy ones.", out.width='50%', fig.align='center'}
+knitr::include_graphics("lecture_01/figures/boltzmann_distribution.png")
+```
 
 To create a valid probability distribution, the probabilities must sum to 1:
 
@@ -107,7 +111,17 @@ A direct approach to this calculation would require:
 2. Computing the property A and energy for each configuration
 3. Calculating the weighted sum
 
-The obstacle lies in the sheer number of possible configurations for any realistic chemical system. Consider a simple example: a $10 \times 10$ array of surface sites where we want to model the adsorption of 50 molecules. This system has approximately $10^{29}$ possible configurations—more than the number of stars in the observable universe. Direct enumeration becomes impossible.
+The obstacle lies in the sheer number of possible configurations for any realistic chemical system. Consider a simple example: a $10 \times 10$ array of surface sites where we want to model the adsorption of 50 molecules.
+
+```{r single-lattice, fig.cap="A single configuration of 50 molecules adsorbed on a $10 \\times 10$ lattice of surface sites.", out.width='40%', fig.align='center'}
+knitr::include_graphics("lecture_01/figures/single_lattice_png.png")
+```
+
+This system has approximately $10^{29}$ possible configurations—more than the number of stars in the observable universe. Direct enumeration becomes impossible.
+
+```{r many-lattices, fig.cap="A small selection of the approximately $10^{29}$ possible configurations of 50 molecules on a $10 \\times 10$ lattice. Direct enumeration of all configurations is computationally intractable.", out.width='100%', fig.align='center'}
+knitr::include_graphics("lecture_01/figures/50_lattices_png.png")
+```
 
 For most chemical systems, the situation is even more extreme. A small protein in solution might have millions of relevant conformations. A metal catalyst with multiple reaction pathways or a polymer chain sampling different spatial arrangements presents an effectively infinite configuration space. This combinatorial explosion makes direct evaluation computationally intractable—even the most powerful supercomputers cannot handle such calculations.
 
@@ -162,7 +176,17 @@ Before addressing the sampling challenges in chemical systems, let's examine two
 
 One of the simplest demonstrations of Monte Carlo methods is estimating the value of $\pi$. Consider a circle with radius 1 inscribed inside a square with side length 2. The area of the circle is $\pi$, while the area of the square is 4. Therefore, the ratio of these areas is $\pi/4$.
 
-We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. The procedure involves generating $N$ random points with coordinates $(x,y)$, where $x$ and $y$ are uniformly distributed between &minus;1 and 1. We then count how many points $M$ satisfy $x^2 + y^2 \leq 1$, which indicates they fall within the circle. The estimate for $\pi$ is given by: $\pi \approx 4 \times M/N$. This approach demonstrates how random sampling can solve a deterministic problem.
+```{r pi-geometry, fig.cap="A circle of radius 1 inscribed inside a square of side length 2. The ratio of the circle's area to the square's area is $\\pi/4$.", out.width='30%', fig.align='center'}
+knitr::include_graphics("lecture_01/figures/pi_geometry.png")
+```
+
+We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. The procedure involves generating $N$ random points with coordinates $(x,y)$, where $x$ and $y$ are uniformly distributed between &minus;1 and 1. We then count how many points $M$ satisfy $x^2 + y^2 \leq 1$, which indicates they fall within the circle. The estimate for $\pi$ is given by: $\pi \approx 4 \times M/N$.
+
+```{r estimating-pi, fig.cap="Estimating $\\pi$ by Monte Carlo sampling. Random points are generated uniformly within a square of side length 2. Points falling inside the inscribed unit circle (red) and outside (blue) are counted, and $\\pi$ is estimated from the ratio $4 \\times M/N$. As the number of samples increases, the estimate converges towards the true value of $\\pi$.", out.width='100%', fig.align='center'}
+knitr::include_graphics("lecture_01/figures/estimating_pi.png")
+```
+
+This approach demonstrates how random sampling can solve a deterministic problem.
 
 ### Function Averaging and Numerical Integration
 
@@ -195,6 +219,10 @@ A fundamental characteristic of all Monte Carlo methods is that they produce est
 Unlike deterministic methods, which might have errors from approximations but give the same answer every time, Monte Carlo methods produce different answers on different runs. This inherent variability means we must consider Monte Carlo results as estimates with associated uncertainty.
 
 The precision of these estimates improves as we increase the number of samples. Statistical uncertainty decreases proportionally to $1/\sqrt{N}$, where $N$ is the number of random samples. To reduce the uncertainty by half, we need to use four times as many samples. This scaling behavior is characteristic of random sampling methods and remains independent of the dimensionality of the problem—a significant advantage in high-dimensional applications.
+
+```{r convergence-funnel, fig.cap="Convergence of Monte Carlo estimates of $\\pi$. Each green trace represents an independent simulation. As the number of samples increases, all estimates converge towards the true value (dashed line), with the spread of estimates narrowing as $1/\\sqrt{N}$.", out.width='70%', fig.align='center'}
+knitr::include_graphics("lecture_01/figures/convergence_funnel.png")
+```
 
 When reporting results from Monte Carlo simulations, it is essential to always include the associated uncertainties alongside the estimated values. This practice is a fundamental aspect of scientific reporting in computational chemistry and allows others to properly evaluate the reliability of the results.
 

@@ -178,26 +178,31 @@ A key strength of the Monte Carlo method is that the procedure remains the same 
 
 Moving from discrete to continuous configuration space, let's examine a more chemical example: sampling the conformational preferences of butane (C₄H₁₀). This simple hydrocarbon serves as an excellent model system for studying torsional preferences in molecules.
 
-The energy of butane varies with rotation around its central carbon-carbon bond, characterized by the dihedral angle $\phi$. This torsional energy landscape features three main conformations:
+The energy of butane varies with rotation around its central carbon-carbon bond, characterized by the dihedral angle $\phi$. As the molecule rotates through 360°, it passes through alternating eclipsed and staggered conformations every 60°. The four distinct conformations are shown in Figure \@ref(fig:butane-conformations):
 
-1. The **anti** conformation ($\phi = 180°$): This extended structure minimizes steric interactions between terminal methyl groups, making it the global energy minimum.
+```{r butane-conformations, fig.cap="Newman projections of the four distinct butane conformations encountered during rotation around the central C--C bond. From left to right: eclipsed (cis) at $\\phi = 0°$ (green), eclipsed at $\\phi = 120°, 240°$ (orange), gauche at $\\phi = 60°, 300°$ (blue), and anti at $\\phi = 180°$ (pink).", out.width='80%', fig.align='center'}
+knitr::include_graphics("lecture_03/figures/butane_conformations.png")
+```
 
-2. Two equivalent **gauche** conformations ($\phi \approx 60°$ and $\phi \approx 300°$): These conformations introduce some steric strain but remain thermally accessible at room temperature.
 
-3. The **eclipsed** or **cis** conformation ($\phi = 0°$): This high-energy conformation places the methyl groups in close proximity, creating steric repulsion.
+1. The **eclipsed (cis)** conformation ($\phi = 0°$): The two methyl groups directly eclipse each other. This is the highest energy point on the potential energy surface, because of the severe steric repulsion between the two methyl groups.
 
-The potential energy as a function of this dihedral angle can be approximated by:
+2. Two equivalent **gauche** conformations ($\phi = 60°$ and $\phi = 300°$): The methyl groups are staggered but separated by only 60°, introducing some steric strain. These local energy minima are thermally accessible at room temperature.
+
+3. Two equivalent **eclipsed** conformations ($\phi = 120°$ and $\phi = 240°$): A methyl group eclipses a hydrogen atom, creating an energy barrier between the anti and gauche minima.
+
+4. The **anti** conformation ($\phi = 180°$): The two methyl groups are as far apart as possible, minimizing steric interactions. This staggered conformation is the global energy minimum.
+
+The potential energy as a function of the dihedral angle can be approximated by:
 
 \begin{equation}
 U(\phi) = A_0 + A_1(1+\cos\phi) + A_2(1-\cos2\phi) + A_3(1+\cos3\phi)
 (\#eq:butane-PES)
 \end{equation}
 
-Where the coefficients $A_i$ determine the relative energies of the different conformations. This functional form captures the threefold periodicity and energy barriers of butane's rotational potential.
+Where the coefficients $A_i$ determine the relative energies of the different conformations. This functional form captures the threefold symmetry of the rotational potential — three maxima (eclipsed conformations) and three minima (staggered conformations) — with the barrier heights depending on which groups are eclipsing: the CH$_3$/CH$_3$ eclipsed (cis) barrier at $\phi = 0°$ is higher than the CH$_3$/H eclipsed barriers at $\phi = 120°$ and $240°$.
 
-This potential energy function creates distinct wells corresponding to the anti and gauche conformations, separated by energy barriers. These barriers represent configurations where methyl groups come into close proximity, creating unfavorable steric interactions.
-
-```{r butane-PES, fig.cap="Potential energy surface for butane's dihedral angle rotation, modelled using Equation \\@ref(eq:butane-PES). Note the global minimum at 180° (anti conformation) and the two local minima at approximately 60° and 300° (gauche conformations), separated by energy barriers representing steric clash configurations.", out.width='50%', fig.align='center'}
+```{r butane-PES, fig.cap="Potential energy surface for butane's dihedral angle rotation, modelled using Equation \\@ref(eq:butane-PES). Coloured circles mark the four distinct conformations shown in Figure \\@ref(fig:butane-conformations): eclipsed (cis) at 0° (green), gauche at 60° and 300° (blue), eclipsed at 120° and 240° (orange), and anti at 180° (pink). Note the different barrier heights: the CH$_3$/CH$_3$ eclipsed barrier at 0° is approximately 35 kJ mol$^{-1}$, while the CH$_3$/H eclipsed barriers at 120° and 240° are approximately 27 kJ mol$^{-1}$.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/butane-PES.png")
 ```
 
