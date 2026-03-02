@@ -89,7 +89,7 @@ P(\text{Event 2 occurs first}) &=& \int_0^{\infty} P(\text{Event 2 occurs at tim
 
 This confirms our earlier result that the probability of a particular event being the first to occur is proportional to its rate constant divided by the sum of all rate constants.
 
-The same approach generalizes to any number of competing events. For $N$ events with rate constants $k_1, k_2, ..., k_N$, the probability that event $j$ occurs first is:
+The same approach generalises to any number of competing events. For $N$ events with rate constants $k_1, k_2, ..., k_N$, the probability that event $j$ occurs first is:
 
 $$P(\text{Event j occurs first}) = \frac{k_j}{\sum_{i=1}^{N} k_i}$$
 

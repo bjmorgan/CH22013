@@ -9,6 +9,7 @@ rmd_files: [
   "lecture_02/lecture_02.Rmd",
   "lecture_03/lecture_03.Rmd",
   "lecture_04/lecture_04.Rmd",
+#  "revision_questions/questions.Rmd",
   "appendices/appendices.Rmd"
 ]
 
