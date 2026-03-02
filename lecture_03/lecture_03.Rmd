@@ -10,49 +10,53 @@ This sequential sampling approach is mathematically formalised through Markov ch
 
 ## Detailed Balance
 
-In Lecture \@ref(monte-carlo-chemical), we built a weather model as a Markov chain: given a set of transition probabilities (the chances of going from sunny to rainy, rainy to cloudy, and so on), we discovered what stationary distribution those probabilities produce. But we want to solve the inverse problem: we already know the stationary distribution we want (the Boltzmann distribution) and we need to find transition probabilities that will produce it.
+In Lecture \@ref(monte-carlo-chemical), we built a weather model as a Markov chain: given a set of transition probabilities (the chances of going from sunny to rainy, rainy to cloudy, and so on), we discovered what stationary distribution those probabilities produce. Let us examine this relationship more carefully, starting from a condition that any equilibrium distribution must satisfy.
 
 ### Global balance
 
-At equilibrium, the probability of being in each state does not change over time. If this were not the case, the distribution would still be evolving and the system would not be at equilibrium. For the distribution to remain constant, the total probability flow into each state must equal the total flow out. This condition is called "global balance."
+At equilibrium, the probability of being in each state does not change over time. If this were not the case, the distribution would still be evolving and the system would not be at equilibrium. For the distribution to remain constant, the total probability flow into each state must equal the total flow out—a condition called "global balance":
 
 ```{r global-balance-schematic, fig.cap="Global balance: even though transitions occur between all pairs of states (left), at equilibrium the probability of being in each state remains constant (right). For each state, the total probability flow in equals the total probability flow out.", out.width='80%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/global_balance_schematic.png")
 ```
 
-To make this concrete, consider a weather model with three states: sunny, rainy, and cloudy. For each state, global balance requires that the total probability flow out equals the total probability flow in:
+Applied to the 2-state weather model from Lecture \@ref(monte-carlo-chemical), global balance gives one equation:
+
+```{r detailed-balance-weather, fig.cap="Global balance for the 2-state weather model from Lecture \\@ref(monte-carlo-chemical). The flow balance condition $\\pi(\\text{sunny}) \\times 0.3 = \\pi(\\text{rainy}) \\times 0.4$, together with the normalisation constraint, uniquely determines the stationary distribution.", out.width='80%', fig.align='center'}
+knitr::include_graphics("lecture_03/figures/global_balance1.png")
+```
+
+There is only one pair of states, so the flow balance condition is: the probability flow from sunny to rainy must equal the flow from rainy to sunny:
+
+$$\pi_\text{sunny} \times 0.3 = \pi_\text{rainy} \times 0.4$$
+
+Combined with the normalisation constraint $\pi_\text{sunny} + \pi_\text{rainy} = 1$, we have two equations in two unknowns. Solving gives $\pi_\text{sunny} = 4/7$ and $\pi_\text{rainy} = 3/7$—exactly the stationary distribution we found in Lecture \@ref(monte-carlo-chemical). The transition probabilities between the two states define the equilibrium distribution.
+
+We can extend this to a better weather model with three states—sunny, rainy, and cloudy. Now global balance gives one equation per state:
 
 ```{r global-balance, fig.cap="Global balance for a 3-state weather model. For each state, the total probability flow out (left-hand side) must equal the total probability flow in (right-hand side). These three equations, together with the requirement that probabilities sum to one, determine the stationary distribution.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/global_balance2.png")
 ```
 
-These three global balance equations (one per state), together with the normalisation requirement that $\pi_\text{sunny} + \pi_\text{rainy} + \pi_\text{cloudy} = 1$, determine the stationary distribution. However, only two of the three global balance equations are independent (if probability flow balances for two states, it must balance for the third). So we have two independent equations plus the normalisation constraint, which is exactly enough to solve for the three unknown probabilities $\pi_i$.
+One of these three global balance equations is redundant (it is a linear combination of the other two). Adding the normalisation constraint $\pi_\text{sunny} + \pi_\text{rainy} + \pi_\text{cloudy} = 1$ gives three independent equations in three unknowns. Solving this set of simultaneous equations determines the stationary distribution.
 
-This tells us that global balance relates the *complete set* of transition probabilities to the stationary distribution. For the inverse problem, we would need to work backwards: starting from a desired distribution, find a full set of transition probabilities that produce it. For a system with $N$ states, this means determining $N^2$ transition probabilities (the full transition matrix), which is a difficult problem to solve directly. We need a more tractable approach.
+In both cases, the transition probabilities between states define the equilibrium probability distribution.
+
+### The inverse problem
+
+But we want to solve the inverse problem: we already know the stationary distribution we want (the Boltzmann distribution) and we need to find transition probabilities that will produce it. Solving global balance directly requires evaluating the Boltzmann weight of every state simultaneously—exactly the exhaustive enumeration we are trying to avoid. We need a more tractable approach.
 
 ### Detailed balance
 
-Instead of requiring that probability flows balance *globally* (the total in equals the total out for each state), we can impose a stronger condition: that probability flows balance *pairwise*. This condition, called "detailed balance," requires that for each pair of states $i$ and $j$, the probability flow from $i$ to $j$ exactly equals the flow from $j$ back to $i$:
+Instead of requiring that probability flows balance *globally* (the total in equals the total out for each state), we can impose a stronger condition: that probability flows balance for each *pair* of states. This condition, called "detailed balance," requires that for each pair of states $i$ and $j$, the probability flow from $i$ to $j$ exactly equals the flow from $j$ to $i$:
 
 $$
 \pi_i \times P(i \to j) = \pi_j \times P(j \to i)
 $$
 
-where $\pi_i$ is the equilibrium probability of state $i$ and $P(i \to j)$ is the transition probability from state $i$ to state $j$.
+where $\pi_i$ is the equilibrium probability of state $i$ and $P(i \to j)$ is the transition probability from state $i$ to state $j$. If detailed balance holds for every pair, then global balance is automatically satisfied.^[Detailed balance is sufficient for global balance, but not necessary. There are Markov chains that satisfy global balance without satisfying detailed balance.]
 
-If detailed balance holds for every pair, then global balance is automatically satisfied: the total flow out of any state $i$ equals $\sum_j \pi_i P(i \to j)$, and summing the pairwise balance conditions over all $j$ shows this equals the total flow in $\sum_j \pi_j P(j \to i)$.^[Detailed balance is sufficient for global balance, but not necessary. There are Markov chains that satisfy global balance without satisfying detailed balance.]
-
-To see how this works concretely, consider the 2-state weather model from Lecture \@ref(monte-carlo-chemical):
-
-```{r detailed-balance-weather, fig.cap="Detailed balance applied to the 2-state weather model from Lecture \\@ref(monte-carlo-chemical). The pairwise balance condition $\\pi(\\text{sunny}) \\times 0.3 = \\pi(\\text{rainy}) \\times 0.4$, together with the normalisation constraint, uniquely determines the stationary distribution.", out.width='80%', fig.align='center'}
-knitr::include_graphics("lecture_03/figures/global_balance1.png")
-```
-
-There is only one pair of states, so detailed balance gives us one equation: $\pi_\text{sunny} \times 0.3 = \pi_\text{rainy} \times 0.4$. Combined with $\pi_\text{sunny} + \pi_\text{rainy} = 1$, this gives $\pi_\text{sunny} = 4/7$ and $\pi_\text{rainy} = 3/7$, exactly the stationary distribution we found in Lecture \@ref(monte-carlo-chemical). For larger systems, each pair of states provides one detailed balance equation constraining the *relative* probabilities of those two states. Applied consistently to all pairs, these pairwise constraints determine the entire stationary distribution.
-
-### Why detailed balance helps with the inverse problem
-
-The advantage of detailed balance for the inverse problem is that it decomposes a global constraint (the full transition matrix must produce the desired stationary distribution) into independent pairwise constraints. We can rearrange the detailed balance equation:
+The advantage for the inverse problem is that detailed balance decomposes the global constraint into independent pairwise constraints. We can rearrange the detailed balance equation:
 
 $$
 \frac{P(i \to j)}{P(j \to i)} = \frac{\pi_j}{\pi_i}
@@ -62,13 +66,13 @@ $$
 knitr::include_graphics("lecture_03/figures/detailed_balance.png")
 ```
 
-If we know the ratio $\pi_j/\pi_i$ for our target distribution, we know the ratio $P(i \to j)/P(j \to i)$ that the transition probabilities must satisfy. For the Boltzmann distribution, $\pi_i \propto \exp(-U_i/kT)$, so:
+Each pair of states gives one constraint on the *ratio* of transition probabilities, and each constraint is independent of the others. We can constrain the relative equilibrium probabilities of any two states by specifying the ratio of their transition probabilities. For the Boltzmann distribution, $\pi_i \propto \exp(-U_i/kT)$, so:
 
 $$
 \frac{P(i \to j)}{P(j \to i)} = \frac{\exp(-U_j/kT)}{\exp(-U_i/kT)} = \exp(-(U_j-U_i)/kT)
 $$
 
-The ratio of transition probabilities depends only on the *energy difference* between the two states, not on the absolute energies or the partition function. This is what makes the approach practical: we do not need to know the normalisation constant $Z$ to construct our Markov chain.
+The ratio of transition probabilities depends only on the *energy difference* between the two states, not on the absolute energies or the partition function. We can sample from the Boltzmann distribution using only local decisions between pairs of states, without ever calculating the partition function $Z$.
 
 Note that this equation does not fully specify the transition probabilities; it only constrains their ratio. This freedom allows us to choose transition probabilities that are computationally convenient, as long as they satisfy the ratio constraint for every pair of states.
 
@@ -307,11 +311,7 @@ Temperature appears directly in the Metropolis acceptance criterion, $\text{acc}
 knitr::include_graphics("lecture_03/figures/butane-results-highT.png")
 ```
 
-Figure \@ref(fig:butane-results-highT) demonstrates how increasing temperature changes the distribution of butane dihedral angles. As temperature rises from 500 K to 1000 K and further to 2000 K, we observe a progressive flattening of the probability landscape. This flattening occurs because temperature effectively rescales the potential energy surface—dividing all energy differences by $kT$ in the Boltzmann factor.
-
-At 1000 K, the distribution shows notable changes compared to 500 K. The central anti conformation at 180° remains distinguishable but with reduced dominance, while the gauche conformations at approximately 60° and 300° gain population.
-
-At 2000 K, the distribution approaches uniformity. The three major conformations have similar probabilities, with only subtle differences remaining between energy minima and barriers. At this high temperature, the exponential term in the Metropolis criterion approaches unity even for substantial energy increases, causing the system to accept most proposed moves regardless of their energetic consequences.
+Figure \@ref(fig:butane-results-highT) demonstrates how increasing temperature changes the distribution of butane dihedral angles. As temperature rises from 500 K through 1000 K to 2000 K, the probability landscape progressively flattens. This occurs because temperature rescales the potential energy surface: dividing all energy differences by $kT$ in the Boltzmann factor reduces the distinction between minima and barriers. By 2000 K, the distribution approaches uniformity and the Metropolis criterion accepts most proposed moves regardless of their energetic consequences.
 
 ### Sampling Problems at Low Temperature
 
