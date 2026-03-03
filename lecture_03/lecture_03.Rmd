@@ -40,11 +40,13 @@ knitr::include_graphics("lecture_03/figures/global_balance2.png")
 
 One of these three global balance equations is redundant (it is a linear combination of the other two). Adding the normalisation constraint $\pi_\text{sunny} + \pi_\text{rainy} + \pi_\text{cloudy} = 1$ gives three independent equations in three unknowns. Solving this set of simultaneous equations determines the stationary distribution.
 
-In both cases, the transition probabilities between states define the equilibrium probability distribution.
+In both the 2-state and 3-state weather models, the transition probabilities between states define the equilibrium probability distribution.
 
 ### The inverse problem
 
-But we want to solve the inverse problem: we already know the stationary distribution we want (the Boltzmann distribution) and we need to find transition probabilities that will produce it. Solving global balance directly requires evaluating the Boltzmann weight of every state simultaneously—exactly the exhaustive enumeration we are trying to avoid. We need a more tractable approach.
+But we want to solve the inverse problem: we already know the stationary distribution we want (the Boltzmann distribution) and we need to find transition probabilities that will produce it.
+
+For the 2-state weather model, the balance equation involves only one pair of states, so it can be rearranged into a clean ratio: $P(\text{sunny} \to \text{rainy})/P(\text{rainy} \to \text{sunny}) = \pi_\text{rainy}/\pi_\text{sunny}$. Any transition probabilities satisfying this ratio will work. But for three or more states, each global balance equation involves *all* states—the equation for sunny includes transitions to and from rainy *and* cloudy. The equations are coupled: each equation involves the equilibrium probability of *every* state. For a chemical system, where each $\pi_i \propto \exp(-U_i/kT)$, this means we need to know the energy of every state—exactly the exhaustive calculation we are trying to avoid. We need a more tractable approach.
 
 ### Detailed balance
 
@@ -66,7 +68,7 @@ $$
 knitr::include_graphics("lecture_03/figures/detailed_balance.png")
 ```
 
-Each pair of states gives one constraint on the *ratio* of transition probabilities, and each constraint is independent of the others. We can constrain the relative equilibrium probabilities of any two states by specifying the ratio of their transition probabilities. For the Boltzmann distribution, $\pi_i \propto \exp(-U_i/kT)$, so:
+Each pair of states gives one independent constraint on the *ratio* of transition probabilities—we only ever need to consider two states at a time. For the Boltzmann distribution, $\pi_i \propto \exp(-U_i/kT)$, so:
 
 $$
 \frac{P(i \to j)}{P(j \to i)} = \frac{\exp(-U_j/kT)}{\exp(-U_i/kT)} = \exp(-(U_j-U_i)/kT)
@@ -261,7 +263,7 @@ U(\phi) = A_0 + A_1(1+\cos\phi) + A_2(1-\cos2\phi) + A_3(1+\cos3\phi)
 (\#eq:butane-PES)
 \end{equation}
 
-Where the coefficients $A_i$ determine the relative energies of the different conformations. This functional form captures the threefold symmetry of the rotational potential — three maxima (eclipsed conformations) and three minima (staggered conformations) — with the barrier heights depending on which groups are eclipsing: the CH$_3$/CH$_3$ eclipsed (cis) barrier at $\phi = 0°$ is higher than the CH$_3$/H eclipsed barriers at $\phi = 120°$ and $240°$.
+where the coefficients $A_i$ determine the relative energies of the different conformations. This functional form captures the threefold symmetry of the rotational potential — three maxima (eclipsed conformations) and three minima (staggered conformations) — with the barrier heights depending on which groups are eclipsing: the CH$_3$/CH$_3$ eclipsed (cis) barrier at $\phi = 0°$ is higher than the CH$_3$/H eclipsed barriers at $\phi = 120°$ and $240°$.
 
 ```{r butane-PES, fig.cap="Potential energy surface for butane's dihedral angle rotation, modelled using Equation \\@ref(eq:butane-PES). Coloured circles mark the four distinct conformations shown in Figure \\@ref(fig:butane-conformations): eclipsed (cis) at 0° (green), gauche at 60° and 300° (blue), eclipsed at 120° and 240° (orange), and anti at 180° (pink). Note the different barrier heights: the CH$_3$/CH$_3$ eclipsed barrier at 0° is approximately 35 kJ mol$^{-1}$, while the CH$_3$/H eclipsed barriers at 120° and 240° are approximately 27 kJ mol$^{-1}$.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/butane-PES.png")
@@ -336,13 +338,13 @@ For a Markov chain Monte Carlo simulation to be ergodic, it must satisfy two mat
 
 In practice, irreducibility is the condition that requires careful attention. As the 50 K butane simulation demonstrates, this assumption can fail in practical applications. Despite the Metropolis algorithm's mathematical guarantee of eventually sampling the correct Boltzmann distribution, the timescale required to adequately sample all relevant configurations might exceed any feasible simulation length. The 50 K simulation remains trapped in a subset of the configuration space, producing results that reflect only part of the full Boltzmann-weighted ensemble. In this case, the time average from our simulation does not equal the true ensemble average—the ergodic hypothesis breaks down.
 
-While the Metropolis algorithm theoretically allows transitions between all possible states, in practice high energy barriers can create situations where certain regions of configuration space become effectively isolated from others. This is analogous to our UK height sampling example from Lecture \@ref(monte-carlo-chemical)&mdash;if our random walker begins in Edinburgh without efficient transportation, they might thoroughly explore the Scottish cities but never reach London or Cardiff during the course of our survey. The heights measured would accurately represent Scotland's population, but fail to capture the demographics of the entire UK. Similarly, when energy barriers partition configuration space, the simulation results depend heavily on the initial configuration and fail to represent the complete equilibrium distribution. This practical limitation represents one of the most significant challenges in applying Monte Carlo methods to complex chemical systems.
+While the Metropolis algorithm theoretically allows transitions between all possible states, in practice high energy barriers can create situations where certain regions of configuration space become effectively isolated from others. This is analogous to our UK height sampling example from Lecture \@ref(monte-carlo-chemical)—if our random walker begins in Edinburgh without efficient transportation, they might thoroughly explore the Scottish cities but never reach London or Cardiff during the course of our survey. The heights measured would accurately represent Scotland's population, but fail to capture the demographics of the entire UK. Similarly, when energy barriers partition configuration space, the simulation results depend heavily on the initial configuration and fail to represent the complete equilibrium distribution. This practical limitation represents one of the most significant challenges in applying Monte Carlo methods to complex chemical systems.
 
 ## Summary
 
-In Lecture \@ref(monte-carlo-chemical), we saw that a Markov chain with the right properties converges to a unique stationary distribution. In this lecture, we tackled the inverse problem: given that we want the Boltzmann distribution as our stationary distribution, what transition probabilities should we use?
+In Lecture \@ref(monte-carlo-chemical), we saw that a Markov chain's transition probabilities define its stationary distribution. In this lecture, we tackled the inverse problem: given that we want the Boltzmann distribution as our stationary distribution, what transition probabilities should we use? Solving this directly would require enumerating all states and their energies—exactly the exhaustive calculation we want to avoid.
 
-Detailed balance (the condition that probability flow between every pair of states is equal at equilibrium) provides a sufficient condition for a Markov chain to have a given stationary distribution. Setting the target distribution to Boltzmann, detailed balance constrains the ratio of forward and reverse transition probabilities to $P(i \to j)/P(j \to i) = \exp(-(U_j - U_i)/kT)$. The Metropolis acceptance criterion satisfies this constraint: always accept moves that lower the energy; accept energy-raising moves with probability $\exp(-\Delta U/kT)$. Only energy differences are needed, not the partition function.
+Detailed balance provides a tractable alternative. By requiring that probability flow balances for each *pair* of states independently, we only ever need the energy difference between two states at a time: $P(i \to j)/P(j \to i) = \exp(-(U_j - U_i)/kT)$. The Metropolis acceptance criterion satisfies this constraint: always accept moves that lower the energy; accept energy-raising moves with probability $\exp(-\Delta U/kT)$. No partition function is needed.
 
 The method works with any energy function, applies to both discrete systems (Ising spins) and continuous ones (butane dihedral angles), and requires only local energy calculations. The main limitation is that at low temperatures, high energy barriers can trap the simulation in a subset of configuration space, violating the ergodic assumption that underlies the connection between time averages and ensemble averages.
 
