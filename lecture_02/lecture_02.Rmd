@@ -23,19 +23,19 @@ For chemical systems at equilibrium, however, uniform sampling is highly ineffic
 For chemical systems at equilibrium, states are distributed according to the Boltzmann distribution:
 
 $$
-P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
+P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/k_\mathrm{B}T)}{Z}
 $$
 
 where the partition function $Z$ is:
 
 $$
-Z = \sum_{\mathbf{r}} \exp(-U(\mathbf{r})/kT)
+Z = \sum_{\mathbf{r}} \exp(-U(\mathbf{r})/k_\mathrm{B}T)
 $$
 
 If we were to sample uniformly, we might initially propose estimating $\langle A \rangle$ via:
 
 $$
-\langle A \rangle \approx \frac{1}{Z} \sum_{i=1}^N A(r_i) \exp(-U(r_i)/kT)
+\langle A \rangle \approx \frac{1}{Z} \sum_{i=1}^N A(r_i) \exp(-U(r_i)/k_\mathrm{B}T)
 $$
 
 However, this approach requires knowing $Z$, which we typically cannot compute directly as it involves summing over all possible states—the very challenge we're using Monte Carlo to overcome.
@@ -43,13 +43,13 @@ However, this approach requires knowing $Z$, which we typically cannot compute d
 We can work around this by writing the full expression for the average and seeing how $Z$ cancels. Starting from the exact definition:
 
 $$
-\langle A \rangle = \sum_i A_i \times P_i = \sum_i A_i \times \frac{\exp(-U_i/kT)}{Z} = \frac{1}{Z}\sum_i A_i \exp(-U_i/kT)
+\langle A \rangle = \sum_i A_i \times P_i = \sum_i A_i \times \frac{\exp(-U_i/k_\mathrm{B}T)}{Z} = \frac{1}{Z}\sum_i A_i \exp(-U_i/k_\mathrm{B}T)
 $$
 
-If we sample $N$ configurations uniformly, the numerator is estimated by $\frac{1}{N}\sum_{i=1}^N A(r_i) \exp(-U(r_i)/kT)$ and the partition function $Z$ itself is estimated by $\frac{1}{N}\sum_{i=1}^N \exp(-U(r_i)/kT)$. Taking the ratio, the factors of $1/N$ cancel, giving:
+If we sample $N$ configurations uniformly, the numerator is estimated by $\frac{1}{N}\sum_{i=1}^N A(r_i) \exp(-U(r_i)/k_\mathrm{B}T)$ and the partition function $Z$ itself is estimated by $\frac{1}{N}\sum_{i=1}^N \exp(-U(r_i)/k_\mathrm{B}T)$. Taking the ratio, the factors of $1/N$ cancel, giving:
 
 $$
-\langle A \rangle \approx \frac{\sum_{i=1}^N A(r_i) \exp(-U(r_i)/kT)}{\sum_{i=1}^N \exp(-U(r_i)/kT)}
+\langle A \rangle \approx \frac{\sum_{i=1}^N A(r_i) \exp(-U(r_i)/k_\mathrm{B}T)}{\sum_{i=1}^N \exp(-U(r_i)/k_\mathrm{B}T)}
 $$
 
 This estimator requires no prior knowledge of $Z$—the partition function cancels between numerator and denominator.
@@ -96,7 +96,7 @@ $$
 \langle A \rangle \approx \frac{1}{N} \sum_{i=1}^N A(\mathbf{r}_i)
 $$
 
-where configurations $\mathbf{r}_i$ are selected with frequency proportional to $\exp(-U(\mathbf{r}_i)/kT)$.
+where configurations $\mathbf{r}_i$ are selected with frequency proportional to $\exp(-U(\mathbf{r}_i)/k_\mathrm{B}T)$.
 
 In a molecular simulation, each step of the chain involves selecting one molecule and displacing it by a small random amount, generating a new configuration that is close to the current one (Figure \@ref(fig:local-moves)):
 

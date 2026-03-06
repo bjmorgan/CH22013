@@ -44,9 +44,9 @@ In both the 2-state and 3-state weather models, the transition probabilities bet
 
 ### The inverse problem
 
-But we want to solve the inverse problem: we know the *form* of the stationary distribution we want—the Boltzmann distribution, $\pi_i \propto \exp(-U_i/kT)$—and we need to find transition probabilities that will produce it.
+But we want to solve the inverse problem: we know the *form* of the stationary distribution we want—the Boltzmann distribution, $\pi_i \propto \exp(-U_i/k_\mathrm{B}T)$—and we need to find transition probabilities that will produce it.
 
-In the weather models, the inverse problem was straightforward: we knew the numerical value of each $\pi_i$ and could plug them directly into the balance equations. For a chemical system, the individual Boltzmann probabilities $\pi_i = \exp(-U_i/kT)/Z$ are unknown because we cannot calculate the partition function $Z$.
+In the weather models, the inverse problem was straightforward: we knew the numerical value of each $\pi_i$ and could plug them directly into the balance equations. For a chemical system, the individual Boltzmann probabilities $\pi_i = \exp(-U_i/k_\mathrm{B}T)/Z$ are unknown because we cannot calculate the partition function $Z$.
 
 This would not matter if we could work purely with *ratios* of probabilities, since $Z$ cancels from $\pi_j/\pi_i$. For the 2-state weather model, the balance equation involves only one pair of states and can be rearranged into exactly such a ratio: $P(\text{sunny} \to \text{rainy})/P(\text{rainy} \to \text{sunny}) = \pi_\text{rainy}/\pi_\text{sunny}$. But for three or more states, each global balance equation involves *all* states through coupled sums—the equation for sunny includes transitions to and from rainy *and* cloudy. These sums involve the individual $\pi_i$, not clean ratios, so $Z$ does not cancel. We need a more tractable approach.
 
@@ -70,10 +70,10 @@ $$
 knitr::include_graphics("lecture_03/figures/detailed_balance.png")
 ```
 
-Each pair of states gives one independent constraint on the *ratio* of transition probabilities—we only ever need to consider two states at a time. For the Boltzmann distribution, $\pi_i \propto \exp(-U_i/kT)$, so:
+Each pair of states gives one independent constraint on the *ratio* of transition probabilities—we only ever need to consider two states at a time. For the Boltzmann distribution, $\pi_i \propto \exp(-U_i/k_\mathrm{B}T)$, so:
 
 $$
-\frac{P(i \to j)}{P(j \to i)} = \frac{\exp(-U_j/kT)}{\exp(-U_i/kT)} = \exp(-(U_j-U_i)/kT)
+\frac{P(i \to j)}{P(j \to i)} = \frac{\exp(-U_j/k_\mathrm{B}T)}{\exp(-U_i/k_\mathrm{B}T)} = \exp(-(U_j-U_i)/k_\mathrm{B}T)
 $$
 
 The ratio of transition probabilities depends only on the *energy difference* between the two states, not on the absolute energies or the partition function. We can sample from the Boltzmann distribution using only local decisions between pairs of states, without ever calculating the partition function $Z$.
@@ -93,20 +93,20 @@ Here $\alpha(i \to j)$ is the *proposal probability* (how likely we are to sugge
 The simplest approach is to use symmetric proposal probabilities where $\alpha(i \to j) = \alpha(j \to i)$. This might involve, for example, randomly displacing an atom in any direction with equal probability. With symmetric proposals, the $\alpha$ terms cancel from the detailed balance ratio, and we only need:
 
 $$
-\frac{\text{acc}(i \to j)}{\text{acc}(j \to i)} = \exp(-(U_j-U_i)/kT)
+\frac{\text{acc}(i \to j)}{\text{acc}(j \to i)} = \exp(-(U_j-U_i)/k_\mathrm{B}T)
 $$
 
 This ratio does not uniquely determine the individual acceptance probabilities. The Metropolis solution is to consider two cases:
 
 - If the proposed move *lowers* the energy ($U_j \leq U_i$), always accept: $\text{acc}(i \to j) = 1$.
-- If the proposed move *raises* the energy ($U_j > U_i$), accept with probability $\text{acc}(i \to j) = \exp(-(U_j - U_i)/kT)$.
+- If the proposed move *raises* the energy ($U_j > U_i$), accept with probability $\text{acc}(i \to j) = \exp(-(U_j - U_i)/k_\mathrm{B}T)$.
 
-We can check this satisfies detailed balance. For the case $U_j > U_i$ (an uphill move from $i$ to $j$): $\text{acc}(i \to j) = \exp(-(U_j - U_i)/kT)$ and $\text{acc}(j \to i) = 1$ (since the reverse move is downhill). The ratio is $\exp(-(U_j - U_i)/kT)$, which matches the detailed balance requirement. The case $U_i > U_j$ gives the same result by symmetry.
+We can check this satisfies detailed balance. For the case $U_j > U_i$ (an uphill move from $i$ to $j$): $\text{acc}(i \to j) = \exp(-(U_j - U_i)/k_\mathrm{B}T)$ and $\text{acc}(j \to i) = 1$ (since the reverse move is downhill). The ratio is $\exp(-(U_j - U_i)/k_\mathrm{B}T)$, which matches the detailed balance requirement. The case $U_i > U_j$ gives the same result by symmetry.
 
 These two cases are commonly written as a single expression using the $\min$ function:
 
 $$
-\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/kT))
+\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/k_\mathrm{B}T))
 $$
 
 When $U_j \leq U_i$, the exponential is $\geq 1$, so the minimum is 1 (always accept). When $U_j > U_i$, the exponential is $< 1$, so it becomes the acceptance probability.
@@ -128,10 +128,10 @@ The complete Metropolis Monte Carlo algorithm is:
 6. **Acceptance decision**: Apply the Metropolis criterion to decide whether to accept the proposed move:
    - If $\Delta U \leq 0$ (energy decreases or remains the same), accept the move.
    - If $\Delta U > 0$ (energy increases), generate a random number $\xi$ uniformly between 0 and 1.
-     - If $\xi < \exp(-\Delta U/kT)$, accept the move.
+     - If $\xi < \exp(-\Delta U/k_\mathrm{B}T)$, accept the move.
      - Otherwise, reject the move.
 
-   This use of a random number implements probabilistic acceptance: comparing $\xi$ to $\exp(-\Delta U/kT)$ means we accept the move with exactly that probability.
+   This use of a random number implements probabilistic acceptance: comparing $\xi$ to $\exp(-\Delta U/k_\mathrm{B}T)$ means we accept the move with exactly that probability.
 
 7. **Configuration update**: If the move is accepted, update your current configuration to $\mathbf{r}'$. If rejected, retain the original configuration $\mathbf{r}$.
 
@@ -149,11 +149,11 @@ When a proposed move is rejected, we include the current state in our statistics
 
 Consider a simple system with just two possible states: state $1$ with energy $E_1$ and state $2$ with energy $E_2$, where $E_2 > E_1$. According to the Boltzmann distribution, the ratio of probabilities should be:
 
-$$\frac{P(2)}{P(1)} = \exp\left(-\frac{E_2 - E_1}{kT}\right)$$
+$$\frac{P(2)}{P(1)} = \exp\left(-\frac{E_2 - E_1}{k_\mathrm{B}T}\right)$$
 
 This ratio varies with temperature—at high temperatures it approaches $1$, and at low temperatures it approaches $0$.
 
-For concreteness, set $E_2 - E_1 = kT$, so $P(2)/P(1) = e^{-1} \approx 0.37$—state $1$ should appear about 73% of the time. Starting in state $1$, the only possible move is to state $2$, which requires an energy increase of $kT$. The Metropolis acceptance probability is $\exp(-1) \approx 0.37$, so about 63% of the time this move is rejected. When we correctly record state $1$ again after each rejection, state $1$ accumulates the extra counts it needs to reflect its higher Boltzmann weight.
+For concreteness, set $E_2 - E_1 = k_\mathrm{B}T$, so $P(2)/P(1) = e^{-1} \approx 0.37$—state $1$ should appear about 73% of the time. Starting in state $1$, the only possible move is to state $2$, which requires an energy increase of $k_\mathrm{B}T$. The Metropolis acceptance probability is $\exp(-1) \approx 0.37$, so about 63% of the time this move is rejected. When we correctly record state $1$ again after each rejection, state $1$ accumulates the extra counts it needs to reflect its higher Boltzmann weight.
 
 If instead we only recorded states after accepted moves, we would always alternate—every accepted move from state $1$ goes to state $2$, every accepted move from state $2$ goes to state $1$—giving equal counts of both states regardless of temperature. This contradicts the Boltzmann distribution, which requires state $1$ to be increasingly favoured as temperature decreases.
 
@@ -188,16 +188,16 @@ A Metropolis Monte Carlo simulation of this system works as follows:
 1. Start with a random arrangement of the four spins.
 2. At each step, randomly select one spin and propose flipping it.
 3. Calculate the energy change $\Delta E$ that would result from this flip.
-4. Apply the Metropolis criterion: accept the flip if $\Delta E \leq 0$; otherwise accept with probability $\exp(-\Delta E/kT)$.
+4. Apply the Metropolis criterion: accept the flip if $\Delta E \leq 0$; otherwise accept with probability $\exp(-\Delta E/k_\mathrm{B}T)$.
 5. Record the new configuration (or repeat the current one if the move was rejected).
 
 To see what step 3 involves, suppose the system is in the ground state (all spins up, $E = -4J$) and we propose flipping spin 2. Before the flip, spin 2 is parallel to both its neighbours, so those two pairs each contribute $-J$ to the energy (a total of $-2J$ from spin 2's interactions). After flipping, spin 2 is antiparallel to both neighbours, so each pair now contributes $+J$ (a total of $+2J$). The energy change is:
 
 $$\Delta E = (+2J) - (-2J) = +4J$$
 
-This is an uphill move. At $kT = 2J$, the Metropolis acceptance probability is $\exp(-4J/2J) = \exp(-2) \approx 0.14$, so roughly one in seven such attempts would be accepted.
+This is an uphill move. At $k_\mathrm{B}T = 2J$, the Metropolis acceptance probability is $\exp(-4J/2J) = \exp(-2) \approx 0.14$, so roughly one in seven such attempts would be accepted.
 
-Figure \@ref(fig:mc-trajectory) illustrates a portion of a Monte Carlo trajectory for this system. Each row shows: the current configuration, which spin is proposed for flipping, the resulting $\Delta E$, and whether the move is accepted or rejected. For downhill moves ($\Delta E \leq 0$), acceptance is automatic. For uphill moves ($\Delta E > 0$), the table shows both the acceptance probability and the random number $\xi$ that was generated: the move is accepted only if $\xi < \exp(-\Delta E/kT)$.
+Figure \@ref(fig:mc-trajectory) illustrates a portion of a Monte Carlo trajectory for this system. Each row shows: the current configuration, which spin is proposed for flipping, the resulting $\Delta E$, and whether the move is accepted or rejected. For downhill moves ($\Delta E \leq 0$), acceptance is automatic. For uphill moves ($\Delta E > 0$), the table shows both the acceptance probability and the random number $\xi$ that was generated: the move is accepted only if $\xi < \exp(-\Delta E/k_\mathrm{B}T)$.
 
 ```{r mc-trajectory, fig.cap="A portion of a Monte Carlo trajectory for the 4-spin Ising model. Each row shows the current configuration, the proposed spin flip, the energy change, the acceptance probability, and (for uphill moves) the random number used to decide acceptance.",  out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/mc-trajectory.png")
@@ -208,10 +208,10 @@ After an initial equilibration period, the Metropolis algorithm samples each con
 **Direct enumeration** (sum over all states):
 
 $$
-\langle A \rangle = \frac{\sum_i A_i \exp(-E_i/kT)}{\sum_i \exp(-E_i/kT)}
+\langle A \rangle = \frac{\sum_i A_i \exp(-E_i/k_\mathrm{B}T)}{\sum_i \exp(-E_i/k_\mathrm{B}T)}
 $$
 
-This requires enumerating every possible state and computing the partition function $Z = \sum_i \exp(-E_i/kT)$.
+This requires enumerating every possible state and computing the partition function $Z = \sum_i \exp(-E_i/k_\mathrm{B}T)$.
 
 **Monte Carlo estimation** (average over sampled configurations):
 
@@ -229,7 +229,7 @@ $$
 
 At very low temperatures, the Boltzmann distribution concentrates almost all the probability on the two ground states (both with $|M| = 4$), so $\langle |M| \rangle \approx 4$. As temperature increases, higher-energy configurations with smaller $|M|$ become accessible, and the average magnetisation decreases.
 
-At the other extreme, when $kT \gg J$, all Boltzmann factors approach 1 and all 16 states become equally probable. We can calculate this limit by direct enumeration. Referring to Figure \@ref(fig:ising-configs): the 2 ground states have $|M| = 4$; 8 configurations with three spins aligned have $|M| = 2$; and the remaining 6 configurations (4 with two adjacent pairs plus 2 alternating) have $|M| = 0$. Averaging over all 16:
+At the other extreme, when $k_\mathrm{B}T \gg J$, all Boltzmann factors approach 1 and all 16 states become equally probable. We can calculate this limit by direct enumeration. Referring to Figure \@ref(fig:ising-configs): the 2 ground states have $|M| = 4$; 8 configurations with three spins aligned have $|M| = 2$; and the remaining 6 configurations (4 with two adjacent pairs plus 2 alternating) have $|M| = 0$. Averaging over all 16:
 
 $$\langle |M| \rangle = \frac{1}{16}\left(2 \times 4 + 8 \times 2 + 6 \times 0\right) = \frac{24}{16} = 1.5$$
 
@@ -281,7 +281,7 @@ A Metropolis Monte Carlo simulation of butane's conformational space proceeds as
 
 4. Apply the Metropolis criterion to decide whether to accept the new angle:
    - If $\Delta U \leq 0$, accept the move.
-   - If $\Delta U > 0$, accept with probability $\exp(-\Delta U/kT)$.
+   - If $\Delta U > 0$, accept with probability $\exp(-\Delta U/k_\mathrm{B}T)$.
 
 5. Record the current dihedral angle (either the new one if accepted, or the previous one if rejected).
 
@@ -309,13 +309,13 @@ These indicators can be misleading: a simulation may appear fully equilibrated w
 
 ## Temperature Effects and Sampling Challenges
 
-Temperature appears directly in the Metropolis acceptance criterion, $\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/kT))$, and affects our simulations in two ways. First, it defines the Boltzmann distribution we aim to sample—at different temperatures, the same configurations have different equilibrium probabilities. Second, it influences how efficiently our simulation explores configuration space.
+Temperature appears directly in the Metropolis acceptance criterion, $\text{acc}(i \to j) = \min(1, \exp(-(U_j-U_i)/k_\mathrm{B}T))$, and affects our simulations in two ways. First, it defines the Boltzmann distribution we aim to sample—at different temperatures, the same configurations have different equilibrium probabilities. Second, it influences how efficiently our simulation explores configuration space.
 
 ```{r butane-results-highT, fig.cap="Probability distributions of butane's dihedral angles at increasing temperatures (500 K, 1000 K, and 2000 K). Elevated temperatures progressively flatten the distribution, with barriers becoming less significant as temperature increases. At 2000 K, the distribution approaches uniformity, indicating that thermal energy has largely overcome the rotational barriers.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/butane-results-highT.png")
 ```
 
-Figure \@ref(fig:butane-results-highT) demonstrates how increasing temperature changes the distribution of butane dihedral angles. As temperature rises from 500 K through 1000 K to 2000 K, the probability landscape progressively flattens. This occurs because temperature rescales the potential energy surface: dividing all energy differences by $kT$ in the Boltzmann factor reduces the distinction between minima and barriers. By 2000 K, the distribution approaches uniformity and the Metropolis criterion accepts most proposed moves regardless of their energetic consequences.
+Figure \@ref(fig:butane-results-highT) demonstrates how increasing temperature changes the distribution of butane dihedral angles. As temperature rises from 500 K through 1000 K to 2000 K, the probability landscape progressively flattens. This occurs because temperature rescales the potential energy surface: dividing all energy differences by $k_\mathrm{B}T$ in the Boltzmann factor reduces the distinction between minima and barriers. By 2000 K, the distribution approaches uniformity and the Metropolis criterion accepts most proposed moves regardless of their energetic consequences.
 
 ### Sampling Problems at Low Temperature
 
@@ -325,7 +325,7 @@ knitr::include_graphics("lecture_03/figures/butane-results-50K.png")
 
 While the simulations at 500 K and above successfully sample the full range of dihedral angles and accurately reproduce the theoretical Boltzmann distribution, Figure \@ref(fig:butane-results-50K) reveals a fundamental sampling problem at low temperature. This simulation at 50 K was initialised with $\phi$ = 60°, and it remains trapped in the local minimum near this angle for much of the simulation time. Eventually, it transitions to the global minimum at 180°, but the relative populations between these two minima remain incorrect. The third minimum at approximately 270° is never visited during the simulation, though at this temperature even the exact distribution shows this conformation has very low probability.
 
-This butane example at 50 K illustrates a general issue that affects Monte Carlo simulations of many chemical systems. When the available thermal energy ($kT$) is small relative to the energy barriers separating different configurations, the Metropolis acceptance probability for barrier-crossing moves becomes vanishingly small. Consequently, the simulation may remain trapped in a subset of the full configuration space for the entire simulation duration.
+This butane example at 50 K illustrates a general issue that affects Monte Carlo simulations of many chemical systems. When the available thermal energy ($k_\mathrm{B}T$) is small relative to the energy barriers separating different configurations, the Metropolis acceptance probability for barrier-crossing moves becomes vanishingly small. Consequently, the simulation may remain trapped in a subset of the full configuration space for the entire simulation duration.
 
 ## The Ergodic Hypothesis
 
@@ -346,7 +346,7 @@ While the Metropolis algorithm theoretically allows transitions between all poss
 
 In Lecture \@ref(monte-carlo-chemical), we saw that a Markov chain's transition probabilities define its stationary distribution. In this lecture, we tackled the inverse problem: given that we want the Boltzmann distribution as our stationary distribution, what transition probabilities should we use? Solving this directly would require enumerating all states and their energies—exactly the exhaustive calculation we want to avoid.
 
-Detailed balance provides a tractable alternative. By requiring that probability flow balances for each *pair* of states independently, we only ever need the energy difference between two states at a time: $P(i \to j)/P(j \to i) = \exp(-(U_j - U_i)/kT)$. The Metropolis acceptance criterion satisfies this constraint: always accept moves that lower the energy; accept energy-raising moves with probability $\exp(-\Delta U/kT)$. No partition function is needed.
+Detailed balance provides a tractable alternative. By requiring that probability flow balances for each *pair* of states independently, we only ever need the energy difference between two states at a time: $P(i \to j)/P(j \to i) = \exp(-(U_j - U_i)/k_\mathrm{B}T)$. The Metropolis acceptance criterion satisfies this constraint: always accept moves that lower the energy; accept energy-raising moves with probability $\exp(-\Delta U/k_\mathrm{B}T)$. No partition function is needed.
 
 The method works with any energy function, applies to both discrete systems (Ising spins) and continuous ones (butane dihedral angles), and requires only local energy calculations. The main limitation is that at low temperatures, high energy barriers can trap the simulation in a subset of configuration space, violating the ergodic assumption that underlies the connection between time averages and ensemble averages.
 

@@ -31,15 +31,13 @@ Here the angle brackets $\langle \cdot \rangle$ denote an average value, $\mathb
 
 ### Probability Distributions
 
-$P(\mathbf{r})$ represents a probability distribution, which describes the likelihood of finding the system in each possible configuration. Each probability is a number between 0 (impossible) and 1 (certain).
-
-Some variables can only take specific, countable values. Rolling a fair six-sided die, for example, gives each number (1&ndash;6) a probability of 1/6 (Figure \@ref(fig:single-die)). This is a *uniform discrete distribution*: every outcome is equally likely.
+$P(\mathbf{r})$ is a *probability distribution*—it specifies, for each possible value of some quantity, how likely that value is. Rolling a fair six-sided die, for example, gives each number (1&ndash;6) a probability of 1/6 (Figure \@ref(fig:single-die)). Because the possible values are countable, this is a *discrete* distribution. A distribution where every value is equally likely is called *uniform*.
 
 ```{r single-die, fig.cap="A uniform discrete distribution: each face of a fair die has equal probability 1/6.", out.width='40%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/single_die.png")
 ```
 
-Not all discrete distributions are uniform: counting heads in four coin flips gives probabilities of 1/16, 4/16, 6/16, 4/16, and 1/16 for 0, 1, 2, 3, and 4 heads respectively, because there are more ways to get 2 heads than 0 or 4 (Figure \@ref(fig:two-coins)).
+Not all discrete distributions are uniform: for example, flipping four (fair) coins gives probabilities of 1/16, 4/16, 6/16, 4/16, and 1/16 for 0, 1, 2, 3, and 4 heads respectively. The most probable outcome is 2 heads and 2 tails, because this result can happen the most ways (six) (Figure \@ref(fig:two-coins)).
 
 ```{r two-coins, fig.cap="A non-uniform discrete distribution: the number of heads in four coin flips. The middle outcomes are more probable because there are more ways to arrange them.", out.width='40%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/two_coins.png")
@@ -49,7 +47,7 @@ For any discrete distribution, the sum of probabilities across all possible outc
 
 $$\sum_i P(i) = 1$$
 
-Other variables can take any value within a continuous range. The Maxwell–Boltzmann speed distribution (Figure \@ref(fig:maxwell-boltzmann)), for example, describes the probability of finding a molecule travelling at a particular speed. For these *continuous distributions*, the probability of finding the variable in a specific range equals the area under the curve over that range.
+Not all quantities have countable values. The Maxwell–Boltzmann speed distribution (Figure \@ref(fig:maxwell-boltzmann)), for example, describes the probability of finding a molecule travelling at a particular speed—the speed can take any value in a continuous range. For these *continuous distributions*, the probability of a value falling in a specific range equals the area under the curve over that range.
 
 ```{r maxwell-boltzmann, fig.cap="The Maxwell--Boltzmann speed distribution, a continuous probability density function. The shaded area gives the probability of finding a molecule with speed between 300 and 500 m s$^{-1}$: the area under the curve in this range is approximately 0.40.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/maxwell-boltzmann.png")
@@ -63,29 +61,29 @@ This normalisation requirement—that probabilities sum or integrate to 1—refl
 
 The average (expected value) of any property A is calculated by weighting each possible value by its probability. For discrete distributions:
 
-$$\langle A \rangle = \sum_i A_i P(i)$$
+$$\langle A \rangle = \sum_i A_i\, P_i$$
 
 This is exactly the weighted sum we wrote down earlier for chemical systems. For continuous distributions, the equivalent expression is an integral:
 
-$$\langle A \rangle = \int_{-\infty}^{\infty} A(x) P(x) \, \mathrm{d}x$$
+$$\langle A \rangle = \int_{-\infty}^{\infty} A(x) \times P(x) \, \mathrm{d}x$$
 
 ### The Boltzmann Distribution
 
 In chemical systems, the probability distribution that governs molecular configurations is the Boltzmann distribution:
 
 \begin{equation}
-P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)
+P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/k_\mathrm{B}T)
 \end{equation}
 
-Here, $U(\mathbf{r})$ is the potential energy of configuration $\mathbf{r}$, $k$ is Boltzmann's constant, and $T$ is the temperature.
+Here, $U(\mathbf{r})$ is the potential energy of configuration $\mathbf{r}$, $k_\mathrm{B}$ is Boltzmann's constant, and $T$ is the temperature.
 
-This relationship reveals a fundamental principle in physical chemistry: lower-energy configurations are exponentially more probable than higher-energy ones. At room temperature (298 K), a configuration that is just 6 kJ/mol higher in energy is approximately 10 times less probable than the minimum energy state, since $\exp(-6000/(8.314 \times 298)) \approx 1/10$. Temperature determines how strongly the system favours low-energy states—at high temperatures, the distribution becomes more uniform, while at low temperatures, the system is increasingly restricted to the lowest energy states (Figure \@ref(fig:boltzmann-distribution)).
+This relationship reveals a fundamental principle: lower-energy configurations are exponentially more probable than higher-energy ones (Figure \@ref(fig:boltzmann-distribution)). At room temperature (298 K), a configuration that is 6&nbsp;kJ/mol higher in energy is approximately 10 times less probable than the minimum energy state, and contributes approximately 10 times less to any thermodynamic averages.^[Since the energy is expressed per mole, we use the gas constant $R = N_\mathrm{A} k_\mathrm{B} = 8.314$ J mol$^{-1}$ K$^{-1}$ in place of $k_\mathrm{B}$: $\exp(-6000/(8.314 \times 298)) \approx 1/10$.] At high temperatures, higher-energy configurations become more accessible and the distribution flattens; at low temperatures, the lowest-energy states dominate increasingly strongly.
 
 ```{r boltzmann-distribution, fig.cap="The Boltzmann distribution at room temperature (298 K). Lower-energy configurations have exponentially higher probability than higher-energy ones.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/boltzmann_distribution.png")
 ```
 
-To create a valid probability distribution, the probabilities must sum to 1:
+For $P(\mathbf{r})$ to be a valid probability distribution, the probabilities must sum to 1:
 
 \begin{equation}
 \sum_i P(\mathbf{r}_i) = 1
@@ -94,35 +92,28 @@ To create a valid probability distribution, the probabilities must sum to 1:
 We achieve this by including a normalisation constant, $Z$:
 
 \begin{equation}
-P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
+P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/k_\mathrm{B}T)}{Z}
 \end{equation}
 
 This constant $Z$ is called the "partition function", defined as:
 
 \begin{equation}
-Z = \sum_{\mathbf{r}} \exp(-U(\mathbf{r})/kT)
+Z = \sum_{\mathbf{r}} \exp(-U(\mathbf{r})/k_\mathrm{B}T)
 \end{equation}
 
 ### The Computational Challenge
 
-To calculate our thermodynamic average directly, we would need to:
-1. Generate all possible configurations of our system
-2. Compute the property A and energy for each configuration
-3. Calculate the weighted sum
+The mathematical framework presented above appears to provide everything we need to calculate any thermodynamic property of our system. In principle, we can generate all possible configurations, and for each one compute the property of interest, $A$, and the energy. From the calculated energies, we compute the partition function, and hence the probabilities, $P(\mathbf{r}_i)$, for each configuration. We then compute our thermodynamic property as a weighted sum over all configurations. 
 
-The obstacle lies in the sheer number of possible configurations for any realistic chemical system. Consider a simple example: a $10 \times 10$ array of surface sites where we want to model the adsorption of 50 molecules (Figure \@ref(fig:single-lattice)).
+In practice, however, computing this sum over all possible states is impossible for any realistic chemical system. Figure \@ref(fig:single-lattice) shows a simple example problem: a $10 \times 10$ array of surface sites with 50 adsorbed molecules. Even this "toy" problem has far too many configurations to compute each one individually: considering all possible arrangements of the adsorbed molecule gives $10^{29}$ possible configurations; this is more than the number of stars in the observable universe (Figure \@ref(fig:many-lattices)).
 
 ```{r single-lattice, fig.cap="A single configuration of 50 molecules adsorbed on a $10 \\times 10$ lattice of surface sites.", out.width='40%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/single_lattice_png.png")
 ```
 
-This system has approximately $10^{29}$ possible configurations—more than the number of stars in the observable universe (Figure \@ref(fig:many-lattices)). Direct enumeration becomes impossible.
-
 ```{r many-lattices, fig.cap="A small selection of the approximately $10^{29}$ possible configurations of 50 molecules on a $10 \\times 10$ lattice. Direct enumeration of all configurations is computationally intractable.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/50_lattices_png.png")
 ```
-
-For most chemical systems, the situation is even more extreme. A small protein in solution might have millions of relevant conformations. A metal catalyst with multiple reaction pathways or a polymer chain sampling different spatial arrangements presents an effectively infinite configuration space. This combinatorial explosion makes direct evaluation computationally intractable.
 
 ## The Solution: Statistical Sampling
 
@@ -143,15 +134,15 @@ This principle applies to chemical systems as well. If we could generate configu
 \langle A \rangle \approx \frac{1}{N} \sum_{i=1}^{N} A(\mathbf{r}_i)
 \end{equation}
 
-where the configurations $\mathbf{r}_i$ are selected with probability proportional to $\exp(-U(\mathbf{r}_i)/kT)$.
+where the configurations $\mathbf{r}_i$ are selected with probability proportional to $\exp(-U(\mathbf{r}_i)/k_\mathrm{B}T)$.
 
 ## Two Approaches to Sampling
 
-Two principal methods have been developed to address the sampling challenge in computational chemistry:
+Computational chemistry has two principal approaches to this sampling problem:
 
-### Molecular Dynamics Approach
+### Sampling using Molecular Dynamics
 
-Molecular Dynamics (MD) simulates atomic motion according to Newton's laws. When performed in the canonical (NVT) ensemble, MD generates trajectories that naturally sample configurations according to their Boltzmann probabilities. When a simulation trajectory visits a suitably representative set of configurations in the relevant regions of configuration space, the time average provides a good approximation of the desired ensemble average:
+Molecular Dynamics (MD) simulates atomic motion by calculating the forces on every atom and numerically integrating Newton's equations of motion. When performed in the canonical (NVT) ensemble, MD generates trajectories that naturally sample configurations according to their Boltzmann probabilities—like measuring people's heights one by one as they file through a doorway. When a simulation trajectory visits a suitably representative set of configurations in the relevant regions of configuration space, the time average provides a good approximation of the desired ensemble average:
 
 \begin{equation}
 \langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)
@@ -163,17 +154,15 @@ However, the effectiveness of MD sampling depends on the system's energy landsca
 
 Timescales present another challenge. Many important chemical processes occur on microsecond to second timescales, while individual MD time steps typically represent femtoseconds. This creates a fundamental gap between simulation capability and the time needed to observe certain phenomena. For instance, studying a slow conformational change or a rare reaction event may require prohibitively long simulation times.
 
-Additionally, some systems inherently resist treatment via continuous dynamics. Lattice models with discrete site occupancies, magnetic materials with fixed spin orientations, or any problem where variables can only take discrete values often require different sampling approaches altogether.
+Additionally, MD requires that forces can be calculated for every atom in the system. For problems with discrete variables—lattice models with discrete site occupancies, magnetic materials with fixed spin orientations—there are no continuous coordinates to differentiate and therefore no forces to integrate.
 
-### Monte Carlo Approach
+### Sampling using Monte Carlo methods
 
-Monte Carlo (MC) methods use random numbers to estimate quantities that would be impractical or impossible to calculate exactly. The name comes from the Monte Carlo quarter of Monaco, reflecting the central role of chance in the method. The approach was developed in the late 1940s by Stanislaw Ulam and John von Neumann at Los Alamos National Laboratory, initially to model neutron diffusion in nuclear weapons. Nicholas Metropolis, who helped implement the early calculations on the MANIAC computer, suggested the casino-inspired name. Within a few years, Metropolis and collaborators had extended the method to statistical mechanics, publishing the landmark 1953 paper that introduced what we now call the Metropolis algorithm.
+Monte Carlo (MC) methods take a different approach: instead of following a physical trajectory, they use random numbers to select configurations directly—like picking people at random from a crowd rather than waiting for them to file past. Each configuration is selected, the property of interest is evaluated, and the results are averaged. Because the sampling does not depend on forces or equations of motion, MC methods apply equally well to continuous and discrete systems—lattice models, spin systems, or any problem where dynamical simulation would be awkward or impossible.
 
-The core idea is to replace an intractable exact calculation—such as summing over $10^{29}$ configurations—with a statistical estimate based on a manageable random sample. In its simplest form, Monte Carlo sampling involves generating configurations using random numbers, evaluating the property of interest for each configuration, and computing the average of these values.
+## Monte Carlo with Uniform Sampling
 
-## Fundamental Monte Carlo Examples
-
-Before addressing the sampling challenges in chemical systems, let's examine two classic examples that illustrate the power of Monte Carlo methods with uniform sampling. These examples demonstrate the core principles using simple problems where each possible outcome has an equal probability of occurring.
+Sampling configurations according to the Boltzmann distribution turns out to be the hard part of Monte Carlo simulation, and is the subject of the next two lectures. The underlying idea—using random samples to estimate the result of a calculation—is best seen first in simpler settings where each possible outcome has an equal probability of occurring.
 
 ### Estimating &pi; by Monte Carlo Integration
 
@@ -191,9 +180,9 @@ knitr::include_graphics("lecture_01/figures/estimating_pi.png")
 
 This approach demonstrates how random sampling can solve a deterministic problem.
 
-### Function Averaging and Numerical Integration
+### Monte Carlo Integration
 
-Our second example involves calculating the average value of a function over a specific interval. Consider finding the average value of $\sin^2(x)$ over the interval $[0,\pi]$ (Figure \@ref(fig:sin2x)).
+A more practical application is numerical integration. Consider finding the average value of $\sin^2(x)$ over the interval $[0,\pi]$ (Figure \@ref(fig:sin2x)).
 
 Mathematically, this average is defined as:
 
@@ -231,14 +220,8 @@ knitr::include_graphics("lecture_01/figures/convergence_funnel.png")
 
 When reporting Monte Carlo results, always include the associated uncertainties alongside the estimated values.
 
-## Summary and Preview
+## Summary
 
-### Key Takeaways from Lecture 1
+Monte Carlo methods use random sampling to estimate quantities that would be intractable to calculate exactly. Uniform random sampling can estimate $\pi$ (by counting points inside a circle) and evaluate definite integrals (by averaging function values at random points). These estimates carry statistical uncertainty that decreases as $1/\sqrt{N}$, so more samples give more precise results.
 
-Monte Carlo methods use random sampling to estimate quantities that would be intractable to calculate exactly. In this lecture we saw how uniform random sampling can estimate $\pi$ (by counting points inside a circle) and evaluate definite integrals (by averaging function values at random points). These estimates carry statistical uncertainty that decreases as $1/\sqrt{N}$, so more samples give more precise results.
-
-All of these examples used uniform sampling—each point was equally likely. For chemical systems, where configurations follow the Boltzmann distribution, we need a way to sample non-uniformly.
-
-### Looking Ahead to Lecture 2
-
-In the next lecture, we'll tackle this problem: how to sample molecular configurations according to the Boltzmann distribution without having to calculate the partition function $Z$.
+All of these examples used uniform sampling—each point was equally likely. For chemical systems, where configurations follow the Boltzmann distribution, we need a way to sample non-uniformly, without having to calculate the partition function $Z$.
