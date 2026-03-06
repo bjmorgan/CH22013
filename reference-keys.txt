@@ -49,15 +49,13 @@ the-boltzmann-distribution
 the-computational-challenge
 the-solution-statistical-sampling
 two-approaches-to-sampling
-molecular-dynamics-approach
-monte-carlo-approach
-fundamental-monte-carlo-examples
+sampling-using-molecular-dynamics
+sampling-using-monte-carlo-methods
+monte-carlo-with-uniform-sampling
 estimating-π-by-monte-carlo-integration
-function-averaging-and-numerical-integration
+monte-carlo-integration
 statistical-uncertainty-in-monte-carlo-methods
-summary-and-preview
-key-takeaways-from-lecture-1
-looking-ahead-to-lecture-2
+summary
 monte-carlo-chemical
 introduction-to-non-uniform-sampling
 boltzmann-sampling-and-the-inefficiency-of-uniform-sampling
@@ -67,7 +65,7 @@ generating-a-chain-of-states
 from-chains-to-probabilities
 convergence-to-a-stationary-distribution
 matrix-formulation
-summary-and-preview-1
+summary-and-preview
 metropolis-monte-carlo
 introduction
 detailed-balance
@@ -84,7 +82,7 @@ equilibration-and-sampling
 temperature-effects-and-sampling-challenges
 sampling-problems-at-low-temperature
 the-ergodic-hypothesis
-summary
+summary-1
 kinetic-monte-carlo
 introduction-1
 the-memoryless-property-lightbulbs-and-radioactive-nuclei
@@ -96,7 +94,7 @@ selecting-which-event-occurs
 the-complete-kmc-algorithm
 a-worked-example-radioactive-decay-chain
 when-is-kmc-appropriate
-summary-1
+summary-2
 deriv-solve-ode
 deriv-exp-mean
 deriv-event-selection
