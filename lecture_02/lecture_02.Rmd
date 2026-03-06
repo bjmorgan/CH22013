@@ -11,7 +11,7 @@ $$
 \langle A \rangle = \sum_i A_i \times P_i
 $$
 
-Where $A_i$ is the value of property A in state $i$, and $P_i$ is the probability of state $i$ occurring. In many problems of this type, evaluating this sum exactly is impossible due to the existence of an enormous number of states.
+where $A_i$ is the value of property A in state $i$, and $P_i$ is the probability of state $i$ occurring. In many problems of this type, evaluating this sum exactly is impossible due to the existence of an enormous number of states.
 Monte Carlo methods allow us to estimate $\langle A \rangle$ by sampling a subset of randomly chosen states.
 
 In the examples in Lecture \@ref(monte-carlo-introduction), we used uniform sampling&mdash;where each possible location in our sample space has an equal probability of being selected. In these examples, uniform sampling was effective because it allowed us to efficiently explore the regions of sample space relevant to the property we were estimating.
@@ -26,10 +26,10 @@ $$
 P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
 $$
 
-Where the partition function $Z$ is:
+where the partition function $Z$ is:
 
 $$
-Z = \sum \exp(-U(\mathbf{r})/kT)
+Z = \sum_{\mathbf{r}} \exp(-U(\mathbf{r})/kT)
 $$
 
 If we were to sample uniformly, we might initially propose estimating $\langle A \rangle$ via:
@@ -56,7 +56,7 @@ This estimator requires no prior knowledge of $Z$—the partition function cance
 
 However, even with this improved estimator, uniform sampling remains highly inefficient for chemical systems. The Boltzmann factor decreases exponentially as energy increases, meaning any property $\langle A \rangle$ is dominated by contributions from a relatively small number of low-energy states. The vast majority of possible states have high energies with negligible Boltzmann weights, yet these states occupy most of the configuration space.
 
-In a system with just 10 atoms, uniform sampling would predominantly generate configurations with atoms positioned unphysically close to each other. Fewer than about 1 in 200 uniformly sampled configurations (roughly 0.5%) have physically reasonable energies—the remaining 99.5% have atoms overlapping or sitting unphysically close together, giving effectively zero Boltzmann weights. These configurations contribute nothing to our estimate of $\langle A \rangle$, yet uniform sampling spends nearly all of its effort generating them. This inefficiency worsens exponentially with system size, making uniform sampling computationally unfeasible for most chemical systems of interest.
+In a system with just 10 atoms, uniform sampling would predominantly generate configurations with atoms positioned unphysically close to each other. Fewer than about 1 in 200 uniformly sampled configurations (roughly 0.5%) have physically reasonable energies—the remaining 99.5% have atoms overlapping or sitting unphysically close together, giving effectively zero Boltzmann weights. These configurations contribute nothing to our estimate of $\langle A \rangle$, yet uniform sampling spends nearly all of its effort generating them (Figure \@ref(fig:uniform-molecules)). This inefficiency worsens exponentially with system size, making uniform sampling computationally unfeasible for most chemical systems of interest.
 
 ```{r uniform-molecules, fig.cap="Five randomly generated configurations of a small molecular system. In most configurations, atoms overlap or sit unphysically close together (red), producing extremely high energies and negligible Boltzmann weights. Only a tiny fraction of uniformly sampled configurations have physically reasonable arrangements.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_02/figures/uniform_molecules.png")
@@ -66,7 +66,7 @@ We need an alternative approach—a method that preferentially samples the low-e
 
 ## The Idea Behind Markov Chain Monte Carlo
 
-In Lecture \@ref(monte-carlo-introduction), we discussed estimating the average height of people in the UK by measuring a representative sample. If we attempted uniform geographical sampling—randomly selecting 100m × 100m squares on a map of the UK and measuring everyone within each selected square—we would encounter severe inefficiency. Most selected squares would contain few or no people (falling on rural areas, forests, mountains, or bodies of water), while densely populated urban areas would be underrepresented. We would waste most of our sampling effort on empty regions while gathering insufficient data from cities and towns, where the majority of people live.
+In Lecture \@ref(monte-carlo-introduction), we discussed estimating the average height of people in the UK by measuring a representative sample. If we attempted uniform geographical sampling—randomly selecting 100m × 100m squares on a map of the UK and measuring everyone within each selected square (Figure \@ref(fig:uk-area-sampling))—we would encounter severe inefficiency. Most selected squares would contain few or no people (falling on rural areas, forests, mountains, or bodies of water), while densely populated urban areas would be underrepresented. We would waste most of our sampling effort on empty regions while gathering insufficient data from cities and towns, where the majority of people live (Figure \@ref(fig:uniform-sampling)).
 
 ```{r uk-area-sampling, fig.cap="Uniform geographical sampling: the UK is divided into a grid of equal-sized squares, and squares are selected at random. Each selected square is sampled regardless of whether anyone lives there.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_02/figures/uk_area_sampling.png")
@@ -82,7 +82,7 @@ A more efficient approach to our height-measuring problem would be to design a s
 2. Occasionally visits villages and small settlements
 3. Rarely ventures into uninhabited areas
 
-This walker would measure the height of individuals encountered during the journey. The crucial insight is that if our walker visits each location with probability *exactly proportional* to the number of people there, then each person in the UK has an equal chance of being included in our sample. This means we can calculate a simple, unweighted average of the measured heights without any correction factors.
+This walker would measure the height of individuals encountered during the journey. The crucial insight is that if our walker visits each location with probability *exactly proportional* to the number of people there, then each person in the UK has an equal chance of being included in our sample. This means we can calculate a simple, unweighted average of the measured heights without any correction factors (Figure \@ref(fig:chain-sampling)).
 
 ```{r chain-sampling, fig.cap="A random walker (white path) on the population density heatmap. Unlike the uniform sampling points, the walker naturally concentrates its steps in the densely populated region (red/orange centre), spending little time in sparsely populated areas.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_02/figures/chain_sampling.png")
@@ -96,9 +96,9 @@ $$
 \langle A \rangle \approx \frac{1}{N} \sum_{i=1}^N A(\mathbf{r}_i)
 $$
 
-Where configurations $\mathbf{r}_i$ are selected with frequency proportional to $\exp(-U(\mathbf{r}_i)/kT)$.
+where configurations $\mathbf{r}_i$ are selected with frequency proportional to $\exp(-U(\mathbf{r}_i)/kT)$.
 
-In a molecular simulation, each step of the chain involves selecting one molecule and displacing it by a small random amount, generating a new configuration that is close to the current one:
+In a molecular simulation, each step of the chain involves selecting one molecule and displacing it by a small random amount, generating a new configuration that is close to the current one (Figure \@ref(fig:local-moves)):
 
 ```{r local-moves, fig.cap="Generating new configurations in MCMC. At each step, one molecule (red) is displaced by a small random amount from its current position, producing a new configuration similar to the current one.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_02/figures/local_moves.png")
@@ -109,7 +109,7 @@ The challenge now becomes designing a sampling process that visits configuration
 ## What is a Markov Chain? {#markov-chain}
 
 The tool we need for sampling according to the Boltzmann distribution is called a "Markov chain."
-A Markov chain is a sequence of states where each new state emerges from the current one through a probabilistic process. For a simple example, consider a weather model where tomorrow's weather depends only on today's weather: if it's sunny today, there might be a 70% chance of sun tomorrow and 30% chance of rain; if it's raining today, there might be a 60% chance of continued rain and 40% chance of sun tomorrow.
+A Markov chain is a sequence of states where each new state emerges from the current one through a probabilistic process. For a simple example, consider a weather model where tomorrow's weather depends only on today's weather (Figure \@ref(fig:two-state-mc)): if it's sunny today, there might be a 70% chance of sun tomorrow and 30% chance of rain; if it's raining today, there might be a 60% chance of continued rain and 40% chance of sun tomorrow.
 
 ```{r two-state-mc, fig.cap="A two-state Markov chain for weather. The arrows show the transition probabilities: from each state (today), the probabilities of reaching each state (tomorrow) sum to 100%.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_02/figures/two-state_MC.png")
@@ -154,7 +154,7 @@ $$\mathbf{p}_3 = [0.61, \; 0.39], \quad \mathbf{p}_4 = [0.583, \; 0.417], \quad 
 knitr::include_graphics("lecture_02/figures/probability_convergence.png")
 ```
 
-Two things happen as we continue. First, we can now answer our question: by day 6, there is roughly a 43% chance of rain. Second, the probabilities are converging. After many days, the distribution settles to approximately $[0.571, \; 0.429]$ and stops changing&mdash;regardless of whether we started from "sunny" or "rainy" on day 1.
+Two things happen as we continue (Figure \@ref(fig:probability-convergence)). First, we can now answer our question: by day 6, there is roughly a 43% chance of rain. Second, the probabilities are converging. After many days, the distribution settles to approximately $[0.571, \; 0.429]$ and stops changing&mdash;regardless of whether we started from "sunny" or "rainy" on day 1.
 
 ### Convergence to a stationary distribution
 
@@ -164,7 +164,7 @@ Our weather model satisfies both conditions. To see why aperiodicity matters, im
 
 ### Matrix formulation
 
-The procedure of evolving the probability distribution step by step can be written more compactly using linear algebra, where the probability distribution over states is represented by a **state vector**, and the set of transition probabilities that define our Markov chain are collected into a **transition matrix** $P$:
+The procedure of evolving the probability distribution step by step can be written more compactly using linear algebra, where the probability distribution over states is represented by a **state vector**, and the set of transition probabilities that define our Markov chain are collected into a **transition matrix** $P$ (Figure \@ref(fig:mc-linear-algebra)):
 
 $$P = \begin{bmatrix} 0.7 & 0.4 \\ 0.3 & 0.6 \end{bmatrix}$$
 

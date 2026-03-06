@@ -1,71 +1,44 @@
 # (APPENDIX) Appendices {-}
 
-# Mathematical Derivations {#math-deriv}
+# Solving dS/dt = −kS {#deriv-solve-ode}
 
-## Derivation of Exponential Waiting Times
-
-Let us consider a memoryless process with rate constant $k$. The probability of the event occurring in an infinitesimally small time interval $\mathrm{d}t$ is given by:
-
-$$P(\mathrm{d}t) = k \times \mathrm{d}t$$
-
-To derive the distribution of waiting times, we first consider the probability of survival $S(t)$&mdash;the probability that the event has not occurred by time $t$. Because at any point in time our process has either occurred or survived, $P(t) + S(t) = 1$, where $P(t)$ is the probability that the event has occurred by time $t$.
-
-Let us imagine we already know the probability of survival at time $t$, and we want to calculate the probability of continued survival at some later time $t+\mathrm{d}t$. This is given by the probability of survival at time $t$, multiplied by the probability of survival for the following time interval $\mathrm{d}t$:
+In Section \@ref(from-memoryless-processes-to-exponential-distributions), we showed that the survival probability for a memoryless process satisfies $\mathrm{d}S/\mathrm{d}t = -kS(t)$. Here we solve this differential equation formally. Separating variables and integrating with the initial condition $S(0) = 1$:
 
 $$
-S(t+\mathrm{d}t) = S(t) \times S(\mathrm{d}t)
+\int_1^{S(t)} \frac{\mathrm{d}S'}{S'} = \int_0^t -k\,\mathrm{d}t'
 $$
 
-Because $P(t) + S(t) = 1$ for any time $t$, 
-
-$$S(\mathrm{d}t) = 1 - P(\mathrm{d}t) = 1 -k\,\mathrm{d}t,$$
-
-and 
-
-\begin{eqnarray}
-S(t+\mathrm{d}t) & = S(t) (1 - k\,\mathrm{d}t) \\
-                 & = S(t) - k S(t) \mathrm{d}t
-\end{eqnarray}
-
-Rearranging:
-
 $$
-S(t+\mathrm{d} t) - S(t) = -k S(t)\,\mathrm{d}t
+\ln S(t) = -kt
 $$
 
-or
-
 $$
-\frac{S(t+\mathrm{d}t) - S(t)}{\mathrm{d}t} = -k S(t)
+S(t) = \exp(-kt)
 $$
 
-In the limit that $\mathrm{d}t$ becomes infinitesimally small, this becomes a differential equation that describes the instantaneous rate of change of the survival probability with time:
+# Mean of the Exponential Distribution {#deriv-exp-mean}
+
+The average (mean) waiting time for an exponential process with rate constant $k$ is given by the expectation value of $t$ over the waiting time distribution $p_\mathrm{wait}(t) = k\exp(-kt)$:
 
 $$
-\frac{\mathrm{d}S(t)}{\mathrm{d}t} = -k S(t)
+\langle t \rangle = \int_0^\infty t\, p_\mathrm{wait}(t)\,\mathrm{d}t = \int_0^\infty t\, k\exp(-kt)\,\mathrm{d}t
 $$
 
-Integrating from $t=0$ to $t=t$, with the initial condition $S(0) = 1$ (we are certain the event has not occurred when $t=0$), gives the probability that the event has not occurred by time $t$:
-
-$$S(t) = \exp(-kt)$$
-
-As $t$ increases, the probability that the event has not occurred by this time decreases according to a negative exponential.
-
-From this, the probability that the event has occurred in time $t$ is:
-$$
-P(t) = 1 - \exp(-kt)
-$$
-
-This is the cumulative probability function (CDF). It describes the probability that the event occurs at some time less than or equal to $t$.
-If we want the probability density function (PDF) for the event occurring at exactly time $t$, then we differentiate this function:
+We evaluate this by integration by parts, with $u = t$ and $\mathrm{d}v = k\exp(-kt)\,\mathrm{d}t$, giving $\mathrm{d}u = \mathrm{d}t$ and $v = -\exp(-kt)$:
 
 $$
-p_\mathrm{wait}(t) = \frac{\mathrm{d}}{\mathrm{d}t}(1-\exp(-kt)) = k\exp(-kt)
+\langle t \rangle = \left[-t\exp(-kt)\right]_0^\infty + \int_0^\infty \exp(-kt)\,\mathrm{d}t
 $$
 
-This result tells us that the probability density function of waiting times is the exponential distribution with parameter $k$, confirming our earlier statement.
+The boundary term vanishes at both limits: at $t = 0$ it is zero, and as $t \to \infty$ the exponential decays faster than $t$ grows. The remaining integral gives $1/k$, so:
 
-## Derivation of Event Selection Probabilities
+$$
+\langle t \rangle = \frac{1}{k}
+$$
+
+A process with a large rate constant $k$ has a short average waiting time, and vice versa.
+
+# Derivation of Event Selection Probabilities {#deriv-event-selection}
 
 Consider two competing events with rate constants $k_1$ and $k_2$. We want to find the probability that event 1 happens first. This equals the probability that event 1 occurs at some time $t$ AND event 2 hasn't occurred by that time, integrated over all possible times $t$:
 

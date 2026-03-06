@@ -2,17 +2,21 @@
 
 ## Introduction
 
-In our first three lectures, we built up the Metropolis Monte Carlo method&mdash;starting from the idea of statistical sampling, developing the Markov chain framework, and arriving at the Metropolis algorithm for sampling the Boltzmann distribution. This lets us calculate equilibrium properties such as average energies, structural distributions, and thermodynamic quantities. But Metropolis Monte Carlo tells us nothing about how systems evolve over time.
+In Lectures \@ref(monte-carlo-chemical) and \@ref(metropolis-monte-carlo), we developed the Metropolis Monte Carlo method for estimating thermodynamic properties by sampling from the Boltzmann distribution. But many chemical questions centre on dynamics rather than equilibrium. How quickly does a protein fold? How do atoms diffuse across a catalyst surface? What is the rate-limiting step in a complex reaction mechanism?
 
-Many chemical questions are inherently time-dependent. How quickly does a protein fold into its native structure? How do atoms diffuse across a catalyst surface? What is the rate-limiting step in a complex reaction mechanism? For these questions, we need not just the equilibrium distribution, but the dynamics of how systems move between states.
+One natural approach to dynamics is molecular dynamics (MD), which integrates Newton's equations of motion. But what if we cannot calculate forces—for example, in a system of discrete states? What if the dynamics are so slow that MD becomes trapped in one energy basin and never samples the rare events we are interested in?
 
-Kinetic Monte Carlo (KMC) addresses these questions. Unlike Metropolis Monte Carlo, which accepts or rejects moves based on energy differences, KMC selects moves based on the relative rates of possible transitions and associates a physical time with each step, capturing the sequence and timing of events rather than just the average behaviour.
+Kinetic Monte Carlo (KMC) provides an alternative. Like Metropolis MC, it uses random numbers to generate a stochastic sequence of states. But where Metropolis MC has no physical time (moves are proposed and accepted or rejected based on energy differences, and the sequence of configurations has no temporal meaning), KMC operates with an explicit physical time. Each move corresponds to a physical event: an atom hopping to a neighbouring site, a molecule adsorbing onto a surface, a bond breaking.
 
-```{r surface-reactivity, fig.cap="Examples of dynamic processes on a catalyst surface that can be modelled with KMC: adsorption of molecules from the gas phase, surface diffusion between neighbouring sites, and desorption back into the gas phase. Each process has its own rate constant.", out.width='100%', fig.align='center'}
+At each step, the algorithm must do two things: select which event happens next, and advance the clock by the appropriate amount. This raises two questions. First, given a set of possible next events, each with its own rate constant, how do we choose which one occurs? And second, how long do we expect to wait before the next event occurs?
+
+```{r surface-reactivity, fig.cap="Dynamic processes on a catalyst surface: molecules adsorb from the gas phase, diffuse between neighbouring surface sites, react with other adsorbed species, and desorb back into the gas phase. Modelling these dynamics with MD would require simulating every atomic vibration across the entire surface—computationally prohibitive for the long timescales over which these events occur. By treating each process as a discrete event with its own rate constant, KMC can model the dynamics efficiently.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_04/figures/surface-reactivity.png")
 ```
 
 ## The Memoryless Property: Lightbulbs and Radioactive Nuclei
+
+Let us start with the first question: if two or more events might happen next, which one actually occurs? We cannot know in advance—the outcome is inherently stochastic—so we describe it with a probabilistic model. But what determines the relative probabilities that event A happens before event B? To answer this, we first need to understand how individual random events are distributed in time.
 
 Imagine we are quality assurance inspectors for a manufacturer of high-quality lightbulbs rated to last 10 years. Part of our job involves annual home inspections to assess the likelihood of bulbs failing in the coming year, replacing any that exceed our risk threshold.
 
@@ -41,259 +45,157 @@ This property&mdash;that future behaviour depends only on the current state, not
 
 ## From Memoryless Processes to Exponential Distributions
 
-For memoryless processes like radioactive decay, how long will we wait until the next event? This "waiting time" turns out to follow a specific probability distribution.
+For memoryless processes like radioactive decay, how long will we wait until the next event?
 
-For a memoryless process with decay constant (or rate constant) $k$, the waiting time follows an exponential distribution with probability density function (a full derivation is provided in Appendix \@ref(math-deriv)):
+The probability of an event occurring between time $t$ and $t + \Delta t$ depends on two factors: the event must not have already occurred, and, given that it has not, it must occur in the next $\Delta t$.
 
-$$p_\mathrm{wait}(t) = k\exp(-kt)$$
+The probability that the event has not occurred by time $t$ is called the survival probability, $S(t)$. At $t = 0$ the event has certainly not happened, so $S(0) = 1$, and $S(t)$ can only decrease over time—once an event has happened, it cannot un-happen. We do not yet know the functional form of $S(t)$, but we will see below that the memoryless property determines it.
 
-1. **Short waiting times are most likely**: The maximum probability density occurs at $t = 0$. Counterintuitively, the most probable time for the event to occur is right at the start of our observation.
+For a memoryless process, the second factor—the probability of the event occurring in the next $\Delta t$, given that it has not yet occurred—is constant (this is what it means to be memoryless). For sufficiently small $\Delta t$, this probability is approximately proportional to $\Delta t$: we write it as $k\,\Delta t$, where $k$ is the rate constant. This approximation becomes exact in the limit $\Delta t \to 0$.
 
-2. **The average waiting time is $1/k$**: For a rate constant of 0.1 s<sup>&minus;1</sup>, the average time until decay is 10 seconds. However, this average emerges from a wide range of possible waiting times.
+Multiplying these two factors gives the probability of waiting until time $t$ and then seeing the event occur—the waiting time distribution:
 
-3. **There is a long tail**: Although short waiting times are most probable, there is always a chance of waiting much longer than the average. Some nuclei decay almost immediately, while others might survive for several multiples of the average lifetime.
+$$p_\mathrm{wait}(t)\,\Delta t \approx S(t) \times k\,\Delta t \tag{4.1}$$
 
-4. **The distribution is memoryless**: At any point in time, the remaining waiting time still follows the same exponential distribution, regardless of how long we have already waited.
+If the event occurs at time $t$, it cannot occur again later, so $p_\mathrm{wait}(t)\,\Delta t$ is also the decrease in $S$ over the interval $\Delta t$:
+
+$$\Delta S_{t \to t+\Delta t} \approx -S(t) \times k\,\Delta t$$
+
+In each interval, $S$ decreases by an amount proportional to itself. Taking the limit $\Delta t \to 0$, we obtain an exact differential equation:
+
+$$\frac{\mathrm{d}S}{\mathrm{d}t} = -kS(t)$$
+
+The solution to this differential equation is:
+
+$$S(t) = \exp(-kt)$$
+
+The survival probability decays exponentially—this might look familiar. An exponential is *defined* by the property that it changes at a rate proportional to its current value, and appears anywhere we have constant proportional scaling (for example, [first-order chemical kinetics](https://bjmorgan.github.io/CH22008/lecture1.html#first-order-reactions)).
+
+Substituting $S(t) = \exp(-kt)$ back into Equation (4.1) gives the waiting time distribution $p_\mathrm{wait}(t) = k\exp(-kt)$. This is the same exponential shape, scaled by $k$.
 
 ```{r exponential-pdf, fig.cap="The exponential waiting time distribution $p_\\mathrm{wait}(t) = k\\exp(-kt)$. Short waiting times are most probable, with probability density highest at $t = 0$ and decaying exponentially.", out.width='50%', fig.align='center'}
-knitr::include_graphics("lecture_04/figures/exponential_pdf.png")
+knitr::include_graphics("lecture_04/figures/p_wait.png")
 ```
 
-While the PDF tells us the relative likelihood of the event occurring at any particular instant, we often want to answer a more practical question: what is the total probability that the nucleus has already decayed by time $t$? This is given by the cumulative distribution function (CDF), obtained by integrating the PDF from 0 to $t$:
-
-$$
-\begin{align}
-P(t) &= \int_0^t p_\mathrm{wait}(\tau)\,\mathrm{d}\tau \\
-     &= \int_0^t k\exp(-k\tau)\,\mathrm{d}\tau \\
-     &= 1 - \exp(-kt)
-\end{align}
-$$
-
-```{r cdf-shaded-area, fig.cap="The CDF is obtained by integrating the waiting time PDF. The shaded area under $p_\\mathrm{wait}(\\tau)$ from 0 to $t$ gives the probability that the event has occurred by time $t$.", out.width='50%', fig.align='center'}
-knitr::include_graphics("lecture_04/figures/cdf_shaded_area.png")
-```
-
-The complementary quantity, called the "survival probability" $S(t)$, gives the probability that the event has not yet occurred by time $t$:
-
-$$
-\begin{align}
-S(t) &= 1 - P(t) \\
-     &= \exp(-kt)
-\end{align}
-$$
-
-```{r cdf-survival, fig.cap="The cumulative distribution function $P(t) = 1 - \\exp(-kt)$ (blue) and the survival probability $S(t) = \\exp(-kt)$ (orange). At any time $t$, $P(t) + S(t) = 1$.", out.width='50%', fig.align='center'}
-knitr::include_graphics("lecture_04/figures/cdf_survival.png")
-```
+Looking at the shape of this distribution, the probability density is highest at $t = 0$ and decreases monotonically: counterintuitively, the most probable time for the event to occur is right at the start of our observation. The average waiting time is $1/k$ (see Appendix \@ref(deriv-exp-mean)), but individual waiting times are spread widely around this average. Some events occur almost immediately, while others take many multiples of the average time—the distribution only reaches zero as $t \to \infty$, so there is always a finite probability of waiting longer. This spread is an inherent feature of exponential processes, not a sign of poor statistics.
 
 ## Two Competing Radioactive Decays
 
-Suppose two different radioactive nuclei sit side by side: a carbon-14 atom with decay constant $k_1$ and a tritium (hydrogen-3) atom with decay constant $k_2$. How long will we wait until the first nucleus decays, and which one is likely to decay first?
-
-```{r two-event-waiting-time, fig.cap="Two competing exponential waiting time distributions with different rate constants. The dashed lines mark the mean waiting time $1/k$ for each process. Faster processes (higher $k$) have shorter mean waiting times and steeper decay.", out.width='50%', fig.align='center'}
-knitr::include_graphics("lecture_04/figures/two-event-waiting-time.png")
-```
+We now have the tools to return to the questions posed in the introduction: given two or more possible events, which one happens next, and how long do we wait? Let us make this concrete with two radioactive nuclei sitting side by side: a carbon-14 atom with decay constant $k_1$ and a tritium (hydrogen-3) atom with decay constant $k_2$. Each decay is a memoryless process with its own exponential waiting time distribution. Which nucleus is likely to decay first, and how long will we wait until one of them does?
 
 For neither nucleus to have decayed by time $t$, both must have survived until that time. Using the survival probability we just derived, and since the nuclei decay independently, the total survival probability is the product of their individual survival probabilities:
 
 $$S_\mathrm{total}(t) = S_1(t) \times S_2(t) = \exp(-k_1t) \times \exp(-k_2t) = \exp(-(k_1 + k_2)t)$$
 
-This is another exponential function, but with rate constant $k_\mathrm{total} = k_1 + k_2$. This means the waiting time until the first decay follows an exponential distribution with average waiting time $1/k_\mathrm{total}$, which is shorter than either nucleus's individual average lifetime.
+This is another exponential function, but with rate constant $k_\mathrm{total} = k_1 + k_2$. The waiting time until the first decay follows an exponential distribution with average waiting time $1/k_\mathrm{total}$, which is shorter than either nucleus's individual average lifetime.
 
-For example, if carbon-14 has a decay constant of $k_1 = 3.8 \times 10^{-12}$ s<sup>&minus;1</sup> and tritium has $k_2 = 1.8 \times 10^{-9}$ s<sup>&minus;1</sup>, then the average waiting time until one of them decays is:
+```{r two-event-survival-time, fig.cap="Two identical processes compete, each with the same rate constant $k$ (both described by the blue curve). The red curve shows the survival probability when both processes compete, with combined rate constant $k_\\mathrm{total} = 2k$. Dashed lines mark the mean waiting time for each: the expected wait for the first event is shorter than the mean lifetime of either process alone.", out.width='50%', fig.align='center'}
+knitr::include_graphics("lecture_04/figures/two-event-survival-time.png")
+```
 
-$$\langle \tau \rangle = \frac{1}{k_1 + k_2} = \frac{1}{3.8 \times 10^{-12} + 1.8 \times 10^{-9}} \approx \frac{1}{1.8 \times 10^{-9}} \approx 5.6 \times 10^8 \text{ seconds}$$
+The same argument extends to any number of competing processes: for $N$ independent memoryless events with rate constants $k_1, k_2, \ldots, k_N$, the total survival probability is $S_\mathrm{total}(t) = \exp(-(k_1 + k_2 + \ldots + k_N)t)$, and the waiting time until the first event is exponentially distributed with rate $k_\mathrm{total} = \sum_{i=1}^N k_i$.
 
-Which is much closer to tritium's half-life than carbon-14's, as we would intuitively expect since tritium decays much faster.
+We now know how long to expect to wait before *something* happens. But we still do not know *which* event occurs.
 
-Now for the second question: which nucleus is likely to decay first?
+The probability of each event being next is proportional to its rate constant (a full derivation is given in Appendix \@ref(deriv-event-selection)). For $N$ competing events, the probability that event $j$ occurs next is:
+
+$$P(\text{event $j$ is next}) = \frac{k_j}{k_\mathrm{total}}$$
+
+For our two nuclei, suppose carbon-14 has a decay constant of $k_1 = 3.8 \times 10^{-12}$ s<sup>&minus;1</sup> and tritium has $k_2 = 1.8 \times 10^{-9}$ s<sup>&minus;1</sup>. Then:
+
+$$P(\text{C-14 decays first}) = \frac{k_1}{k_1 + k_2} \approx 0.0021 \qquad P(\text{tritium decays first}) = \frac{k_2}{k_1 + k_2} \approx 0.9979$$
 
 ```{r waiting-times, fig.cap="Two competing decay processes: carbon-14 ($k_1$) and tritium ($k_2$). Because $k_2 \\gg k_1$, tritium is far more likely to decay first, with probability $k_2/(k_1 + k_2)$.", out.width='70%', fig.align='center'}
 knitr::include_graphics("lecture_04/figures/waiting_times.png")
 ```
 
-The probability that carbon-14 decays first is:
-
-$$P(\text{C-14 decays first}) = \frac{k_1}{k_1 + k_2} = \frac{3.8 \times 10^{-12}}{3.8 \times 10^{-12} + 1.8 \times 10^{-9}} \approx 0.0021$$
-
-While the probability that tritium decays first is:
-
-$$P(\text{tritium decays first}) = \frac{k_2}{k_1 + k_2} \approx 0.9979$$
-
-In other words, the tritium atom is about 474 times more likely to decay first than the carbon-14 atom, which matches our intuition since tritium's rate constant is about 474 times larger (a full derivation is given in Appendix \@ref(math-deriv)).
-
-## Generalising to Multiple Radioactive Nuclei
-
-The approach we have developed extends to any number of competing decay processes. If we have $N$ different radioactive nuclei with decay constants $k_1, k_2, ..., k_N$, the total decay rate is:
-
-$$k_\mathrm{total} = k_1 + k_2 + ... + k_N = \sum_{i=1}^N k_i$$
-
-The waiting time until the first decay follows an exponential distribution:
-
-$$p(\tau) = k_\mathrm{total} \times \exp(-k_\mathrm{total} \times \tau)$$
-
-And the probability that nucleus $j$ is the one that decays first is:
-
-$$P(\text{nucleus $j$ decays first}) = \frac{k_j}{k_\mathrm{total}}$$
-
-These two principles&mdash;exponentially distributed waiting times with rate $k_\mathrm{total}$ and process selection with probabilities proportional to individual rates&mdash;form the mathematical core of the KMC algorithm.
-
-We derived these results using radioactive decay, but the same mathematics applies to any first-order process: an adsorbed molecule desorbing from a catalyst surface, a defect hopping between lattice sites, or a chemical reaction proceeding over an energy barrier. In each case, the process has a rate constant $k$, the waiting time is exponentially distributed, and the memoryless property holds. The KMC algorithm exploits this generality.
-
 ## Building the KMC Algorithm
+
+We now have two key results: the waiting time until the next event is exponentially distributed with rate $k_\mathrm{total} = \sum_i k_i$, and the probability of each event being next is $k_j / k_\mathrm{total}$. To turn these into a simulation algorithm, we need a way to generate random numbers from each distribution.
 
 ### Generating Exponentially Distributed Random Times
 
-We need to generate random waiting times that follow an exponential distribution. The standard approach is "inverse transform sampling": generate a uniform random number $r$ between 0 and 1, then transform it using the inverse of the exponential CDF.
+A computer can easily generate uniform random numbers between 0 and 1, but we need exponentially distributed waiting times. The trick is to transform one into the other.
 
-For an exponential distribution with rate parameter $k$ (whether a decay constant or more generally a rate constant), the CDF is:
-
-$$F(\tau) = 1 - \exp(-k \times \tau)$$
-
-To generate a waiting time, we set $F(\tau) = r$ and solve for $\tau$:
+We already know that the survival probability $S(\tau) = \exp(-k\tau)$ decreases smoothly from 1 to 0 as $\tau$ increases. Normally, $S$ takes a time and returns a probability: "what is the probability of surviving to time $\tau$?" But we can run this backwards. Since $S$ decreases smoothly, every probability between 0 and 1 corresponds to exactly one time. So we can ask the *inverse* question: "given a probability $r$, at what time does the survival probability equal $r$?" Setting $S(\tau) = r$ and solving:
 
 $$
 \begin{align}
-r &= 1 - \exp(-k \times \tau) \\
-\exp(-k \times \tau) &= 1 - r \\
-\tau &= -\frac{\ln(1 - r)}{k}
+\exp(-k\tau) &= r \\
+\tau &= -\frac{\ln(r)}{k}
 \end{align}
 $$
 
-Since $r$ is uniformly distributed between 0 and 1, so is $(1-r)$&mdash;flipping a uniform distribution around its midpoint gives the same distribution. We can therefore use $r$ directly:
+If we feed in a random number $r$ uniformly distributed between 0 and 1, the resulting $\tau$ is automatically distributed according to the correct exponential waiting time distribution. This is called "inverse transform sampling"—we are sampling random times by inverting the survival probability function. Small values of $r$ correspond to long waiting times (the event takes a while to happen, so survival is low), while values close to 1 give short ones. Most random numbers fall near the middle of the range, producing waiting times near the average $1/k$, but occasional values close to zero give the rare long waits that are characteristic of exponential processes.
 
-$$\tau = -\frac{\ln(r)}{k}$$
-
-```{r inverse-transform-sampling, fig.cap="Inverse transform sampling. A uniform random number $r$ (orange arrow, y-axis) is mapped through the inverse CDF to produce an exponentially distributed waiting time $\\tau$ (orange arrow, x-axis).", out.width='50%', fig.align='center'}
+```{r inverse-transform-sampling, fig.cap="Inverse transform sampling. A uniform random number $r$ (y-axis) is mapped through the survival probability curve to produce an exponentially distributed waiting time $\\tau$ (x-axis).", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_04/figures/inverse_transform_sampling.png")
 ```
 
-In practice, most scientific computing libraries implement this transformation for you. In Python, for example, `np.random.exponential(1/k)` generates an exponentially distributed random number with rate parameter $k$, handling the inverse transform sampling internally.
+In practice, most scientific computing libraries implement this transformation internally. In Python, for example, `np.random.exponential(1/k)` generates an exponentially distributed random number with rate parameter $k$.
 
-### Selecting Which Nucleus Decays
+### Selecting Which Event Occurs
 
-To select which nucleus decays, we use another random number and compare it against the cumulative probabilities of the processes:
+We already know that event $j$ should be selected with probability $k_j / k_\mathrm{total}$. How do we turn a single uniform random number into this weighted choice?
 
-1. Generate a uniform random number $s$ between 0 and 1
-2. If $s < \frac{k_1}{k_\mathrm{total}}$, select nucleus 1
-3. If $\frac{k_1}{k_\mathrm{total}} \leq s < \frac{k_1 + k_2}{k_\mathrm{total}}$, select nucleus 2
-4. And so on for additional nuclei
+The idea is to divide the interval from 0 to 1 into segments, one for each possible event, where the width of each segment is proportional to that event's rate constant. Event 1 gets the segment from 0 to $k_1/k_\mathrm{total}$, event 2 gets from $k_1/k_\mathrm{total}$ to $(k_1 + k_2)/k_\mathrm{total}$, and so on until the segments fill the whole interval. We then generate a uniform random number $s$ between 0 and 1 and check which segment it lands in—that is the event we select. Events with larger rate constants occupy wider segments and are therefore selected more often, exactly in proportion to their rates.
 
-This is equivalent to dividing a line from 0 to 1 into segments proportional to each nucleus's decay probability, then seeing which segment contains our random number.
-
-```{r event-selection, fig.cap="Event selection in KMC. The interval from 0 to 1 is divided into segments proportional to each process's rate. A uniform random number selects which event occurs.", out.width='60%', fig.align='center'}
+```{r event-selection, fig.cap="Event selection in KMC. The interval from 0 to 1 is divided into segments proportional to each process's rate constant. A uniform random number $s$ selects whichever event's segment it falls into.", out.width='60%', fig.align='center'}
 knitr::include_graphics("lecture_04/figures/event_selection.png")
 ```
 
 ### The Complete KMC Algorithm
 
-The algorithm below is essentially the "Stochastic Simulation Algorithm" published by Daniel Gillespie in 1976 for simulating chemical reaction networks, and is often referred to as the Gillespie algorithm.
+Putting these two pieces together—generating a waiting time and selecting an event—gives us the full KMC algorithm. This is essentially the "Stochastic Simulation Algorithm" published by Daniel Gillespie in 1976 for simulating chemical reaction networks, and is often referred to as the Gillespie algorithm.
 
-1. **Start with the system in a well-defined state and set time to zero.**
+1. **Start with the system in a well-defined state and set the clock to $t = 0$.**
 
-2. **Create a catalog of all possible events and their rates.**
-   - For each site or component, determine what events could happen there
-   - Calculate the rate constant for each possible event
-   - Sum up the rates to get the total rate $k_\mathrm{total}$
+2. **Create a catalog of all possible events and their rates.** For each site or component in the system, determine what events could happen there and calculate the corresponding rate constant. Sum all the individual rates to get $k_\mathrm{total}$.
 
-3. **Advance time by generating a random waiting time.**
-   - Generate a random number $r_1$ uniformly between 0 and 1
-   - Calculate $\tau = -\ln(r_1)/k_\mathrm{total}$
-   - Advance the simulation clock: $t = t + \tau$
+3. **Advance time.** Generate a uniform random number $r_1$ and calculate the waiting time $\tau = -\ln(r_1)/k_\mathrm{total}$. Advance the clock: $t = t + \tau$.
 
-4. **Select which event occurs.**
-   - Generate another random number $r_2$ between 0 and 1
-   - Use $r_2$ to select an event with probability proportional to its rate
-   - A simple approach: if $r_2 < k_1/k_\mathrm{total}$, select event 1; otherwise, if $r_2 < (k_1+k_2)/k_\mathrm{total}$, select event 2; and so on
+4. **Select which event occurs.** Generate a second uniform random number $r_2$ and use the segment method described above to select an event with probability proportional to its rate.
 
-5. **Execute the selected event and update the system.**
-   - Change the system state according to the selected event
-   - Update the catalog of possible events and their rates (only those affected by the change)
+5. **Execute the selected event and update the system.** Change the system state according to the selected event, and update the catalog of possible events and their rates. Only events affected by the change need to be recalculated.
 
-6. **Repeat steps 3-5** until reaching the desired simulation time or end condition.
+6. **Repeat from step 3** until reaching the desired simulation time or end condition.
 
-The KMC algorithm focuses computational effort on times when events actually occur. Unlike time-step methods that process periods when nothing happens, KMC jumps directly from event to event, making it effective for systems with widely varying timescales.
+Notice that the algorithm jumps directly from one event to the next, skipping over all the time in between when nothing happens. This is what makes KMC efficient: rather than simulating every small timestep (most of which would be uneventful), it focuses all its computational effort on the moments when events actually occur. For systems where events are rare, this can be enormously faster than a fixed-timestep approach.
 
 ## A Worked Example: Radioactive Decay Chain
 
-Consider a radioactive decay chain where A atoms decay to B atoms, which then decay to C atoms:
+To see the algorithm in action, consider a radioactive decay chain where A atoms decay to B atoms, which then decay to C atoms:
 
 $$\mathrm{A} \overset{k_1}\longrightarrow \mathrm{B} \overset{k_2}\longrightarrow \mathrm{C}$$
 
-We will start with 10 A atoms and follow the system's evolution using KMC, tracking each atom individually:
+We start with 10 A atoms, using $k_1 = 1$ s<sup>&minus;1</sup> and $k_2 = 2$ s<sup>&minus;1</sup> (so B atoms decay twice as fast as A atoms). Each individual atom is tracked separately: the total rate at any moment is $k_\mathrm{total} = k_1 \times N_\mathrm{A} + k_2 \times N_\mathrm{B}$, which changes every time an event occurs.
 
-1. Each individual $\mathrm{A}$ atom has a chance to decay to $\mathrm{B}$ with rate $k_1$
-2. Each individual $\mathrm{B}$ atom has a chance to decay to $\mathrm{C}$ with rate $k_2$
+Let us walk through the first few steps. Initially, all 10 atoms are type A and no B atoms exist, so $k_\mathrm{total} = 1 \times 10 = 10$ s<sup>&minus;1</sup> and the only possible event is $\mathrm{A} \to \mathrm{B}$. We generate $r_1 = 0.368$, giving a waiting time $\tau = -\ln(0.368)/10 = 0.1$ s, and advance the clock to $t = 0.1$ s. One A atom decays to B, and the system now has 9 A atoms and 1 B atom.
 
-Let us use $k_1 = 1$ s<sup>&minus;1</sup> and $k_2 = 2$ s<sup>&minus;1</sup>, meaning B atoms decay twice as fast as A atoms.
+In the second step, the total rate increases to $k_\mathrm{total} = 1 \times 9 + 2 \times 1 = 11$ s<sup>&minus;1</sup>, and now two event types compete. We generate $r_1 = 0.841$, giving a short waiting time of $\tau = 0.016$ s. For event selection, we generate $r_2 = 0.682$. The A $\to$ B segment occupies the range 0 to $9/11 = 0.818$, and since $0.682 < 0.818$, another A atom decays.
 
-Figure \@ref(fig:kmc-decay-chain) illustrates the first five steps of our KMC simulation, showing how the system evolves and how random numbers determine both the timing of events and which events occur.
+The simulation continues in this way (Figure \@ref(fig:kmc-decay-chain)). Most early steps select $\mathrm{A} \to \mathrm{B}$, since the A atoms outnumber the B atoms and dominate $k_\mathrm{total}$. The first interesting moment comes at step 4: by now there are 7 A atoms and 3 B atoms, so $k_\mathrm{total} = 7 + 6 = 13$ s<sup>&minus;1</sup> and the B $\to$ C segment occupies $6/13 = 46\%$ of the interval. We generate $r_2 = 0.960$, which falls in the B $\to$ C segment—the first time a B atom decays to C.
 
-```{r kmc-decay-chain, fig.cap="Visual representation of the first five steps in a KMC simulation of the radioactive decay chain A $\\to$ B $\\to$ C. Each row shows: the current state of the system (red circles = A atoms, green circles = B atoms, yellow circles = C atoms); the total event rate divided by event type; the random number $r_1$ used to generate the waiting time $\\Delta t$; the random number $r_2$ used for event selection (with coloured bars showing the probability ranges for each possible event); and the selected event.", out.width='100%', fig.align='center'}
+```{r kmc-decay-chain, fig.cap="The first five steps of a KMC simulation of the decay chain A $\\to$ B $\\to$ C. Each row shows: the current state of the system (red = A, green = B, yellow = C); the total event rate; the random number $r_1$ and resulting waiting time; the random number $r_2$ and event selection (coloured bars show the probability segments for each event type); and the selected event.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_04/figures/kmc-decay-chain.png")
 ```
 
-Here are the first five steps in detail:
+Running the simulation to completion produces the population dynamics in Figure \@ref(fig:kmc-example-10). A decays exponentially, B rises and then falls as an intermediate, and C steadily accumulates—exactly the behaviour we would expect from the [rate equations](https://bjmorgan.github.io/CH22008/lecture1.html#consecutive-reactions). But unlike the smooth curves of a deterministic model, the KMC trajectory is jagged, reflecting the random timing of individual decay events. Each simulation run produces a slightly different trajectory, yet all follow the same general pattern.
 
-1. **Initial setup** 
-   - Starting state: $N_\mathrm{A} = 10$, $N_\mathrm{B} = 0$, $N_\mathrm{C} = 0$, $t = 0$
-   - Total rate: $k_\mathrm{total} = 1 \times 10 + 2 \times 0 = 10$ s<sup>&minus;1</sup>
-   - Generate $r_1 = 0.368$ $\to$ waiting time: $\tau = -\ln(0.368)/10 = 0.1$ s
-   - Advance time: $t = 0 + 0.1 = 0.1$ s
-   - Generate $r_2 = 0.275$
-   - Since there is only one possible event type ($\mathrm{A} \to \mathrm{B}$), select that
-   - Update: $N_\mathrm{A} = 9$, $N_\mathrm{B} = 1$, $N_\mathrm{C} = 0$
-
-2. **Second iteration** 
-   - Total rate: $k_\mathrm{total} = 1 \times 9 + 2 \times 1 = 11$ s<sup>&minus;1</sup>
-   - Generate $r_1 = 0.841$ $\to$ waiting time: $\tau = -\ln(0.841)/11 = 0.016$ s
-   - Advance time: $t = 0.1 + 0.016 = 0.116$ s
-   - Generate $r_2 = 0.682$
-   - Compare: $0.682 < (9/11) = 0.818$, so select $\mathrm{A} \to \mathrm{B}$
-   - Update: $N_\mathrm{A} = 8$, $N_\mathrm{B} = 2$, $N_\mathrm{C} = 0$
-
-3. **Third iteration** 
-   - Total rate: $k_\mathrm{total} = 1 \times 8 + 2 \times 2 = 12$ s<sup>&minus;1</sup>
-   - Generate $r_1 = 0.042$ $\to$ waiting time: $\tau = -\ln(0.042)/12 = 0.264$ s
-   - Advance time: $t = 0.116 + 0.264 = 0.38$ s
-   - Generate $r_2 = 0.058$
-   - Compare: $0.058 < (8/12) = 0.667$, so select $\mathrm{A} \to \mathrm{B}$
-   - Update: $N_\mathrm{A} = 7$, $N_\mathrm{B} = 3$, $N_\mathrm{C} = 0$
-
-4. **Fourth iteration** 
-   - Total rate: $k_\mathrm{total} = 1 \times 7 + 2 \times 3 = 13$ s<sup>&minus;1</sup>
-   - Generate $r_1 = 0.194$ $\to$ waiting time: $\tau = -\ln(0.194)/13 = 0.126$ s
-   - Advance time: $t = 0.38 + 0.126 = 0.506$ s
-   - Generate $r_2 = 0.960$
-   - Compare: $0.960 > (7/13) = 0.538$, so select $\mathrm{B} \to \mathrm{C}$
-   - Update: $N_\mathrm{A} = 7$, $N_\mathrm{B} = 2$, $N_\mathrm{C} = 1$
-
-5. **Fifth iteration** 
-   - Total rate: $k_\mathrm{total} = 1 \times 7 + 2 \times 2 = 11$ s<sup>&minus;1</sup>
-   - Generate $r_1 = 0.782$ $\to$ waiting time: $\tau = -\ln(0.782)/11 = 0.022$ s
-   - Advance time: $t = 0.506 + 0.022 = 0.528$ s
-   - Generate $r_2 = 0.411$
-   - Compare: $0.411 < (7/11) = 0.636$, so select $\mathrm{A} \to \mathrm{B}$
-   - Update: $N_\mathrm{A} = 6$, $N_\mathrm{B} = 3$, $N_\mathrm{C} = 1$
-
-Figure \@ref(fig:kmc-example-10) shows the complete population dynamics when the simulation is run to completion.
-
-```{r kmc-example-10, fig.cap="Population dynamics in a KMC simulation of the radioactive decay chain A → B → C starting with 10 A atoms. Species A (red) decreases exponentially, species B (green) rises and then falls as an intermediate, and species C (yellow) steadily accumulates as the final product.", out.width='50%', fig.align='center'}
+```{r kmc-example-10, fig.cap="Population dynamics from a KMC simulation of the decay chain A $\\to$ B $\\to$ C, starting with 10 A atoms ($k_1 = 1$ s$^{-1}$, $k_2 = 2$ s$^{-1}$). The jagged trajectories reflect the stochastic timing of individual events.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_04/figures/kmc-example-10.png")
 ```
 
-The trajectory shows A decaying exponentially, B rising then falling as an intermediate, and C accumulating&mdash;all as expected. But unlike a deterministic rate equation, the progression is not smooth: it reflects the random timing of individual decay events. Each simulation run produces a slightly different trajectory, yet all follow the same general pattern.
-
 ## When is KMC Appropriate?
 
-KMC is suited to systems that can be described as a set of discrete states connected by transitions with known rate constants. These transitions must be first-order processes&mdash;ones whose rates depend only on the current state, not on how long the system has been in that state&mdash;so that the memoryless property holds and waiting times are exponentially distributed. Surface catalysis (adsorption, diffusion, reaction, desorption), crystal growth, and defect migration in solids are all natural applications.
+Everything we have derived in this chapter rests on the memoryless property: the assumption that each event has a constant probability of occurring per unit time, regardless of history. This is what gave us exponential waiting times, additive rates for competing events, and the simple event-selection rule $k_j / k_\mathrm{total}$. KMC is therefore suited to systems of first-order processes: discrete states connected by transitions with known rate constants. Surface catalysis (where molecules adsorb, diffuse, react, and desorb), crystal growth, and defect migration in solids are all natural applications.
 
-KMC is not the right tool when the system's dynamics are better described by continuous motion (where molecular dynamics is more appropriate), or when the relevant rate constants are unknown and cannot be estimated. It is also not suited to problems where the goal is to sample equilibrium properties without regard to dynamics&mdash;for those, Metropolis Monte Carlo is simpler and more efficient.
+When does KMC *not* work? If the dynamics involve continuous motion (atoms vibrating, molecules tumbling through solution), the system does not hop between discrete states, and molecular dynamics is more appropriate. If the relevant rate constants are unknown and cannot be estimated, KMC has nothing to work with. And if the goal is to sample equilibrium properties without caring about dynamics, then Metropolis Monte Carlo is simpler and more efficient, precisely because it does not need to model physical time.
 
 ## Summary
 
-Where Metropolis Monte Carlo samples equilibrium configurations, Kinetic Monte Carlo simulates how a system evolves in time. The two methods answer different questions&mdash;one asks "what does the equilibrium look like?", the other asks "what happens next, and when?"
+Where Metropolis Monte Carlo samples equilibrium configurations, Kinetic Monte Carlo simulates how a system evolves in time. The two methods answer different questions: one asks "what does the equilibrium look like?", the other asks "what happens next, and when?"
 
-The algorithm uses two random numbers per step: one to generate an exponentially distributed waiting time, another to select which event occurs with probability proportional to its rate. We developed this approach by considering radioactive decay, but the same mathematics applies to any system of first-order processes&mdash;surface reactions, diffusion in solids, crystal growth. And because KMC jumps directly from event to event rather than simulating every timestep, it can efficiently reach long timescales that would be inaccessible to molecular dynamics.
+The algorithm uses two random numbers per step: one to generate an exponentially distributed waiting time, another to select which event occurs with probability proportional to its rate. We developed this approach by considering radioactive decay, but the same mathematics applies to any system of first-order processes, from surface reactions and diffusion in solids to crystal growth. And because KMC jumps directly from event to event rather than simulating every timestep, it can efficiently model processes that would be inaccessible to molecular dynamics.
 
-Returning to the questions we opened with&mdash;how quickly does a protein fold? How do atoms diffuse across a catalyst surface? What is the rate-limiting step in a complex mechanism?&mdash;KMC answers these by simulating the sequence and timing of individual events, building up the full kinetic picture from microscopic rate constants.
+How quickly does a protein fold? How do atoms diffuse across a catalyst surface? What is the rate-limiting step in a complex mechanism? KMC answers these by simulating the sequence and timing of individual events, building up the full kinetic picture from microscopic rate constants.

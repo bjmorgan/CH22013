@@ -12,7 +12,7 @@ knitr::opts_knit$set(process_pdf = TRUE)
 
 ## Introduction to Averaging & Sampling
 
-Chemistry is fundamentally a statistical science. Macroscopic properties such as pressure, temperature, and heat capacity emerge from the collective behaviour of approximately $10^{23}$ atoms or molecules. These observable quantities represent averages over an immense number of microscopic states. A central challenge in computational chemistry is how to accurately estimate these macroscopic properties without having to evaluate every possible molecular arrangement.
+Chemistry is fundamentally a statistical science. Macroscopic properties such as pressure, temperature, and heat capacity emerge from the collective behaviour of approximately $10^{23}$ atoms or molecules. These observable quantities represent averages over an immense number of microscopic states. A central challenge in computational chemistry is how to accurately estimate these macroscopic properties without having to evaluate every possible molecular arrangement (Figure \@ref(fig:molecular-configurations)).
 
 ```{r molecular-configurations, fig.cap="A macroscopic chemical system contains approximately $10^{23}$ molecules. Zooming in at different points reveals different molecular arrangements — these are the microscopic configurations whose properties we need to average.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/molecular_configurations.png")
@@ -24,7 +24,7 @@ When we measure properties of chemical systems in the laboratory, we observe the
 
 
 \begin{equation}
-\langle A \rangle = \sum A(\mathbf{r}) \times P(\mathbf{r})
+\langle A \rangle = \sum_{\mathbf{r}} A(\mathbf{r}) \times P(\mathbf{r})
 \end{equation}
 
 Here the angle brackets $\langle \cdot \rangle$ denote an average value, $\mathbf{r}$ represents a particular configuration of the system, and $P(\mathbf{r})$ is the probability of finding the system in that configuration.
@@ -33,15 +33,13 @@ Here the angle brackets $\langle \cdot \rangle$ denote an average value, $\mathb
 
 $P(\mathbf{r})$ represents a probability distribution, which describes the likelihood of finding the system in each possible configuration. Each probability is a number between 0 (impossible) and 1 (certain).
 
-Probability distributions come in two forms:
-
-**Discrete distributions** apply when a variable can only take specific, countable values. For these, we use a probability mass function (PMF) that gives the probability of each possible outcome. For example, when rolling a fair six-sided die, each number (1&mdash;6) has a probability of 1/6—this is a uniform distribution.
+Some variables can only take specific, countable values. Rolling a fair six-sided die, for example, gives each number (1&ndash;6) a probability of 1/6 (Figure \@ref(fig:single-die)). This is a *uniform discrete distribution*: every outcome is equally likely.
 
 ```{r single-die, fig.cap="A uniform discrete distribution: each face of a fair die has equal probability 1/6.", out.width='40%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/single_die.png")
 ```
 
-Not all discrete distributions are uniform: counting heads in four coin flips gives probabilities of 1/16, 4/16, 6/16, 4/16, and 1/16 for 0, 1, 2, 3, and 4 heads respectively, because there are more ways to get 2 heads than 0 or 4.
+Not all discrete distributions are uniform: counting heads in four coin flips gives probabilities of 1/16, 4/16, 6/16, 4/16, and 1/16 for 0, 1, 2, 3, and 4 heads respectively, because there are more ways to get 2 heads than 0 or 4 (Figure \@ref(fig:two-coins)).
 
 ```{r two-coins, fig.cap="A non-uniform discrete distribution: the number of heads in four coin flips. The middle outcomes are more probable because there are more ways to arrange them.", out.width='40%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/two_coins.png")
@@ -51,7 +49,7 @@ For any discrete distribution, the sum of probabilities across all possible outc
 
 $$\sum_i P(i) = 1$$
 
-**Continuous distributions** apply when a variable can take any value within a continuous range. These use a probability density function (PDF) where the probability of finding the variable in a specific range equals the area under the PDF curve over that range.
+Other variables can take any value within a continuous range. The Maxwell–Boltzmann speed distribution (Figure \@ref(fig:maxwell-boltzmann)), for example, describes the probability of finding a molecule travelling at a particular speed. For these *continuous distributions*, the probability of finding the variable in a specific range equals the area under the curve over that range.
 
 ```{r maxwell-boltzmann, fig.cap="The Maxwell--Boltzmann speed distribution, a continuous probability density function. The shaded area gives the probability of finding a molecule with speed between 300 and 500 m s$^{-1}$: the area under the curve in this range is approximately 0.40.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/maxwell-boltzmann.png")
@@ -81,7 +79,7 @@ P(\mathbf{r}) \propto \exp(-U(\mathbf{r})/kT)
 
 Here, $U(\mathbf{r})$ is the potential energy of configuration $\mathbf{r}$, $k$ is Boltzmann's constant, and $T$ is the temperature.
 
-This relationship reveals a fundamental principle in physical chemistry: lower-energy configurations are exponentially more probable than higher-energy ones. At room temperature (298 K), a configuration that is just 6 kJ/mol higher in energy is approximately 10 times less probable than the minimum energy state, since $\exp(-6000/(8.314 \times 298)) \approx 1/10$. Temperature determines how strongly the system favours low-energy states—at high temperatures, the distribution becomes more uniform, while at low temperatures, the system is increasingly restricted to the lowest energy states.
+This relationship reveals a fundamental principle in physical chemistry: lower-energy configurations are exponentially more probable than higher-energy ones. At room temperature (298 K), a configuration that is just 6 kJ/mol higher in energy is approximately 10 times less probable than the minimum energy state, since $\exp(-6000/(8.314 \times 298)) \approx 1/10$. Temperature determines how strongly the system favours low-energy states—at high temperatures, the distribution becomes more uniform, while at low temperatures, the system is increasingly restricted to the lowest energy states (Figure \@ref(fig:boltzmann-distribution)).
 
 ```{r boltzmann-distribution, fig.cap="The Boltzmann distribution at room temperature (298 K). Lower-energy configurations have exponentially higher probability than higher-energy ones.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/boltzmann_distribution.png")
@@ -90,7 +88,7 @@ knitr::include_graphics("lecture_01/figures/boltzmann_distribution.png")
 To create a valid probability distribution, the probabilities must sum to 1:
 
 \begin{equation}
-\sum_i P(\mathbf{r}) = 1
+\sum_i P(\mathbf{r}_i) = 1
 \end{equation}
 
 We achieve this by including a normalisation constant, $Z$:
@@ -102,7 +100,7 @@ P(\mathbf{r}) = \frac{\exp(-U(\mathbf{r})/kT)}{Z}
 This constant $Z$ is called the "partition function", defined as:
 
 \begin{equation}
-Z = \sum \exp(-U(\mathbf{r})/kT)
+Z = \sum_{\mathbf{r}} \exp(-U(\mathbf{r})/kT)
 \end{equation}
 
 ### The Computational Challenge
@@ -112,13 +110,13 @@ To calculate our thermodynamic average directly, we would need to:
 2. Compute the property A and energy for each configuration
 3. Calculate the weighted sum
 
-The obstacle lies in the sheer number of possible configurations for any realistic chemical system. Consider a simple example: a $10 \times 10$ array of surface sites where we want to model the adsorption of 50 molecules.
+The obstacle lies in the sheer number of possible configurations for any realistic chemical system. Consider a simple example: a $10 \times 10$ array of surface sites where we want to model the adsorption of 50 molecules (Figure \@ref(fig:single-lattice)).
 
 ```{r single-lattice, fig.cap="A single configuration of 50 molecules adsorbed on a $10 \\times 10$ lattice of surface sites.", out.width='40%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/single_lattice_png.png")
 ```
 
-This system has approximately $10^{29}$ possible configurations—more than the number of stars in the observable universe. Direct enumeration becomes impossible.
+This system has approximately $10^{29}$ possible configurations—more than the number of stars in the observable universe (Figure \@ref(fig:many-lattices)). Direct enumeration becomes impossible.
 
 ```{r many-lattices, fig.cap="A small selection of the approximately $10^{29}$ possible configurations of 50 molecules on a $10 \\times 10$ lattice. Direct enumeration of all configurations is computationally intractable.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/50_lattices_png.png")
@@ -128,7 +126,7 @@ For most chemical systems, the situation is even more extreme. A small protein i
 
 ## The Solution: Statistical Sampling
 
-Instead, we can estimate the sum through sampling—selecting a subset of configurations that represent the full distribution, evaluating our property of interest for these samples, and calculating their average.
+Instead, we can estimate the sum through sampling—selecting a representative subset of configurations (Figure \@ref(fig:sampling-subset)), evaluating our property of interest for these samples, and calculating their average.
 
 ```{r sampling-subset, fig.cap="Rather than evaluating all possible configurations, we select a representative subset (highlighted) and use these to estimate the average.", out.width='80%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/sampling_subset.png")
@@ -145,7 +143,7 @@ This principle applies to chemical systems as well. If we could generate configu
 \langle A \rangle \approx \frac{1}{N} \sum_{i=1}^{N} A(\mathbf{r}_i)
 \end{equation}
 
-Where the configurations $\mathbf{r}_i$ are selected with probability proportional to $\exp(-U(\mathbf{r}_i)/kT)$.
+where the configurations $\mathbf{r}_i$ are selected with probability proportional to $\exp(-U(\mathbf{r}_i)/kT)$.
 
 ## Two Approaches to Sampling
 
@@ -159,7 +157,7 @@ Molecular Dynamics (MD) simulates atomic motion according to Newton's laws. When
 \langle A \rangle \approx \frac{1}{M} \sum_{i=1}^{M} A(\mathbf{r}_i)
 \end{equation}
 
-Where $M$ is the number of time steps.
+where $M$ is the number of time steps.
 
 However, the effectiveness of MD sampling depends on the system's energy landscape. Consider a protein folding example: if high energy barriers separate different conformational states, the protein may remain trapped in one conformation for the entire simulation duration. The resulting time average would reflect only a small subset of the relevant configuration space, not the true equilibrium ensemble.
 
@@ -179,13 +177,13 @@ Before addressing the sampling challenges in chemical systems, let's examine two
 
 ### Estimating &pi; by Monte Carlo Integration
 
-One of the simplest demonstrations of Monte Carlo methods is estimating the value of $\pi$. Consider a circle with radius 1 inscribed inside a square with side length 2. The area of the circle is $\pi$, while the area of the square is 4. Therefore, the ratio of these areas is $\pi/4$.
+One of the simplest demonstrations of Monte Carlo methods is estimating the value of $\pi$. Consider a circle with radius 1 inscribed inside a square with side length 2 (Figure \@ref(fig:pi-geometry)). The area of the circle is $\pi$, while the area of the square is 4. Therefore, the ratio of these areas is $\pi/4$.
 
 ```{r pi-geometry, fig.cap="A circle of radius 1 inscribed inside a square of side length 2. The ratio of the circle's area to the square's area is $\\pi/4$.", out.width='30%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/pi_geometry.png")
 ```
 
-We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. The procedure involves generating $N$ random points with coordinates $(x,y)$, where $x$ and $y$ are uniformly distributed between &minus;1 and 1. We then count how many points $M$ satisfy $x^2 + y^2 \leq 1$, which indicates they fall within the circle. The estimate for $\pi$ is given by: $\pi \approx 4 \times M/N$.
+We can estimate this ratio by randomly placing points within the square and counting what fraction fall inside the circle. The procedure involves generating $N$ random points with coordinates $(x,y)$, where $x$ and $y$ are uniformly distributed between &minus;1 and 1. We then count how many points $M$ satisfy $x^2 + y^2 \leq 1$, which indicates they fall within the circle. The estimate for $\pi$ is given by: $\pi \approx 4 \times M/N$. Figure \@ref(fig:estimating-pi) shows how the estimate converges as the number of samples increases.
 
 ```{r estimating-pi, fig.cap="Estimating $\\pi$ by Monte Carlo sampling. Random points are generated uniformly within a square of side length 2. Points falling inside the inscribed unit circle (red) and outside (blue) are counted, and $\\pi$ is estimated from the ratio $4 \\times M/N$. As the number of samples increases, the estimate converges towards the true value of $\\pi$.", out.width='100%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/estimating_pi.png")
@@ -195,7 +193,7 @@ This approach demonstrates how random sampling can solve a deterministic problem
 
 ### Function Averaging and Numerical Integration
 
-Our second example involves calculating the average value of a function over a specific interval. Consider finding the average value of $\sin^2(x)$ over the interval $[0,\pi]$.
+Our second example involves calculating the average value of a function over a specific interval. Consider finding the average value of $\sin^2(x)$ over the interval $[0,\pi]$ (Figure \@ref(fig:sin2x)).
 
 Mathematically, this average is defined as:
 
@@ -209,15 +207,15 @@ The analytical solution to this integral is 1/2.
 knitr::include_graphics("lecture_01/figures/sin2x.png")
 ```
 
-Using Monte Carlo methods, we can estimate this average by generating uniform random $x$-values between 0 and $\pi$, calculating $\sin^2(x)$ for each point, and then averaging these results. For example, suppose we generate five random values: $x = 0.50, 1.20, 2.10, 0.85, 2.70$. Evaluating $\sin^2(x)$ for each gives $0.230, 0.869, 0.745, 0.564, 0.183$, with an average of $0.518$—already close to the exact value of $0.500$ with just five samples.
+We can estimate this average using Monte Carlo methods, by generating uniform random $x$-values between 0 and $\pi$, calculating $\sin^2(x)$ for each point, and then averaging these results. For example, suppose we generate five random values: $x = 0.50, 1.20, 2.10, 0.85, 2.70$. Evaluating $\sin^2(x)$ for each gives $0.230, 0.869, 0.745, 0.564, 0.183$, with an average of $0.518$—already close to the exact value of $0.500$ with just five samples.
 
 This procedure can be generalised to estimate any definite integral:
 
 \begin{equation}
-\int_a^b f(x) dx \approx (b-a) \times \frac{1}{N} \sum_{i=1}^{N} f(x_i)
+\int_a^b f(x)\,\mathrm{d}x \approx (b-a) \times \frac{1}{N} \sum_{i=1}^{N} f(x_i)
 \end{equation}
 
-Where $x_1$, $x_2$, ..., $x_n$ are uniform random numbers between $a$ and $b$. The factor $(b-a)$ converts the average value of $f(x)$ into the area under the curve: the integral equals the average height of the function multiplied by the width of the interval.
+where $x_1$, $x_2$, ..., $x_N$ are uniform random numbers between $a$ and $b$. The factor $(b-a)$ converts the average value of $f(x)$ into the area under the curve: the integral equals the average height of the function multiplied by the width of the interval.
 
 The strength of this approach becomes apparent when dealing with multi-dimensional integrals, where traditional numerical methods become exponentially more expensive as dimensionality increases.
 
@@ -225,9 +223,9 @@ The strength of this approach becomes apparent when dealing with multi-dimension
 
 Unlike deterministic methods, which give the same answer every time, Monte Carlo methods produce slightly different results each time we run them with a different sequence of random numbers. We must therefore treat Monte Carlo results as estimates with associated uncertainty.
 
-The precision of these estimates improves as we increase the number of samples. Statistical uncertainty decreases proportionally to $1/\sqrt{N}$, where $N$ is the number of random samples. To reduce the uncertainty by half, we need to use four times as many samples. This scaling behaviour is characteristic of random sampling methods and remains independent of the dimensionality of the problem—a significant advantage in high-dimensional applications.
+The precision of these estimates improves as we increase the number of samples. Statistical uncertainty decreases proportionally to $1/\sqrt{N}$, where $N$ is the number of random samples (Figure \@ref(fig:convergence-funnel)). To reduce the uncertainty by half, we need to use four times as many samples. This scaling behaviour is characteristic of random sampling methods and remains independent of the dimensionality of the problem—a significant advantage in high-dimensional applications.
 
-```{r convergence-funnel, fig.cap="Convergence of Monte Carlo estimates of $\\pi$. Each green trace represents an independent simulation. As the number of samples increases, all estimates converge towards the true value (dashed line), with the spread of estimates narrowing as $1/\\sqrt{N}$.", out.width='70%', fig.align='center'}
+```{r convergence-funnel, fig.cap="Convergence of Monte Carlo estimates of $\\pi$. Each green trace represents an independent simulation. As the number of samples increases, all estimates converge towards the true value (dashed line), with the spread of estimates narrowing as $1/\\sqrt{N}$.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_01/figures/convergence_funnel.png")
 ```
 

@@ -4,3 +4,4 @@ _book/*
 **/*.swp
 .nova
 .DS_Store
+*.md

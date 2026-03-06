@@ -44,9 +44,11 @@ In both the 2-state and 3-state weather models, the transition probabilities bet
 
 ### The inverse problem
 
-But we want to solve the inverse problem: we already know the stationary distribution we want (the Boltzmann distribution) and we need to find transition probabilities that will produce it.
+But we want to solve the inverse problem: we know the *form* of the stationary distribution we want—the Boltzmann distribution, $\pi_i \propto \exp(-U_i/kT)$—and we need to find transition probabilities that will produce it.
 
-For the 2-state weather model, the balance equation involves only one pair of states, so it can be rearranged into a clean ratio: $P(\text{sunny} \to \text{rainy})/P(\text{rainy} \to \text{sunny}) = \pi_\text{rainy}/\pi_\text{sunny}$. Any transition probabilities satisfying this ratio will work. But for three or more states, each global balance equation involves *all* states—the equation for sunny includes transitions to and from rainy *and* cloudy. The equations are coupled: each equation involves the equilibrium probability of *every* state. For a chemical system, where each $\pi_i \propto \exp(-U_i/kT)$, this means we need to know the energy of every state—exactly the exhaustive calculation we are trying to avoid. We need a more tractable approach.
+In the weather models, the inverse problem was straightforward: we knew the numerical value of each $\pi_i$ and could plug them directly into the balance equations. For a chemical system, the individual Boltzmann probabilities $\pi_i = \exp(-U_i/kT)/Z$ are unknown because we cannot calculate the partition function $Z$.
+
+This would not matter if we could work purely with *ratios* of probabilities, since $Z$ cancels from $\pi_j/\pi_i$. For the 2-state weather model, the balance equation involves only one pair of states and can be rearranged into exactly such a ratio: $P(\text{sunny} \to \text{rainy})/P(\text{rainy} \to \text{sunny}) = \pi_\text{rainy}/\pi_\text{sunny}$. But for three or more states, each global balance equation involves *all* states through coupled sums—the equation for sunny includes transitions to and from rainy *and* cloudy. These sums involve the individual $\pi_i$, not clean ratios, so $Z$ does not cancel. We need a more tractable approach.
 
 ### Detailed balance
 
@@ -151,7 +153,7 @@ $$\frac{P(2)}{P(1)} = \exp\left(-\frac{E_2 - E_1}{kT}\right)$$
 
 This ratio varies with temperature—at high temperatures it approaches $1$, and at low temperatures it approaches $0$.
 
-For concreteness, set $E_2 - E_1 = kT$, so $P(2)/P(1) = e^{-1} \approx 0.37$—state $1$ should appear about 73% of the time. Starting in state $1$, the only possible move is to state $2$, which requires an energy increase of $kT$. The Metropolis acceptance probability is $\exp(-1) \approx 0.37$, so roughly two-thirds of the time this move is rejected. When we correctly record state $1$ again after each rejection, state $1$ accumulates the extra counts it needs to reflect its higher Boltzmann weight.
+For concreteness, set $E_2 - E_1 = kT$, so $P(2)/P(1) = e^{-1} \approx 0.37$—state $1$ should appear about 73% of the time. Starting in state $1$, the only possible move is to state $2$, which requires an energy increase of $kT$. The Metropolis acceptance probability is $\exp(-1) \approx 0.37$, so about 63% of the time this move is rejected. When we correctly record state $1$ again after each rejection, state $1$ accumulates the extra counts it needs to reflect its higher Boltzmann weight.
 
 If instead we only recorded states after accepted moves, we would always alternate—every accepted move from state $1$ goes to state $2$, every accepted move from state $2$ goes to state $1$—giving equal counts of both states regardless of temperature. This contradicts the Boltzmann distribution, which requires state $1$ to be increasingly favoured as temperature decreases.
 
@@ -263,7 +265,7 @@ U(\phi) = A_0 + A_1(1+\cos\phi) + A_2(1-\cos2\phi) + A_3(1+\cos3\phi)
 (\#eq:butane-PES)
 \end{equation}
 
-where the coefficients $A_i$ determine the relative energies of the different conformations. This functional form captures the threefold symmetry of the rotational potential — three maxima (eclipsed conformations) and three minima (staggered conformations) — with the barrier heights depending on which groups are eclipsing: the CH$_3$/CH$_3$ eclipsed (cis) barrier at $\phi = 0°$ is higher than the CH$_3$/H eclipsed barriers at $\phi = 120°$ and $240°$.
+where the coefficients $A_i$ determine the relative energies of the different conformations. This functional form captures the threefold symmetry of the rotational potential—three maxima (eclipsed conformations) and three minima (staggered conformations)—with the barrier heights depending on which groups are eclipsing: the CH$_3$/CH$_3$ eclipsed (cis) barrier at $\phi = 0°$ is higher than the CH$_3$/H eclipsed barriers at $\phi = 120°$ and $240°$.
 
 ```{r butane-PES, fig.cap="Potential energy surface for butane's dihedral angle rotation, modelled using Equation \\@ref(eq:butane-PES). Coloured circles mark the four distinct conformations shown in Figure \\@ref(fig:butane-conformations): eclipsed (cis) at 0° (green), gauche at 60° and 300° (blue), eclipsed at 120° and 240° (orange), and anti at 180° (pink). Note the different barrier heights: the CH$_3$/CH$_3$ eclipsed barrier at 0° is approximately 35 kJ mol$^{-1}$, while the CH$_3$/H eclipsed barriers at 120° and 240° are approximately 27 kJ mol$^{-1}$.", out.width='50%', fig.align='center'}
 knitr::include_graphics("lecture_03/figures/butane-PES.png")
